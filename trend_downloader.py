@@ -95,7 +95,7 @@ def search_and_download_viral_short(search_query: str, download_dir: str):
         "description": best_entry.get("description", "")
     }
 
-def apply_anti_copyright_edits(input_video: str, output_video: str, hook_banner: str = None):
+def apply_anti_copyright_edits(input_video: str, output_video: str, hook_banner: str = None, niche: str = "animals"):
     """
     Applies aggressive anti-copyright transformations:
     - Speed up by 1.04x (breaks acoustic & optical exact matches)
@@ -146,19 +146,13 @@ def apply_anti_copyright_edits(input_video: str, output_video: str, hook_banner:
     ]
     subprocess.run(cmd_thumb, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
-    # Add high-CTR hook overlay on thumbnail if banner provided
-    if thumb_path.exists() and hook_banner:
+    # Apply luxury high-CTR styling on thumbnail
+    if thumb_path.exists():
         try:
-            img = Image.open(thumb_path)
-            draw = ImageDraw.Draw(img)
-            w, h = img.size
-            # Top banner
-            draw.rectangle([0, 150, w, 320], fill=(0, 0, 0, 180))
-            draw.rounded_rectangle([60, 170, w - 60, 300], radius=25, fill=(255, 69, 0))
-            draw.text((w // 2, 235), hook_banner, fill=(255, 255, 255), anchor="mm")
-            img.save(thumb_path, "JPEG", quality=95)
-        except Exception:
-            pass
+            from metadata_optimizer import generate_luxury_thumbnail
+            generate_luxury_thumbnail(str(thumb_path), str(thumb_path), niche=niche, custom_text=hook_banner)
+        except Exception as e:
+            print(f"  [Thumbnail warning]: {e}")
 
     return {
         "video": output_video,

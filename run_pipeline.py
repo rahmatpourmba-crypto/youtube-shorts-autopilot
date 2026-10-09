@@ -48,16 +48,16 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
     res = apply_anti_copyright_edits(
         input_video=data["raw_video"],
         output_video=edited_video,
-        hook_banner=hook_banner
+        hook_banner=hook_banner,
+        niche=channel_key
     )
     
-    # Optimize title
-    title = data["title"]
-    if "#shorts" not in title.lower():
-        title = f"{title[:80]} #Shorts"
-        
-    tags = data.get("tags") or ["Shorts", "Viral"]
-    desc = f"{data['title']}\n\nSubscribe to the channel for daily viral shorts!\n\n#Shorts #Viral"
+    # Premium Luxury Metadata Optimization
+    from metadata_optimizer import get_optimized_metadata
+    opt = get_optimized_metadata(niche=channel_key, raw_title=data.get("title"))
+    title = opt["title"]
+    desc = opt["description"]
+    tags = opt["tags"]
     
     print(f"[{channel_key.upper()}] 3. Uploading to YouTube Channel: {ch_info['name']} ({ch_info['email']})...")
     if ch_info["token_file"].exists():
