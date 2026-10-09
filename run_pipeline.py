@@ -138,8 +138,14 @@ def main():
         run_dir=run_dir / "ai_1"
     )
     
-    # 3. CryptoLab: PAUSED per user request
-    print("\n[CRYPTO] Skipped / Paused per user instructions.")
+    # 3. CryptoLab: Multi-Lingual Geo-Targeted Daily Release
+    print("\n" + "="*40 + "\n[CRYPTOLAB CHANNEL] Publishing Multilingual Geo-Targeted Short...\n" + "="*40)
+    try:
+        from cryptolab_multilingual import publish_next_cryptolab_language
+        publish_next_cryptolab_language()
+    except Exception as e:
+        print(f"  [CryptoLab Warning] Multilingual publish error: {e}")
+
     
     # 4. Animals Channel (1 Video Daily)
     print("\n" + "="*40 + "\n[ANIMALS CHANNEL] Producing 1 Daily Short...\n" + "="*40)
