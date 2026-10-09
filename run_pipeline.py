@@ -83,7 +83,7 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
     else:
         print(f"  [Notice] Token not found for {channel_key}. Saved locally at {res['video']}.")
 
-    # AUTO CLEANUP TO FREE DISK SPACE (پاکسازی خودکار فایل‌ها برای جلوگیری از پر شدن هارد)
+    # AUTO CLEANUP TO FREE DISK SPACE (پاکسازی خودکار فایل‌ها برای تمامی کانال‌ها)
     try:
         raw_vid = Path(data["raw_video"])
         if raw_vid.exists():
@@ -99,10 +99,16 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
         if thumb_img.exists() and upload_res:
             thumb_img.unlink()
             print(f"  [Cleanup] Deleted thumbnail file: {thumb_img.name}")
+
+        # Remove the channel run output directory if completely empty
+        if out_dir.exists() and upload_res:
+            shutil.rmtree(out_dir, ignore_errors=True)
+            print(f"  [Cleanup] Fully cleared directory: {out_dir.name}")
     except Exception as e:
         print(f"  [Cleanup Warning] Error deleting temporary files: {e}")
 
     return upload_res
+
 
 
 
