@@ -34,6 +34,16 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 1
             likes = item.get("like_count") or 0
             timestamp = item.get("timestamp") or (now_ts - 86400 * 30)
             
+            # Strict Moral & Halal Safety Check
+            from halal_content_filter import is_content_halal_and_clean
+            title = item.get("title", "")
+            desc = item.get("description", "")
+            tags = item.get("tags") or []
+            
+            if not is_content_halal_and_clean(title, desc, tags):
+                print(f"  [Halal Shield] Skipped non-compliant/unethical candidate: '{title[:50]}...'")
+                continue
+            
             # Days since published
             days_active = max(1.0, (now_ts - timestamp) / 86400.0)
             
@@ -46,13 +56,13 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 1
             candidates.append({
                 "id": item.get("id"),
                 "url": item.get("webpage_url") or f"https://www.youtube.com/watch?v={item.get('id')}",
-                "title": item.get("title", ""),
+                "title": title,
                 "views": views,
                 "likes": likes,
                 "days_active": round(days_active, 1),
                 "velocity_score": viral_velocity,
-                "tags": item.get("tags") or [],
-                "description": item.get("description") or ""
+                "tags": tags,
+                "description": desc
             })
         except Exception:
             continue
