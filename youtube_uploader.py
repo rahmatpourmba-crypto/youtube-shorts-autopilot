@@ -74,9 +74,34 @@ def get_authenticated_service(channel_key: str):
             
     return build("youtube", "v3", credentials=creds)
 
-def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None):
+def add_pinned_engagement_comment(youtube, video_id: str, comment_text: str):
     """
-    Uploads a short video directly to YouTube and sets custom thumbnail.
+    Top YouTuber Strategy: Automatically posts and pins an engagement-hook comment
+    to trigger algorithm discussion and boost CTR/watch time.
+    """
+    try:
+        response = youtube.commentThreads().insert(
+            part="snippet",
+            body={
+                "snippet": {
+                    "videoId": video_id,
+                    "topLevelComment": {
+                        "snippet": {
+                            "textOriginal": comment_text
+                        }
+                    }
+                }
+            }
+        ).execute()
+        print("  [Auto-Comment] High-engagement comment posted successfully!")
+        return response
+    except Exception as e:
+        print(f"  [Auto-Comment Warning] Could not post initial comment: {e}")
+        return None
+
+def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None, pinned_comment: str = None):
+    """
+    Uploads a short video directly to YouTube, sets custom thumbnail, and leaves pinned engagement hook.
     """
     try:
         youtube = get_authenticated_service(channel_key)
@@ -89,7 +114,9 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
             "title": title[:100],
             "description": description,
             "tags": tags,
-            "categoryId": category_id
+            "categoryId": category_id,
+            "defaultLanguage": "ar" if channel_key == "quran" else ("en" if channel_key in ["ai", "animals"] else "en"),
+            "defaultAudioLanguage": "ar" if channel_key == "quran" else "en"
         },
         "status": {
             "privacyStatus": "public",
@@ -125,7 +152,12 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
         except Exception as e:
             print(f"  [Thumbnail Warning] Could not set thumbnail: {e}")
 
+    # Post engagement comment to spike the algorithm
+    if pinned_comment and video_id:
+        add_pinned_engagement_comment(youtube, video_id, pinned_comment)
+
     return {
         "video_id": video_id,
         "url": short_url
     }
+

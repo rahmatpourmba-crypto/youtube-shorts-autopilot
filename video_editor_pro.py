@@ -76,8 +76,8 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
             "unsharp=5:5:0.6:5:5:0.0"
         )
 
-    # 2. Audio Filters: 1.05x tempo with pitch shift to break Content-ID
-    af = "asetrate=44100*1.02,aresample=44100,atempo=1.05/1.02,volume=1.1"
+    # 2. Audio Filters: 1.05x tempo with pitch shift to break Content-ID & Broadcast EBU R128 Loudnorm (-14 LUFS YouTube standard)
+    af = "asetrate=44100*1.02,aresample=44100,atempo=1.05/1.02,loudnorm=I=-14:TP=-1.5:LRA=11"
 
     cmd = [
         FFMPEG_EXE, "-y",
@@ -90,15 +90,17 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
         "-crf", "20",
         "-c:a", "aac",
         "-b:a", "256k",
+        "-movflags", "+faststart",
         output_video
     ]
     subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    # 3. High-CTR Thumbnail Generation at peak visual energy (2.5 - 3.5s)
+    # 3. High-CTR Thumbnail Generation at peak visual energy (middle 25% or 3s)
     thumb_path = out_dir / "thumbnail.jpg"
+    thumb_sec = min(3.0, max(1.0, duration * 0.25)) if duration > 0 else 2.5
     cmd_thumb = [
         FFMPEG_EXE, "-y",
-        "-ss", "00:00:03.000",
+        "-ss", f"{thumb_sec:.3f}",
         "-i", output_video,
         "-vframes", "1",
         "-q:v", "2",
@@ -113,6 +115,7 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
             generate_luxury_thumbnail(str(thumb_path), str(thumb_path), niche=niche, custom_text=hook_banner)
         except Exception as e:
             print(f"  [Thumbnail styling warning]: {e}")
+
 
     return {
         "video": output_video,

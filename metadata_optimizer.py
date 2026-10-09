@@ -24,7 +24,8 @@ PREMIUM_METADATA_CONFIG = {
         "tags": [
             "قرآن كريم", "تلاوة خاشعة", "راحة نفسية", "قرآن", "سورة", "ايات قرانية", 
             "Quran", "Quran recitation", "Holy Quran", "Peace", "Islam", "Shorts", "Viral"
-        ]
+        ],
+        "engagement_comment": "🌿 صلوا على الحبيب محمد ﷺ واكتب من أي بلد تستمع لهذه التلاوة المباركة؟ 🤍✨"
     },
     "ai": {
         "title_templates": [
@@ -46,7 +47,8 @@ PREMIUM_METADATA_CONFIG = {
         "tags": [
             "AI", "Artificial Intelligence", "AI Tools", "Tech", "Technology", "Future Tech", 
             "ChatGPT", "Runway AI", "Productivity", "Software", "Shorts", "Viral", "Trending"
-        ]
+        ],
+        "engagement_comment": "🤖 Which AI tool shocked you the most? Drop your favorite in the comments below! 👇⚡"
     },
     "animals": {
         "title_templates": [
@@ -68,7 +70,8 @@ PREMIUM_METADATA_CONFIG = {
         "tags": [
             "Animals", "Wildlife", "Nature", "Cute Animals", "Funny Pets", "Lion", 
             "Animal Rescue", "Wild Animals", "Nature Documentary", "Shorts", "Viral", "Trending"
-        ]
+        ],
+        "engagement_comment": "❤️🐾 Would you dare to get this close? Rate this animal moment from 1 to 10 below! 👇🦁"
     }
 }
 
@@ -143,5 +146,7 @@ def get_optimized_metadata(niche: str, raw_title: str = None):
         "description": config["description_template"],
         "tags": config["tags"],
         "hashtags": config["hashtags"],
-        "badge_text": config["luxury_badge"]
+        "badge_text": config["luxury_badge"],
+        "engagement_comment": config.get("engagement_comment")
     }
+

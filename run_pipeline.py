@@ -76,12 +76,14 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
             description=desc,
             tags=tags,
             category_id=category_id,
-            thumbnail_path=res["thumbnail"]
+            thumbnail_path=res["thumbnail"],
+            pinned_comment=opt.get("engagement_comment")
         )
         return upload_res
     else:
         print(f"  [Notice] Token not found for {channel_key}. Saved locally at {res['video']}.")
         return None
+
 
 def main():
     state = load_state()
