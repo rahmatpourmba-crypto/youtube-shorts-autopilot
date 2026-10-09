@@ -54,28 +54,34 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     w, h, duration, fps = get_video_specs(input_video)
     ar = w / h if h > 0 else 0.5625
 
-    # 1. Video Filters - MRBEAST RETENTION ARCHITECTURE:
-    # Rule 1: Instant Hook (first 1.5s zoom punch 1.06x -> 1.0x) to eliminate swipe-away.
-    # Rule 2: Zero Ugly Black Bars - replace flat black letterbox with subtle ambient blurred aura.
-    # Rule 3: 1080x1920 strict vertical canvas preserving 100% subtitles and faces in safe zone.
+    # 1. Video Filters - ZERO WATERMARKS + MRBEAST RETENTION ARCHITECTURE:
+    # Rule 1: AUTO WATERMARK STRIPPER: Crops out bottom 9% of the input where watermarks (VideoShow, CapCut, InShot) live.
+    # Rule 2: Instant Hook (first 1.5s zoom punch 1.06x -> 1.0x) to eliminate swipe-away.
+    # Rule 3: Zero Ugly Black Bars - replace flat black letterbox with subtle ambient blurred aura.
+    # Rule 4: 1080x1920 strict vertical canvas preserving 100% subtitles and faces in safe zone.
+    
+    # Strip bottom watermark area ensuring even dimensions for H.264
+    clean_fg = "crop=iw:ih-trunc(ih*0.09/2)*2:0:0,"
+
+
     if 0.50 <= ar <= 0.62:
-        # Standard Vertical (9:16) -> Scale preserving 100% frame + ambient backdrop if slight aspect variance
+        # Standard Vertical (9:16)
         vf = (
             "setpts=PTS/1.05,"
             "split[v_bg][v_fg];"
             "[v_bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=40:5,eq=brightness=-0.35[bg_blur];"
-            "[v_fg]scale=1080:1920:force_original_aspect_ratio=decrease[fg_sharp];"
+            f"[v_fg]{clean_fg}scale=1080:1920:force_original_aspect_ratio=decrease[fg_sharp];"
             "[bg_blur][fg_sharp]overlay=(W-w)/2:(H-h)/2,"
             "eq=contrast=1.09:brightness=0.01:saturation=1.14,"
             "unsharp=5:5:0.7:5:5:0.0"
         )
     elif ar < 0.50:
-        # Ultra-tall vertical -> Perfect fit inside 1080x1920 with ambient blur sides
+        # Ultra-tall vertical
         vf = (
             "setpts=PTS/1.05,"
             "split[v_bg][v_fg];"
             "[v_bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=40:5,eq=brightness=-0.35[bg_blur];"
-            "[v_fg]scale=1080:1920:force_original_aspect_ratio=decrease[fg_sharp];"
+            f"[v_fg]{clean_fg}scale=1080:1920:force_original_aspect_ratio=decrease[fg_sharp];"
             "[bg_blur][fg_sharp]overlay=(W-w)/2:(H-h)/2,"
             "eq=contrast=1.09:brightness=0.01:saturation=1.14,"
             "unsharp=5:5:0.7:5:5:0.0"
@@ -83,16 +89,17 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     else:
         # Horizontal / Square -> Transform to STRICT 9:16 (1080x1920)
         # Background: ultra-smooth dark ambient motion blur
-        # Foreground: crisp, full 100% view without cutting off faces, captions or action
+        # Foreground: crisp, full view with watermark stripped
         vf = (
             "setpts=PTS/1.05,"
             "split[v_bg][v_fg];"
             "[v_bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=45:6,eq=brightness=-0.30[bg_blur];"
-            "[v_fg]scale=1080:1350:force_original_aspect_ratio=decrease[fg_sharp];"
+            f"[v_fg]{clean_fg}scale=1080:1440:force_original_aspect_ratio=decrease[fg_sharp];"
             "[bg_blur][fg_sharp]overlay=(W-w)/2:(H-h)/2,"
             "eq=contrast=1.09:brightness=0.01:saturation=1.14,"
             "unsharp=5:5:0.7:5:5:0.0"
         )
+
 
 
 

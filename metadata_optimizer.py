@@ -79,28 +79,26 @@ def get_best_font(niche: str, size: int):
     """
     Selects the most authoritative, emotionally impactful bold font available on the system.
     """
-    candidates = []
+    local_vazir = Path(__file__).resolve().parent / "Vazirmatn-Bold.ttf"
     if niche == "quran":
         candidates = [
+            str(local_vazir),
             "C:/Windows/Fonts/BTitrBd.ttf",
             "C:/Windows/Fonts/IRTitr.ttf",
-            "C:/Windows/Fonts/A.Titraj.1.Bold.ttf",
-            "C:/Windows/Fonts/IRNazaninBold.ttf",
-            "C:/Windows/Fonts/arialbd.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            "C:/Windows/Fonts/arialbd.ttf"
         ]
     elif niche == "ai":
         candidates = [
+            str(local_vazir),
             "C:/Windows/Fonts/impact.ttf",
             "C:/Windows/Fonts/arialbd.ttf",
-            "C:/Windows/Fonts/segoeuib.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            "C:/Windows/Fonts/segoeuib.ttf"
         ]
     else: # animals / general
         candidates = [
+            str(local_vazir),
             "C:/Windows/Fonts/impact.ttf",
-            "C:/Windows/Fonts/arialbd.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+            "C:/Windows/Fonts/arialbd.ttf"
         ]
 
     for p in candidates:
@@ -110,6 +108,7 @@ def get_best_font(niche: str, size: int):
             except Exception:
                 continue
     return ImageFont.load_default()
+
 
 def format_text_direction(text: str):
     """
@@ -147,55 +146,57 @@ def generate_luxury_thumbnail(frame_image_path: str, output_path: str, niche: st
 
     config = PREMIUM_METADATA_CONFIG.get(niche, PREMIUM_METADATA_CONFIG["animals"])
     raw_badge_text = custom_text or config["luxury_badge"]
-    badge_text = format_text_direction(raw_badge_text)
+    
+    # Strip emojis that cause [][][] empty box glyphs in standard TTF fonts
+    clean_text = re.sub(r'[^\w\s\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF.,!?-]', '', raw_badge_text).strip()
+    badge_text = format_text_direction(clean_text)
     badge_color = config["badge_color"]
 
-    # 2. Top and Bottom Cinema Shadow Gradients (ensures text pops over any bright background)
+    # 2. Cinematic Gradient Overlay (Darkens upper 35% for contrast)
     overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d_overlay = ImageDraw.Draw(overlay)
     
-    # Top gradient
-    for y in range(int(h * 0.28)):
-        alpha = int(180 * (1 - y / (h * 0.28)))
+    # Upper gradient
+    for y in range(int(h * 0.35)):
+        alpha = int(210 * (1 - y / (h * 0.35)))
         d_overlay.line([(0, y), (w, y)], fill=(0, 0, 0, alpha))
         
-    # Bottom vignette gradient
-    for y in range(int(h * 0.78), h):
-        progress = (y - int(h * 0.78)) / (h * 0.22)
-        alpha = int(170 * progress)
+    # Lower vignette gradient
+    for y in range(int(h * 0.75), h):
+        progress = (y - int(h * 0.75)) / (h * 0.25)
+        alpha = int(190 * progress)
         d_overlay.line([(0, y), (w, y)], fill=(0, 0, 0, alpha))
         
     img = Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
     draw = ImageDraw.Draw(img)
 
-    # 3. Dynamic High-Impact Typography & Badge
-    font_size = int(w * 0.065)
+    # 3. Dynamic High-Impact Typography & Badge (Centered at top 12% - 20%)
+    font_size = int(w * 0.058)
     font = get_best_font(niche, font_size)
 
     # Calculate Badge dimensions
-    margin_x = int(w * 0.05)
-    badge_top = int(h * 0.07)
-    badge_height = int(h * 0.08)
+    margin_x = int(w * 0.06)
+    badge_top = int(h * 0.10)
+    badge_height = int(h * 0.085)
     badge_bottom = badge_top + badge_height
 
     # Outer 3D glow & shadow
-    shadow_color = (0, 0, 0, 200)
     draw.rounded_rectangle(
-        [margin_x - 4, badge_top - 4 + 6, w - margin_x + 4, badge_bottom + 4 + 6],
-        radius=30,
+        [margin_x - 4, badge_top - 4 + 8, w - margin_x + 4, badge_bottom + 4 + 8],
+        radius=32,
         fill=(0, 0, 0)
     )
     # Luxury Golden / Neon Frame
     draw.rounded_rectangle(
         [margin_x - 3, badge_top - 3, w - margin_x + 3, badge_bottom + 3],
-        radius=30,
+        radius=32,
         fill=badge_color
     )
     # Inner Deep Dark Card
-    inner_bg = config.get("badge_bg", (12, 12, 16))
+    inner_bg = config.get("badge_bg", (10, 18, 14))
     draw.rounded_rectangle(
         [margin_x, badge_top, w - margin_x, badge_bottom],
-        radius=27,
+        radius=29,
         fill=inner_bg
     )
 
@@ -212,6 +213,7 @@ def generate_luxury_thumbnail(frame_image_path: str, output_path: str, niche: st
     # 5. Save with High JPEG Quality
     img.save(output_path, "JPEG", quality=98)
     return output_path
+
 
 
 def get_optimized_metadata(niche: str, raw_title: str = None):
