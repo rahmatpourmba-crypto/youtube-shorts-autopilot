@@ -81,10 +81,19 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
             pinned_comment=opt.get("engagement_comment")
         )
     else:
-        print(f"  [Notice] Token not found for {channel_key}. Saved locally at {res['video']}.")
+    # 4. INSTAGRAM REELS INTEGRATION (انتشار خودکار در اینستاگرام)
+    if channel_key == "quran" and upload_res:
+        try:
+            print(f"[{channel_key.upper()}] 4. Cross-posting to Instagram Reels...")
+            from instagram_publisher import publish_instagram_reel
+            ig_caption = f"{title}\n\n{desc[:400]}\n\n{' '.join(opt['hashtags'])}"
+            publish_instagram_reel(video_path=res["video"], caption=ig_caption)
+        except Exception as e:
+            print(f"  [Instagram Warning] Cross-posting failed: {e}")
 
     # AUTO CLEANUP TO FREE DISK SPACE (پاکسازی خودکار فایل‌ها برای تمامی کانال‌ها)
     try:
+
         raw_vid = Path(data["raw_video"])
         if raw_vid.exists():
             raw_vid.unlink()
