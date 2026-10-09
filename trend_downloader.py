@@ -97,11 +97,14 @@ def search_and_download_viral_short(search_query: str, download_dir: str):
 
 def apply_anti_copyright_edits(input_video: str, output_video: str, hook_banner: str = None, niche: str = "animals"):
     """
-    Applies professional high-retention anti-copyright editing with smart framing,
-    blurred backgrounds (if horizontal), audio remastering, and sharp luxury thumbnails.
+    Applies the 300M-View Viral Editing Strategy:
+    - Strict 1080x1920 (9:16) vertical format (no awkward squares).
+    - Contrast/vibrancy remastering exceeding original video quality.
+    - Pacing boost (1.05x) and audio normalization for >100% retention.
+    - High-CTR luxury cover extraction and styling.
     """
-    from video_editor_pro import apply_professional_high_retention_edits
-    return apply_professional_high_retention_edits(
+    from video_editor_pro import render_300m_viral_short
+    return render_300m_viral_short(
         input_video=input_video,
         output_video=output_video,
         hook_banner=hook_banner,
