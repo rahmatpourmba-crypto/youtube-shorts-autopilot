@@ -187,12 +187,23 @@ def publish_next_cryptolab_language():
         pinned_comment=curr_lang.get("comment")
     )
 
+    # Cross-Post to CryptoLab Instagram Page (@cryp.tolab1)
+    if res:
+        try:
+            print("  [CryptoLab] Cross-posting Reel to Instagram (@cryp.tolab1)...")
+            from instagram_publisher import publish_instagram_reel
+            ig_caption = f"{curr_lang['title']}\n\n{curr_lang['desc']}"
+            publish_instagram_reel(video_path=str(MASTER_VIDEO), caption=ig_caption, niche="cryptolab")
+        except Exception as e:
+            print(f"  [Instagram Warning] CryptoLab Reel publish notice: {e}")
+
     # Clean up generated thumbnail
     try:
         if thumb_path.exists():
             thumb_path.unlink()
             print(f"  [Cleanup] Deleted CryptoLab thumbnail file: {thumb_path.name}")
     except Exception as e:
+
         print(f"  [Cleanup Warning] {e}")
 
     # Increment language index for tomorrow
