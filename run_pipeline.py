@@ -59,6 +59,14 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
     desc = opt["description"]
     tags = opt["tags"]
     
+    # Pre-Flight Quality Gate Audit (بازرسی هوشمند قبل از انتشار)
+    from quality_gate import audit_video_before_publish
+    audit = audit_video_before_publish(res["video"], res["thumbnail"], title, desc, tags)
+    print(f"[{channel_key.upper()}] Pre-Flight Quality Gate Score: {audit['score']}/100")
+    if audit["warnings"]:
+        for w in audit["warnings"]:
+            print(f"  [Audit Note] {w}")
+
     print(f"[{channel_key.upper()}] 3. Uploading to YouTube Channel: {ch_info['name']} ({ch_info['email']})...")
     if ch_info["token_file"].exists():
         upload_res = upload_short(
