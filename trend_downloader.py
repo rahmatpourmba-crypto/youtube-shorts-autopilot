@@ -97,64 +97,13 @@ def search_and_download_viral_short(search_query: str, download_dir: str):
 
 def apply_anti_copyright_edits(input_video: str, output_video: str, hook_banner: str = None, niche: str = "animals"):
     """
-    Applies aggressive anti-copyright transformations:
-    - Speed up by 1.04x (breaks acoustic & optical exact matches)
-    - Audio pitch shift & resample (44100*1.02 -> 44100)
-    - Color grading eq filter (contrast 1.06, saturation 1.08)
-    - Scale & center crop to 1080x1920 (9:16 vertical)
-    - Top hook banner overlay
+    Applies professional high-retention anti-copyright editing with smart framing,
+    blurred backgrounds (if horizontal), audio remastering, and sharp luxury thumbnails.
     """
-    out_dir = Path(output_video).parent
-    out_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Video filters:
-    # 1. PTS speedup (1.04x)
-    # 2. Scale & crop to 1080x1920 vertical
-    # 3. Subtle color grade / contrast boost
-    vf = "setpts=PTS/1.04,scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,eq=contrast=1.06:brightness=0.01:saturation=1.09"
-    
-    # Audio filters:
-    # 1. asetrate pitch shift
-    # 2. aresample to standard 44100
-    # 3. atempo to match speed
-    af = "asetrate=44100*1.02,aresample=44100,atempo=1.04/1.02"
-
-    cmd = [
-        FFMPEG_EXE, "-y",
-        "-i", input_video,
-        "-vf", vf,
-        "-af", af,
-        "-c:v", "libx264",
-        "-preset", "ultrafast",
-        "-threads", "0",
-        "-crf", "22",
-        "-c:a", "aac",
-        "-b:a", "192k",
-        output_video
-    ]
-    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    # Extract thumbnail frame at 2.5 seconds
-    thumb_path = out_dir / "thumbnail.jpg"
-    cmd_thumb = [
-        FFMPEG_EXE, "-y",
-        "-ss", "00:00:02.500",
-        "-i", output_video,
-        "-vframes", "1",
-        "-q:v", "2",
-        str(thumb_path)
-    ]
-    subprocess.run(cmd_thumb, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    # Apply luxury high-CTR styling on thumbnail
-    if thumb_path.exists():
-        try:
-            from metadata_optimizer import generate_luxury_thumbnail
-            generate_luxury_thumbnail(str(thumb_path), str(thumb_path), niche=niche, custom_text=hook_banner)
-        except Exception as e:
-            print(f"  [Thumbnail warning]: {e}")
-
-    return {
-        "video": output_video,
-        "thumbnail": str(thumb_path)
-    }
+    from video_editor_pro import apply_professional_high_retention_edits
+    return apply_professional_high_retention_edits(
+        input_video=input_video,
+        output_video=output_video,
+        hook_banner=hook_banner,
+        niche=niche
+    )
