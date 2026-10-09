@@ -104,18 +104,25 @@ def main():
     run_dir = OUTPUT_BASE / today_str
     run_dir.mkdir(parents=True, exist_ok=True)
     
-    # 1. Quran Channel
-    quran_queries = ["تلاوة خاشعة quran recitation", "beautiful quran recitation shorts", "surah recitation peace"]
-    q_query = quran_queries[(run_count - 1) % len(quran_queries)]
-    process_and_upload_trend(
-        channel_key="quran",
-        search_query=q_query,
-        hook_banner="راحة نفسية 🕊️ سورة من القرآن",
-        category_id="22",
-        run_dir=run_dir
-    )
+    # 1. Quran Channel: 3 DISTINCT REAL VIRAL SHORTS DAILY
+    print("\n" + "="*40 + "\n[QURAN CHANNEL] Producing 3 Distinct Daily Shorts...\n" + "="*40)
+    quran_batch = [
+        {"query": "تلاوة خاشعة تريح القلب قرآن كريم", "hook": "تلاوة خاشعة تريح القلوب"},
+        {"query": "سورة من القرآن تسكن الروح راحة نفسية", "hook": "راحة نفسية لا توصف"},
+        {"query": "أجمل تلاوة قرآنية خاشعة ومبكية", "hook": "أرح سمعك وقلبك بالقرآن"}
+    ]
+    for idx, q_item in enumerate(quran_batch, 1):
+        print(f"\n--- [QURAN #{idx}/3] Processing: '{q_item['query']}' ---")
+        process_and_upload_trend(
+            channel_key="quran",
+            search_query=q_item["query"],
+            hook_banner=q_item["hook"],
+            category_id="22",
+            run_dir=run_dir / f"quran_{idx}"
+        )
     
-    # 2. AI Channel (Alternating English and Persian)
+    # 2. AI Channel (1 Video Daily - Alternating EN/FA)
+    print("\n" + "="*40 + "\n[AI TOOLS CHANNEL] Producing 1 Daily Short...\n" + "="*40)
     if current_ai_lang == "en":
         ai_query = "trending insane AI tools 2026"
         ai_hook = "INSANE AI TOOL! 🤖⚡"
@@ -128,13 +135,14 @@ def main():
         search_query=ai_query,
         hook_banner=ai_hook,
         category_id="28",
-        run_dir=run_dir
+        run_dir=run_dir / "ai_1"
     )
     
     # 3. CryptoLab: PAUSED per user request
     print("\n[CRYPTO] Skipped / Paused per user instructions.")
     
-    # 4. Animals Channel
+    # 4. Animals Channel (1 Video Daily)
+    print("\n" + "="*40 + "\n[ANIMALS CHANNEL] Producing 1 Daily Short...\n" + "="*40)
     animal_queries = ["wildlife animal rescue fight", "funny cute dogs cats pets", "crazy animal moments viral"]
     a_query = animal_queries[(run_count - 1) % len(animal_queries)]
     process_and_upload_trend(
@@ -142,8 +150,9 @@ def main():
         search_query=a_query,
         hook_banner="WAIT TILL THE END! 🐾❤️",
         category_id="15",
-        run_dir=run_dir
+        run_dir=run_dir / "animals_1"
     )
+
     
     # Update State
     state["ai_channel_language"] = next_ai_lang
