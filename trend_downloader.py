@@ -64,16 +64,29 @@ def search_and_download_viral_short(search_query: str, download_dir: str):
     video_url = best_entry.get("webpage_url") or f"https://www.youtube.com/watch?v={best_entry.get('id')}"
     raw_video_path = out_dir / "raw_download.mp4"
     
-    # 2. Download the video with high quality
+    # 2. Download the video with high quality & datacenter bypass
     cmd_dl = [
         "yt-dlp",
         "--ffmpeg-location", FFMPEG_EXE,
-        "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        "--merge-output-format", "mp4",
+        "--extractor-args", "youtube:player_client=android,ios",
+        "--geo-bypass",
+        "-f", "best[ext=mp4]/best",
         "-o", str(raw_video_path),
         video_url
     ]
-    subprocess.run(cmd_dl, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        subprocess.run(cmd_dl, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as err:
+        print(f"  [yt-dlp warning] Retrying with web client: {err.stderr.decode('utf-8', errors='ignore')[:200]}")
+        cmd_dl_fallback = [
+            "yt-dlp",
+            "--ffmpeg-location", FFMPEG_EXE,
+            "--extractor-args", "youtube:player_client=web,tv",
+            "--geo-bypass",
+            "-o", str(raw_video_path),
+            video_url
+        ]
+        subprocess.run(cmd_dl_fallback, check=True)
     
     return {
         "raw_video": str(raw_video_path),
