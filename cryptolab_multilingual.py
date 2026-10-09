@@ -187,11 +187,20 @@ def publish_next_cryptolab_language():
         pinned_comment=curr_lang.get("comment")
     )
 
+    # Clean up generated thumbnail
+    try:
+        if thumb_path.exists():
+            thumb_path.unlink()
+            print(f"  [Cleanup] Deleted CryptoLab thumbnail file: {thumb_path.name}")
+    except Exception as e:
+        print(f"  [Cleanup Warning] {e}")
+
     # Increment language index for tomorrow
     state["cryptolab_lang_index"] = lang_idx + 1
     state["cryptolab_last_lang"] = curr_lang["code"]
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
+
 
     return res
 

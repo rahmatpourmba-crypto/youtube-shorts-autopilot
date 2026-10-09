@@ -68,6 +68,7 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
             print(f"  [Audit Note] {w}")
 
     print(f"[{channel_key.upper()}] 3. Uploading to YouTube Channel: {ch_info['name']} ({ch_info['email']})...")
+    upload_res = None
     if ch_info["token_file"].exists():
         upload_res = upload_short(
             channel_key=channel_key,
@@ -79,10 +80,30 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
             thumbnail_path=res["thumbnail"],
             pinned_comment=opt.get("engagement_comment")
         )
-        return upload_res
     else:
         print(f"  [Notice] Token not found for {channel_key}. Saved locally at {res['video']}.")
-        return None
+
+    # AUTO CLEANUP TO FREE DISK SPACE (پاکسازی خودکار فایل‌ها برای جلوگیری از پر شدن هارد)
+    try:
+        raw_vid = Path(data["raw_video"])
+        if raw_vid.exists():
+            raw_vid.unlink()
+            print(f"  [Cleanup] Deleted raw download: {raw_vid.name}")
+        
+        proc_vid = Path(res["video"])
+        if proc_vid.exists() and upload_res:
+            proc_vid.unlink()
+            print(f"  [Cleanup] Deleted processed video after upload: {proc_vid.name}")
+
+        thumb_img = Path(res["thumbnail"])
+        if thumb_img.exists() and upload_res:
+            thumb_img.unlink()
+            print(f"  [Cleanup] Deleted thumbnail file: {thumb_img.name}")
+    except Exception as e:
+        print(f"  [Cleanup Warning] Error deleting temporary files: {e}")
+
+    return upload_res
+
 
 
 def main():
