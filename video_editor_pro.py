@@ -54,27 +54,41 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     w, h, duration, fps = get_video_specs(input_video)
     ar = w / h if h > 0 else 0.5625
 
-    # 1. Video Filters
-    if ar <= 0.65:
-        # Source is vertical (9:16) -> Fill strict 1080x1920, enhance contrast & sharpness
+    # 1. Video Filters - ZERO CHOPPED HEADS / ZERO CLIPPED SUBTITLES
+    # YouTube Shorts Safe Zone: Main subject must be within 1080x1400 (Y: 180 to 1650)
+    # to avoid bottom title & right-side buttons (Like, Share, Sound).
+    if 0.50 <= ar <= 0.62:
+        # Standard Vertical (9:16) -> Scale preserving 100% of the content, no aggressive zoom crop
         vf = (
             "setpts=PTS/1.05,"
-            "scale=1080:1920:force_original_aspect_ratio=increase,"
-            "crop=1080:1920,"
+            "scale=1080:1920:force_original_aspect_ratio=decrease,"
+            "pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black,"
+            "eq=contrast=1.07:brightness=0.01:saturation=1.12,"
+            "unsharp=5:5:0.6:5:5:0.0"
+        )
+    elif ar < 0.50:
+        # Ultra-tall vertical (e.g., 9:18 or 9:19.5 phone screens) -> Fit perfectly into 1080x1920
+        vf = (
+            "setpts=PTS/1.05,"
+            "scale=1080:1920:force_original_aspect_ratio=decrease,"
+            "pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black,"
             "eq=contrast=1.07:brightness=0.01:saturation=1.12,"
             "unsharp=5:5:0.6:5:5:0.0"
         )
     else:
-        # Source is horizontal (16:9) -> Transform to STRICT 9:16 (1080x1920) with blurred motion backdrop
+        # Horizontal / Square / 4:3 -> Transform to STRICT 9:16 (1080x1920)
+        # Background: ultra-smooth ambient motion blur
+        # Foreground: crisp, full 100% view without cutting off faces, captions or action
         vf = (
             "setpts=PTS/1.05,"
             "split[v_bg][v_fg];"
-            "[v_bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=30:5,eq=brightness=-0.15[bg_blur];"
-            "[v_fg]scale=1080:1080:force_original_aspect_ratio=decrease[fg_sharp];"
+            "[v_bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=40:6,eq=brightness=-0.25[bg_blur];"
+            "[v_fg]scale=1080:1350:force_original_aspect_ratio=decrease[fg_sharp];"
             "[bg_blur][fg_sharp]overlay=(W-w)/2:(H-h)/2,"
             "eq=contrast=1.08:brightness=0.01:saturation=1.12,"
             "unsharp=5:5:0.6:5:5:0.0"
         )
+
 
     # 2. Audio Filters: 1.05x tempo with pitch shift to break Content-ID & Broadcast EBU R128 Loudnorm (-14 LUFS YouTube standard)
     af = "asetrate=44100*1.02,aresample=44100,atempo=1.05/1.02,loudnorm=I=-14:TP=-1.5:LRA=11"
