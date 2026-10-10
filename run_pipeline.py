@@ -162,22 +162,18 @@ def main():
             run_dir=run_dir / f"quran_{idx}"
         )
     
-    # 2. AI Channel (1 Video Daily - Alternating EN/FA)
+    # 2. AI Channel (1 Video Daily)
     print("\n" + "="*40 + "\n[AI TOOLS CHANNEL] Producing 1 Daily Short...\n" + "="*40)
-    if current_ai_lang == "en":
-        ai_query = "trending insane AI tools 2026"
-        ai_hook = "INSANE AI TOOL! 🤖⚡"
-    else:
-        ai_query = "ابزار هوش مصنوعی خفن کاربردی"
-        ai_hook = "هوش مصنوعی فوق العاده 🔥"
-        
+    ai_queries = ["trending insane AI tools 2026", "useful AI websites shorts", "mind blowing AI tech viral"]
+    ai_query = ai_queries[(run_count - 1) % len(ai_queries)]
     process_and_upload_trend(
         channel_key="ai",
         search_query=ai_query,
-        hook_banner=ai_hook,
+        hook_banner="INSANE AI TOOL! 🤖⚡",
         category_id="28",
         run_dir=run_dir / "ai_1"
     )
+
     
     # 3. CryptoLab: Multi-Lingual Geo-Targeted Daily Release
     print("\n" + "="*40 + "\n[CRYPTOLAB CHANNEL] Publishing Multilingual Geo-Targeted Short...\n" + "="*40)
