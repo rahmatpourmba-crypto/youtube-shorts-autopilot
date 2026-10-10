@@ -27,28 +27,39 @@ def search_and_download_viral_short(search_query: str, download_dir: str):
     raw_video_path = out_dir / "raw_download.mp4"
     
     # 2. Download the video with high quality & datacenter bypass
-    cmd_dl = [
-        "yt-dlp",
-        "--ffmpeg-location", FFMPEG_EXE,
-        "--extractor-args", "youtube:player_client=android,ios",
-        "--geo-bypass",
-        "-f", "best[ext=mp4]/best",
-        "-o", str(raw_video_path),
-        video_url
-    ]
-    try:
-        subprocess.run(cmd_dl, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except subprocess.CalledProcessError as err:
-        print(f"  [yt-dlp warning] Retrying with web client: {err.stderr.decode('utf-8', errors='ignore')[:200]}")
-        cmd_dl_fallback = [
+    clients = ["android", "ios", "mweb", "android_creator"]
+    download_success = False
+    
+    for client in clients:
+        cmd_dl = [
             "yt-dlp",
             "--ffmpeg-location", FFMPEG_EXE,
-            "--extractor-args", "youtube:player_client=web,tv",
+            "--extractor-args", f"youtube:player_client={client}",
+            "--geo-bypass",
+            "-f", "best[ext=mp4]/best",
+            "-o", str(raw_video_path),
+            video_url
+        ]
+        try:
+            subprocess.run(cmd_dl, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            download_success = True
+            break
+        except subprocess.CalledProcessError as err:
+            err_msg = err.stderr.decode('utf-8', errors='ignore') if err.stderr else ""
+            print(f"  [yt-dlp note] Client '{client}' failed, trying next client: {err_msg[:120]}")
+            continue
+
+    if not download_success:
+        # Ultimate fallback
+        cmd_fallback = [
+            "yt-dlp",
+            "--ffmpeg-location", FFMPEG_EXE,
             "--geo-bypass",
             "-o", str(raw_video_path),
             video_url
         ]
-        subprocess.run(cmd_dl_fallback, check=True)
+        subprocess.run(cmd_fallback, check=True)
+
     
     return {
         "raw_video": str(raw_video_path),

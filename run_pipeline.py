@@ -81,6 +81,8 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
             pinned_comment=opt.get("engagement_comment")
         )
     else:
+        print(f"  [Notice] Token not found for {channel_key}. Saved locally at {res['video']}.")
+
     # 4. INSTAGRAM REELS INTEGRATION (انتشار خودکار در اینستاگرام)
     if channel_key == "quran" and upload_res:
         try:
@@ -90,6 +92,7 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
             publish_instagram_reel(video_path=res["video"], caption=ig_caption)
         except Exception as e:
             print(f"  [Instagram Warning] Cross-posting failed: {e}")
+
 
     # AUTO CLEANUP TO FREE DISK SPACE (پاکسازی خودکار فایل‌ها برای تمامی کانال‌ها)
     try:
