@@ -27,38 +27,31 @@ def search_and_download_viral_short(search_query: str, download_dir: str):
     raw_video_path = out_dir / "raw_download.mp4"
     
     # 2. Download the video with high quality & datacenter bypass
-    clients = ["android", "ios", "mweb", "android_creator"]
-    download_success = False
-    
-    for client in clients:
-        cmd_dl = [
-            "yt-dlp",
-            "--ffmpeg-location", FFMPEG_EXE,
-            "--extractor-args", f"youtube:player_client={client}",
-            "--geo-bypass",
-            "-f", "best[ext=mp4]/best",
-            "-o", str(raw_video_path),
-            video_url
-        ]
-        try:
-            subprocess.run(cmd_dl, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            download_success = True
-            break
-        except subprocess.CalledProcessError as err:
-            err_msg = err.stderr.decode('utf-8', errors='ignore') if err.stderr else ""
-            print(f"  [yt-dlp note] Client '{client}' failed, trying next client: {err_msg[:120]}")
-            continue
-
-    if not download_success:
-        # Ultimate fallback
+    cmd_dl = [
+        "yt-dlp",
+        "--ffmpeg-location", FFMPEG_EXE,
+        "--extractor-args", "youtube:player_client=tv,mweb,web",
+        "--geo-bypass",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "-f", "b/best[ext=mp4]/18/best",
+        "-o", str(raw_video_path),
+        video_url
+    ]
+    try:
+        subprocess.run(cmd_dl, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as err:
+        err_msg = err.stderr.decode('utf-8', errors='ignore') if err.stderr else ""
+        print(f"  [yt-dlp note] Primary download failed, falling back to direct format 18: {err_msg[:120]}")
         cmd_fallback = [
             "yt-dlp",
             "--ffmpeg-location", FFMPEG_EXE,
-            "--geo-bypass",
+            "--extractor-args", "youtube:player_client=android",
+            "-f", "18/best",
             "-o", str(raw_video_path),
             video_url
         ]
         subprocess.run(cmd_fallback, check=True)
+
 
     
     return {
