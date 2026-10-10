@@ -3,23 +3,21 @@ import json
 import time
 from pathlib import Path
 
-def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 10):
+def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 25):
     """
     ULTRA-SMART VIRAL TREND SCANNER (ترندینگ‌یابی فوق هوشمند):
     Scans the top candidates, computes their Viral Growth Velocity,
     and returns the #1 exploding video right now.
-    
-    Formula:
-    Viral Velocity = (Views / Days Since Upload) * Engagement Factor
     """
     cmd = [
         "yt-dlp",
-        f"ytsearch{max_candidates}:{search_query} #shorts",
-        "--match-filter", "duration <= 59 & duration >= 10",
+        f"ytsearch{max_candidates}:{search_query}",
+        "--match-filter", "duration <= 60",
         "--dump-json",
         "--flat-playlist", "False",
         "--no-playlist"
     ]
+
     
     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="ignore")
     candidates = []
