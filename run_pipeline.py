@@ -36,10 +36,11 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
-def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: str, category_id: str, run_dir: Path):
+def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: str, category_id: str, run_dir: Path, niche: str = None):
     ch_info = CHANNELS[channel_key]
     out_dir = run_dir / f"channel_{channel_key}"
     out_dir.mkdir(parents=True, exist_ok=True)
+    target_niche = niche or channel_key
     
     print(f"\n[{channel_key.upper()}] 1. Searching & Downloading real viral Short for: '{search_query}'...")
     data = search_and_download_viral_short(search_query, str(out_dir))
@@ -51,12 +52,12 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
         input_video=data["raw_video"],
         output_video=edited_video,
         hook_banner=hook_banner,
-        niche=channel_key
+        niche=target_niche
     )
     
     # Premium Luxury Metadata Optimization
     from metadata_optimizer import get_optimized_metadata
-    opt = get_optimized_metadata(niche=channel_key, raw_title=data.get("title"))
+    opt = get_optimized_metadata(niche=target_niche, raw_title=data.get("title"))
     title = opt["title"]
     desc = opt["description"]
     tags = opt["tags"]
@@ -145,21 +146,40 @@ def main():
     run_dir = OUTPUT_BASE / today_str
     run_dir.mkdir(parents=True, exist_ok=True)
     
-    # 1. Quran Channel: 3 DISTINCT REAL VIRAL SHORTS DAILY
-    print("\n" + "="*40 + "\n[QURAN CHANNEL] Producing 3 Distinct Daily Shorts...\n" + "="*40)
+    # 1. Quran Channel: 3 DISTINCT HIGH-RETENTION SHORTS (Including Towards Eternity style)
+    print("\n" + "="*40 + "\n[QURAN CHANNEL] Producing 3 Distinct Daily Viral Shorts...\n" + "="*40)
     quran_batch = [
-        {"query": "تلاوة خاشعة تريح القلب قرآن كريم", "hook": "تلاوة خاشعة تريح القلوب"},
-        {"query": "سورة من القرآن تسكن الروح راحة نفسية", "hook": "راحة نفسية لا توصف"},
-        {"query": "أجمل تلاوة قرآنية خاشعة ومبكية", "hook": "أرح سمعك وقلبك بالقرآن"}
+        # Video 1: Soul-Soothing Recitation (تلاوت خاشعانه و آرامش‌بخش)
+        {
+            "query": "تلاوة خاشعة تريح القلب قرآن كريم",
+            "hook": "تلاوة خاشعة تريح القلوب",
+            "niche": "quran",
+            "style_label": "Recitation"
+        },
+        # Video 2: Towards Eternity Style (حقایق تکان‌دهنده، نشانه‌های قیامت و دجال - ویوهای میلیونی)
+        {
+            "query": "Dajjal signs coming true end times towards eternity shorts",
+            "hook": "SIGNS COMING TRUE ⚠️",
+            "niche": "islamic_mystery",
+            "style_label": "Towards Eternity Style"
+        },
+        # Video 3: Inspirational Quranic Wisdom & Story (داستان‌های عبرت‌آموز و معجزات قرآن)
+        {
+            "query": "قصص القران عبر ومواعظ مؤثرة راحة نفسية",
+            "hook": "معجزة قرآنية تهز القلوب",
+            "niche": "quran",
+            "style_label": "Quranic Wisdom"
+        }
     ]
     for idx, q_item in enumerate(quran_batch, 1):
-        print(f"\n--- [QURAN #{idx}/3] Processing: '{q_item['query']}' ---")
+        print(f"\n--- [QURAN #{idx}/3 - {q_item['style_label']}] Processing: '{q_item['query']}' ---")
         process_and_upload_trend(
             channel_key="quran",
             search_query=q_item["query"],
             hook_banner=q_item["hook"],
             category_id="22",
-            run_dir=run_dir / f"quran_{idx}"
+            run_dir=run_dir / f"quran_{idx}",
+            niche=q_item["niche"]
         )
     
     # 2. AI Channel (1 Video Daily)

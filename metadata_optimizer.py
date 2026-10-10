@@ -27,6 +27,29 @@ PREMIUM_METADATA_CONFIG = {
         ],
         "engagement_comment": "🌿 صلوا على الحبيب محمد ﷺ واكتب من أي بلد تستمع لهذه التلاوة المباركة؟ 🤍✨"
     },
+    "islamic_mystery": {
+        "title_templates": [
+            "Shocking Signs of the End Times That Are Coming True Right Now! 😱 #shorts #islam",
+            "What Actually Happens In The Grave? The Terrifying Truth! ⚡ #shorts #towards_eternity",
+            "Signs of Dajjal Revealed: Are We in the Final Days? ⚠️ #shorts #islamicreminder"
+        ],
+        "luxury_badge": "SHOCKING TRUTH REVEALED ⚠️⚡",
+        "badge_color": (255, 204, 0),  # Warning Gold
+        "badge_bg": (25, 10, 5),        # Deep Mystery Dark Red/Brown
+        "hashtags": ["#shorts", "#islam", "#dajjal", "#signsofdayofjudgment", "#endtimes", "#quran", "#towardseternity", "#viral"],
+        "description_template": (
+            "⚡ Powerful reminders and signs of the final hour. Discover the deep Islamic mysteries and prophecies coming true today.\n\n"
+            "📖 Let this reminder soften your heart and bring you closer to Allah before it is too late.\n\n"
+            "🤍 Share this reminder with everyone you know. Subscribe to @islamrazekhoshabkhte for daily faith-awakening reminders.\n\n"
+            "─── ⋆⋅☆⋅⋆ ───\n"
+            "#Shorts #Islam #EndOfTimes #Dajjal #IslamicReminder #Prophecies #QuranMiracles #TowardsEternity"
+        ),
+        "tags": [
+            "Islam", "Signs of Day of Judgment", "Dajjal", "End of Times", "Islamic Reminder", 
+            "Towards Eternity", "Quran Miracles", "Life After Death", "Grave", "Shorts", "Viral"
+        ],
+        "engagement_comment": "⚠️ Did you know about this sign before? Comment your thoughts below and share with your loved ones! 👇"
+    },
     "ai": {
         "title_templates": [
             "Mind-Blowing AI Tools That Feel Illegal to Know in 2026! 🤖⚡ #shorts #ai",
@@ -86,6 +109,13 @@ def get_best_font(niche: str, size: int):
             "C:/Windows/Fonts/BTitrBd.ttf",
             "C:/Windows/Fonts/IRTitr.ttf",
             "C:/Windows/Fonts/arialbd.ttf"
+        ]
+    elif niche == "islamic_mystery":
+        candidates = [
+            str(local_vazir),
+            "C:/Windows/Fonts/impact.ttf",
+            "C:/Windows/Fonts/arialbd.ttf",
+            "C:/Windows/Fonts/segoeuib.ttf"
         ]
     elif niche == "ai":
         candidates = [
