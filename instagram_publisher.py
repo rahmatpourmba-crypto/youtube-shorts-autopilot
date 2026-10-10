@@ -1,8 +1,9 @@
 import os
 import sys
 import json
-import requests
+import time
 from pathlib import Path
+from instagrapi import Client
 
 if sys.platform.startswith('win'):
     try:
@@ -10,73 +11,95 @@ if sys.platform.startswith('win'):
     except Exception:
         pass
 
-# Multi-Account Ayrshare API Keys
-AYRSHARE_KEYS = {
-    "quran": os.environ.get("AYRSHARE_API_KEY_QURAN") or "C4CA0622-A7AB41CC-BCC97E84-37166BE4",
-    "cryptolab": os.environ.get("AYRSHARE_API_KEY_CRYPTOLAB") or "6B300C3B-84F54DE4-B31269C9-A8A7D2C4"
+BASE_DIR = Path(__file__).resolve().parent
+
+ACCOUNTS = {
+    "quran": {
+        "username": "abdol_basit_rahmatpour",
+        "password": os.environ.get("IG_PASSWORD_QURAN", "2899813366"),
+        "session_file": BASE_DIR / "ig_session_quran.json",
+        "display": "@abdol_basit_rahmatpour"
+    },
+    "cryptolab": {
+        "username": "cryp.tolab1",
+        "password": os.environ.get("IG_PASSWORD_CRYPTOLAB", "2899813366"),
+        "session_file": BASE_DIR / "ig_session_cryptolab.json",
+        "display": "@cryp.tolab1"
+    }
 }
-AYRSHARE_POST_URL = "https://app.ayrshare.com/api/post"
-AYRSHARE_MEDIA_UPLOAD_URL = "https://app.ayrshare.com/api/media/upload"
 
-def upload_media_to_ayrshare(file_path: str, niche: str = "quran"):
+def get_instagram_client(niche: str = "quran") -> Client:
     """
-    Uploads video file to Ayrshare media storage and returns public URL.
+    Returns an authenticated instagrapi Client using saved persistent session settings.
     """
-    api_key = AYRSHARE_KEYS.get(niche, AYRSHARE_KEYS["quran"])
-    headers = {
-        "Authorization": f"Bearer {api_key}"
-    }
-    with open(file_path, "rb") as f:
-        files = {"file": f}
-        res = requests.post(AYRSHARE_MEDIA_UPLOAD_URL, headers=headers, files=files)
-        res_data = res.json()
-        if res.status_code == 200 and "url" in res_data:
-            return res_data["url"]
-        else:
-            raise RuntimeError(f"Media upload failed: {res_data}")
+    acc = ACCOUNTS.get(niche, ACCOUNTS["quran"])
+    cl = Client()
+    cl.delay_range = [2, 5]
 
-def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", media_url: str = None):
-    """
-    Publishes a vertical video as an Instagram Reel via Ayrshare for Quran or CryptoLab.
-    """
-    api_key = AYRSHARE_KEYS.get(niche, AYRSHARE_KEYS["quran"])
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
+    session_path = acc["session_file"]
+    logged_in = False
 
-    # If public media_url is not provided, upload local file
-    if not media_url:
-        print(f"  [Instagram-{niche.upper()}] Uploading video to Ayrshare media CDN...")
-        media_url = upload_media_to_ayrshare(video_path, niche=niche)
-        print(f"  [Instagram-{niche.upper()}] CDN URL generated: {media_url[:60]}...")
+    if session_path.exists():
+        try:
+            print(f"  [Instagram-{niche.upper()}] Loading persistent session from {session_path.name}...")
+            cl.load_settings(session_path)
+            cl.login(acc["username"], acc["password"])
+            logged_in = True
+            print(f"  [Instagram-{niche.upper()}] Session verified for {acc['display']}.")
+        except Exception as e:
+            print(f"  [Instagram-{niche.upper()}] Session restore failed ({e}), re-authenticating...")
 
-    payload = {
-        "post": caption,
-        "platforms": ["instagram"],
-        "mediaUrls": [media_url],
-        "instagramOptions": {
-            "reels": True,
-            "shareToFeed": True
+    if not logged_in:
+        print(f"  [Instagram-{niche.upper()}] Fresh login for {acc['display']}...")
+        cl.login(acc["username"], acc["password"])
+        cl.dump_settings(session_path)
+        print(f"  [Instagram-{niche.upper()}] Logged in & session saved to {session_path.name}.")
+
+    return cl
+
+def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", thumbnail_path: str = None):
+    """
+    Uploads a vertical 9:16 video as an Instagram Reel completely FREE using direct instagrapi.
+    """
+    acc = ACCOUNTS.get(niche, ACCOUNTS["quran"])
+    target_video = Path(video_path)
+
+    if not target_video.exists():
+        print(f"  [Instagram Error] Video file does not exist: {video_path}")
+        return None
+
+    try:
+        print(f"  [Instagram-{niche.upper()}] Connecting to Instagram as {acc['display']}...")
+        cl = get_instagram_client(niche=niche)
+
+        print(f"  [Instagram-{niche.upper()}] Uploading Reel ({target_video.name})...")
+        thumb = Path(thumbnail_path) if thumbnail_path and Path(thumbnail_path).exists() else None
+
+        media = cl.clip_upload(
+            path=target_video,
+            caption=caption,
+            thumbnail=thumb
+        )
+
+        media_pk = media.pk
+        reel_code = media.code
+        reel_url = f"https://www.instagram.com/reel/{reel_code}/"
+        print(f"  [Instagram Success] Reel published to {acc['display']}! URL: {reel_url}")
+        return {
+            "status": "success",
+            "media_pk": media_pk,
+            "code": reel_code,
+            "url": reel_url
         }
-    }
-
-    target_account = "@abdol_basit_rahmatpour" if niche == "quran" else "@cryp.tolab1"
-    print(f"  [Instagram] Publishing Reel to {target_account}...")
-    res = requests.post(AYRSHARE_POST_URL, headers=headers, json=payload)
-    res_data = res.json()
-
-    if res.status_code == 200 and res_data.get("status") == "success":
-        post_id = res_data.get("id")
-        post_url = res_data.get("postUrl")
-        print(f"  [Instagram Success] Published Reel to {target_account}! URL: {post_url or post_id}")
-        return res_data
-    else:
-        print(f"  [Instagram Notice] Result: {res_data}")
-        return res_data
+    except Exception as e:
+        print(f"  [Instagram Error] Failed to publish reel to {acc['display']}: {e}")
+        return None
 
 if __name__ == "__main__":
-
-    print("Testing connection...")
-    r = requests.get("https://app.ayrshare.com/api/user", headers={"Authorization": f"Bearer {AYRSHARE_API_KEY}"})
-    print(r.json().get("displayNames"))
+    print("Testing Instagram Clients...")
+    for n in ["quran", "cryptolab"]:
+        try:
+            cl = get_instagram_client(n)
+            print(f"✓ {n}: Connected successfully as {cl.username}")
+        except Exception as e:
+            print(f"✗ {n}: {e}")
