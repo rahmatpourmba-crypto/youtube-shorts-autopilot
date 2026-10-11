@@ -24,12 +24,12 @@ CLIENT_SECRETS_FILE = BASE_DIR / "client_secrets.json"
 
 CHANNELS = {
     "quran": {
-        "name": "Quranic Channel",
+        "name": "نور القرآن | The Holy Light",
         "email": "iman996372@gmail.com",
         "token_file": BASE_DIR / "token_quran.pickle"
     },
     "ai": {
-        "name": "AI Tools Channel",
+        "name": "AI Unveiled | Future Tech",
         "email": "workonlin63@gmail.com",
         "token_file": BASE_DIR / "token_ai.pickle"
     },
@@ -39,7 +39,7 @@ CHANNELS = {
         "token_file": BASE_DIR / "token_polygon.pickle"
     },
     "animals": {
-        "name": "Animals Channel",
+        "name": "Wild Kingdom | عالم الحيوان",
         "email": "ammm37474@gmail.com",
         "token_file": BASE_DIR / "token_animals.pickle"
     }
