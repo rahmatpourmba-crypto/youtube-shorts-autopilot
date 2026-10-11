@@ -133,10 +133,17 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
 
     response = None
     print(f"  [Uploading] Uploading {video_path} to {CHANNELS[channel_key]['name']}...")
-    while response is None:
-        status, response = request.next_chunk()
-        if status:
-            print(f"  [Progress] Uploaded {int(status.progress() * 100)}%")
+    try:
+        while response is None:
+            status, response = request.next_chunk()
+            if status:
+                print(f"  [Progress] Uploaded {int(status.progress() * 100)}%")
+    except Exception as e:
+        print(f"  [Upload Limit / Quota Notice] YouTube upload limit reached for {channel_key}: {e}")
+        return None
+
+    if not response or not response.get("id"):
+        return None
 
     video_id = response.get("id")
     short_url = f"https://youtube.com/shorts/{video_id}"
