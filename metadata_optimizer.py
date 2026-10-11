@@ -108,6 +108,20 @@ PREMIUM_METADATA_CONFIG = {
             "Animal Rescue", "Wild Animals", "Nature Documentary", "Shorts", "Viral", "Trending"
         ],
         "engagement_comment": "❤️🐾 Would you dare to get this close? Rate this animal moment from 1 to 10 below! 👇🦁"
+    },
+    "cryptolab": {
+        "title_templates": [
+            "Create Your Own Crypto Token in 30 Seconds! 🚀💎 PolyMint #shorts #web3",
+            "How to Launch an ERC-20 Token Without Coding! 🤯 Polygon #shorts #crypto",
+            "This Secret Tool Lets Anyone Mint Tokens Easily! 🪙⚡ #shorts #polymint"
+        ],
+        "luxury_badge": "CREATE TOKEN NO CODE! 🚀💎",
+        "badge_color": (255, 215, 0),   # Bright Liquid Gold
+        "badge_bg": (28, 12, 48),       # Deep Polygon Obsidian Violet
+        "hashtags": ["#shorts", "#crypto", "#polygon", "#web3", "#blockchain", "#token", "#polymint"],
+        "description_template": "",
+        "tags": ["Crypto", "Polygon", "Token", "PolyMint", "Web3", "Blockchain", "ERC20", "Shorts"],
+        "engagement_comment": "🚀 What name would you give to your own crypto token? Drop it below! 👇💎"
     }
 }
 
@@ -124,7 +138,7 @@ def get_best_font(niche: str, size: int):
             "C:/Windows/Fonts/impact.ttf",
             "C:/Windows/Fonts/arialbd.ttf"
         ]
-    elif niche == "ai":
+    elif niche in ["ai", "cryptolab"]:
         candidates = [
             str(local_vazir),
             "C:/Windows/Fonts/impact.ttf",

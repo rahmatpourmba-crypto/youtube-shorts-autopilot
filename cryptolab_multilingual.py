@@ -171,7 +171,7 @@ def publish_next_cryptolab_language():
     generate_luxury_thumbnail(
         str(thumb_path),
         str(thumb_path),
-        niche="ai", # neon styling
+        niche="cryptolab", # 21 Mega-Prompt High-CTR Web3 Obsidian & Gold
         custom_text=curr_lang["badge"]
     )
 
