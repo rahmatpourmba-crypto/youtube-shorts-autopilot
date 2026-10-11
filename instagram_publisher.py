@@ -57,6 +57,23 @@ def get_instagram_client(niche: str = "quran") -> Client:
 
     return cl
 
+def build_bilingual_quran_caption(base_title: str) -> str:
+    """
+    Builds a high-retention, high-engagement Persian & Kurdish (Sorani) bilingual caption
+    optimized for Instagram Explore & Reels algorithms.
+    """
+    caption = (
+        "🌿 تلاوت خاشعانه و آرامش‌بخش قرآن کریم 🕊️\n"
+        "ئارامی دڵ و ڕووح بە دەنگی قورئانی پیرۆز ✨\n\n"
+        "✨ قال الله تعالى: ﴿الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾\n\n"
+        "🤍 برای آرامش دلت گوش کن و برای عزیزانت بفرست..\n"
+        "🤍 بۆ ئارامی دڵ و ڕووحت گوێ بگرە و بۆ ئازیزانت بنێرە..\n\n"
+        "🌿 صلوات بر پیامبر رحمت بفرستید | صەڵاوات لەسەر پێغەمبەر (د.خ) لێبدەن 🤍\n\n"
+        "─── ⋆⋅☆⋅⋆ ───\n"
+        "#قرآن #تلاوت #قورئان #ئارامی_دڵ #تلاوة_خاشعة #راحة_نفسية #کوردستان #مهاباد #سنندج #سلیمانی #اربیل #reels #explore #quran"
+    )
+    return caption
+
 def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", thumbnail_path: str = None):
     """
     Uploads a vertical 9:16 video as an Instagram Reel completely FREE using direct instagrapi.

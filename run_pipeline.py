@@ -89,10 +89,10 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
     # 4. INSTAGRAM REELS INTEGRATION (انتشار خودکار در اینستاگرام)
     if channel_key == "quran" and upload_res:
         try:
-            print(f"[{channel_key.upper()}] 4. Cross-posting to Instagram Reels...")
-            from instagram_publisher import publish_instagram_reel
-            ig_caption = f"{title}\n\n{desc[:400]}\n\n{' '.join(opt['hashtags'])}"
-            publish_instagram_reel(video_path=res["video"], caption=ig_caption)
+            print(f"[{channel_key.upper()}] 4. Cross-posting to Instagram Reels (@abdol_basit_rahmatpour)...")
+            from instagram_publisher import publish_instagram_reel, build_bilingual_quran_caption
+            ig_caption = build_bilingual_quran_caption(base_title=title)
+            publish_instagram_reel(video_path=res["video"], caption=ig_caption, niche="quran", thumbnail_path=res["thumbnail"])
         except Exception as e:
             print(f"  [Instagram Warning] Cross-posting failed: {e}")
 
