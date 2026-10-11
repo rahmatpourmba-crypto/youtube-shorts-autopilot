@@ -27,9 +27,9 @@ def search_and_download_viral_short(search_query: str, download_dir: str, niche:
 
     if not best_entry:
         best_entry = {
-            "title": f"Trending {search_query}",
+            "title": search_query,
             "tags": ["shorts", "viral"],
-            "description": "Viral trending short"
+            "description": "Viral high-retention short"
         }
         video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" # dummy for fallback
     else:
