@@ -43,7 +43,7 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
     target_niche = niche or channel_key
     
     print(f"\n[{channel_key.upper()}] 1. Searching & Downloading real viral Short for: '{search_query}'...")
-    data = search_and_download_viral_short(search_query, str(out_dir))
+    data = search_and_download_viral_short(search_query, str(out_dir), niche=target_niche)
     print(f"  -> Original Title: {data['title']}")
     
     print(f"[{channel_key.upper()}] 2. Applying anti-copyright modifications (Speedup, Pitch Shift, Color Grade)...")

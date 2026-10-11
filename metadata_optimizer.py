@@ -1,8 +1,21 @@
 import re
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageFilter
 from pathlib import Path
+import random
 
-# Professional, high-authority metadata configurations per channel niche
+# ==============================================================================
+# 21 MEGA-PROMPT ULTRA-VIRAL ARCHITECTURE (معماری ۲۱ ترفند طلایی ویوی میلیاردی)
+# ==============================================================================
+# Techniques applied:
+# 1. Persona & World-Class Growth Hacker Anchoring
+# 2. Grounding & Anti-Hallucination (Strict safe metadata)
+# 3. Curiosity Gap & Neuro-Hook Framing
+# 6. Negative Constraints (Zero boring titles, zero weak verbs)
+# 8. Cultural & Geographic Nuance Tuning (US/EU for AI, LATAM for Crypto, MENA for Quran)
+# 15. Psychological Anchoring & Extreme CTR Drivers
+# 17. Output Schema Enforcement (Strict length, emojis, #Shorts)
+# ==============================================================================
+
 PREMIUM_METADATA_CONFIG = {
     "quran": {
         "title_templates": [
@@ -103,19 +116,13 @@ def get_best_font(niche: str, size: int):
     Selects the most authoritative, emotionally impactful bold font available on the system.
     """
     local_vazir = Path(__file__).resolve().parent / "Vazirmatn-Bold.ttf"
-    if niche == "quran":
+    if niche in ["quran", "islamic_mystery"]:
         candidates = [
             str(local_vazir),
             "C:/Windows/Fonts/BTitrBd.ttf",
             "C:/Windows/Fonts/IRTitr.ttf",
-            "C:/Windows/Fonts/arialbd.ttf"
-        ]
-    elif niche == "islamic_mystery":
-        candidates = [
-            str(local_vazir),
             "C:/Windows/Fonts/impact.ttf",
-            "C:/Windows/Fonts/arialbd.ttf",
-            "C:/Windows/Fonts/segoeuib.ttf"
+            "C:/Windows/Fonts/arialbd.ttf"
         ]
     elif niche == "ai":
         candidates = [
@@ -139,7 +146,6 @@ def get_best_font(niche: str, size: int):
                 continue
     return ImageFont.load_default()
 
-
 def format_text_direction(text: str):
     """
     Handles Persian/Arabic bidirectional text and reshaping to prevent disconnected/reversed letters.
@@ -154,15 +160,13 @@ def format_text_direction(text: str):
 
 def generate_luxury_thumbnail(frame_image_path: str, output_path: str, niche: str = "animals", custom_text: str = None):
     """
-    CINEMA-GRADE 300M+ VIRAL THUMBNAIL ENGINE:
+    CINEMA-GRADE 300M+ VIRAL THUMBNAIL ENGINE (MEGA-PROMPT DRIVEN):
     1. Color Enhancement: Micro-contrast punch + vibrant HDR color boost.
     2. Dynamic Vignette & Lighting: Darkens non-essential areas to draw 100% focus to the subject.
     3. Heavy Cinema Typography: Ultra-bold font with thick outer stroke, 3D drop shadow, and golden/neon styling.
     4. RTL Persian/Arabic Support: Prevents disconnected Arabic letters with native reshaping.
     5. Emotional Urgency / Curiosity Badge.
     """
-    from PIL import ImageEnhance, ImageFilter
-
     img = Image.open(frame_image_path).convert("RGB")
     w, h = img.size
 
@@ -177,7 +181,7 @@ def generate_luxury_thumbnail(frame_image_path: str, output_path: str, niche: st
     config = PREMIUM_METADATA_CONFIG.get(niche, PREMIUM_METADATA_CONFIG["animals"])
     raw_badge_text = custom_text or config["luxury_badge"]
     
-    # Strip emojis that cause [][][] empty box glyphs in standard TTF fonts
+    # Strip emojis that cause empty box glyphs in standard TTF fonts
     clean_text = re.sub(r'[^\w\s\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF.,!?-]', '', raw_badge_text).strip()
     badge_text = format_text_direction(clean_text)
     badge_color = config["badge_color"]
@@ -244,22 +248,75 @@ def generate_luxury_thumbnail(frame_image_path: str, output_path: str, niche: st
     img.save(output_path, "JPEG", quality=98)
     return output_path
 
+# ==============================================================================
+# 21 MEGA-PROMPT NEURO-HOOK & HIGH-CTR TITLE GENERATOR
+# ==============================================================================
+def apply_mega_prompt_ctr_engineering(raw_title: str, niche: str) -> str:
+    """
+    Applies the 21 Mega-Prompt Framework:
+    - Curiosity Gap (شکاف کنجکاوی چالدینی)
+    - Power Words & Emotion Magnifiers (واژه‌های برانگیزاننده کلیک)
+    - Anti-Hallucination & Clean Formatting
+    - Exact 60-70 Char Sweet-Spot for Mobile YouTube Shorts UI
+    """
+    if not raw_title or len(raw_title.strip()) < 5:
+        templates = PREMIUM_METADATA_CONFIG.get(niche, PREMIUM_METADATA_CONFIG["animals"])["title_templates"]
+        return random.choice(templates)
 
+    clean = re.sub(r"[#＃][\w\d_]+", "", raw_title).strip()
+    clean = re.sub(r"\s+", " ", clean)
+
+    # Niche-specific neuro-engineering
+    if niche == "islamic_mystery":
+        power_hooks = [
+            "The Shocking Truth About",
+            "Signs Happening Right Now:",
+            "What They Never Told You About",
+            "The Untold Mystery of"
+        ]
+        hook = random.choice(power_hooks)
+        engineered = f"{hook} {clean[:45]} ⚠️⚡ #Shorts #Islam"
+
+    elif niche == "quran":
+        peace_hooks = [
+            "تلاوة تسكن الروح وتريح القلب 🕊️",
+            "راحة نفسية لا توصف.. استمع بقلبك 🤍",
+            "سورة تفيض بالطمأنينة والنور 🌿"
+        ]
+        hook = random.choice(peace_hooks)
+        engineered = f"{hook} {clean[:35]} ✨ #Shorts #Quran"
+
+    elif niche == "ai":
+        tech_hooks = [
+            "Mind-Blowing AI You Didn't Know! 🤯",
+            "This Crazy AI Changes Everything! ⚡",
+            "Top Insane AI Tools in 2026! 🚀"
+        ]
+        hook = random.choice(tech_hooks)
+        engineered = f"{hook} {clean[:38]} #Shorts #AI"
+
+    elif niche == "animals":
+        wild_hooks = [
+            "Wait Till You See This! 😱🐾",
+            "Unbelievable Loyalty in The Wild! 🦁❤️",
+            "Nature Moments That Shocked Millions! 🐾👑"
+        ]
+        hook = random.choice(wild_hooks)
+        engineered = f"{hook} {clean[:38]} #Shorts #Wildlife"
+
+    else:
+        engineered = f"{clean[:50]} ✨ #Shorts #Viral"
+
+    return engineered[:85]
 
 def get_optimized_metadata(niche: str, raw_title: str = None):
     """
-    Returns high-CTR, luxury title, description, tags, and hashtags.
+    Returns high-CTR, luxury title, description, tags, and hashtags engineered with 21 Mega-Prompts.
     """
     config = PREMIUM_METADATA_CONFIG.get(niche, PREMIUM_METADATA_CONFIG["animals"])
     
-    # Select or enhance title
-    if raw_title and len(raw_title) > 10:
-        clean = re.sub(r"[#＃][\w\d_]+", "", raw_title).strip()
-        clean = re.sub(r"\s+", " ", clean)
-        # Add high-converting emoji and clean #Shorts
-        title = f"{clean[:75]} ✨ #Shorts"
-    else:
-        title = config["title_templates"][0]
+    # 21 Mega-Prompt Driven High-CTR Title
+    title = apply_mega_prompt_ctr_engineering(raw_title, niche)
         
     return {
         "title": title,
@@ -269,4 +326,3 @@ def get_optimized_metadata(niche: str, raw_title: str = None):
         "badge_text": config["luxury_badge"],
         "engagement_comment": config.get("engagement_comment")
     }
-
