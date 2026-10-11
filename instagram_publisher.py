@@ -74,7 +74,7 @@ def build_bilingual_quran_caption(base_title: str) -> str:
     )
     return caption
 
-def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", thumbnail_path: str = None):
+def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", thumbnail_path: str = None, initial_comment: str = None):
     """
     Uploads a vertical 9:16 video as an Instagram Reel completely FREE using direct instagrapi.
     """
@@ -102,6 +102,14 @@ def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", 
         reel_code = media.code
         reel_url = f"https://www.instagram.com/reel/{reel_code}/"
         print(f"  [Instagram Success] Reel published to {acc['display']}! URL: {reel_url}")
+
+        if initial_comment:
+            try:
+                cl.media_comment(media_pk, initial_comment)
+                print(f"  [Instagram Success] Pinned initial comment posted to {acc['display']}!")
+            except Exception as ce:
+                print(f"  [Instagram Notice] Could not post initial comment: {ce}")
+
         return {
             "status": "success",
             "media_pk": media_pk,

@@ -175,16 +175,36 @@ def publish_next_cryptolab_language():
         custom_text=curr_lang["badge"]
     )
 
-    # Upload to CryptoLab Channel
+    # Official PolyMint Links & Halal Crypto Authority Block
+    POLYMINT_BRAND_BLOCK = (
+        "📊 PolyMint Crypto Daily\n"
+        "Islamic Scholars' View on Crypto\n\n"
+        "🌐 https://ploymint.polyganfactorytoken.workers.dev\n"
+        "✈️ https://t.me/polymint_crypto\n\n"
+        "#crypto #bitcoin #cryptocurrency #blockchain #polygon #ethereum #defi #cryptonews #altcoin #halal "
+        "#عملات_الرقمية #بيتكوين #كريبتو #بلوكشين #رمزارز #کریپتو #بیت_کوین #criptomonedas #criptomoedas #kriptopara #криптовалюта #加密货币"
+    )
+
+    # Combined full high-authority description: Title + Body + Brand Links
+    full_description = f"{curr_lang['title']}\n\n{curr_lang['desc']}\n\n{POLYMINT_BRAND_BLOCK}"
+
+    # Engagement & conversion comment for YouTube & Instagram
+    pinned_comment_text = (
+        "📊 PolyMint Crypto Daily — Islamic Scholars' View on Crypto\n"
+        "🌐 Deploy your token: https://ploymint.polyganfactorytoken.workers.dev\n"
+        "✈️ Telegram Community: https://t.me/polymint_crypto"
+    )
+
+    # Upload to CryptoLab YouTube Channel
     res = upload_short(
         channel_key="polygon",
         video_path=str(MASTER_VIDEO),
         title=curr_lang["title"],
-        description=curr_lang["desc"],
+        description=full_description,
         tags=curr_lang["tags"],
         category_id="28",
         thumbnail_path=str(thumb_path),
-        pinned_comment=curr_lang.get("comment")
+        pinned_comment=pinned_comment_text
     )
 
     # Cross-Post to CryptoLab Instagram Page (@cryp.tolab1)
@@ -192,8 +212,14 @@ def publish_next_cryptolab_language():
         try:
             print("  [CryptoLab] Cross-posting Reel to Instagram (@cryp.tolab1)...")
             from instagram_publisher import publish_instagram_reel
-            ig_caption = f"{curr_lang['title']}\n\n{curr_lang['desc']}"
-            publish_instagram_reel(video_path=str(MASTER_VIDEO), caption=ig_caption, niche="cryptolab")
+            ig_caption = f"{curr_lang['title']}\n\n{curr_lang['desc']}\n\n{POLYMINT_BRAND_BLOCK}"
+            publish_instagram_reel(
+                video_path=str(MASTER_VIDEO),
+                caption=ig_caption,
+                niche="cryptolab",
+                thumbnail_path=str(thumb_path),
+                initial_comment=pinned_comment_text
+            )
         except Exception as e:
             print(f"  [Instagram Warning] CryptoLab Reel publish notice: {e}")
 
