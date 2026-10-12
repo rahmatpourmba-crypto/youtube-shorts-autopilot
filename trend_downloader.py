@@ -58,57 +58,43 @@ def search_and_download_viral_short(search_query: str, download_dir: str, niche:
         print(f"  [yt-dlp note] Primary download failed: {err_msg[:100]}")
         
     if not download_ok:
-        # Cloud Datacenter Fallback: Fetch guaranteed bot-free vertical videos strictly by niche
-        print(f"  [Downloader] Engaging resilient Cloud Mirror CDN for niche '{niche}'...")
+        # 50 MEGA-PROMPT ULTRA VIRAL TRENDS REPOSITORY (مخزن ۵۰ ترند مگا ابرپرامپتی ضدتکرار)
+        print(f"  [Downloader] Engaging 50 Mega-Prompt Viral Trends Bank for niche '{niche}'...")
         import urllib.request
-        import urllib.parse
-        import random
+        from viral_trends_bank_50 import get_next_viral_trend_from_bank
 
-        # Curated verified high-quality vertical audio-visual streams STRICTLY per niche (100% 200 OK)
-        NICHE_MIRRORS = {
-            "quran": [
-                "https://archive.org/download/surah_ibrahim_shorts/1%20-%20Ibrahim%20%28Ayat%201-3%29.mp4",
-                "https://archive.org/download/surah_ibrahim_shorts/10%20-%20Ibrahim%20%28Ayah%2022%29.mp4",
-                "https://archive.org/download/surah_ibrahim_shorts/11%20-%20Ibrahim%20%28Ayah%2023%29.mp4",
-                "https://archive.org/download/surah_ibrahim_shorts/2%20-%20Ibrahim%20%28Ayat%204%29.mp4",
-                "https://archive.org/download/surah_ibrahim_shorts/3%20-%20Ibrahim%20%28Ayat%205-8%29.mp4"
-            ],
-            "islamic_mystery": [
-                "https://archive.org/download/surah_ibrahim_shorts/10%20-%20Ibrahim%20%28Ayah%2022%29.mp4",
-                "https://archive.org/download/surah_ibrahim_shorts/11%20-%20Ibrahim%20%28Ayah%2023%29.mp4"
-            ],
-            "ai": [
-                "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
-                "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4"
-            ],
-            "animals": [
-                "https://archive.org/download/youtube-VIA20r-WO4M/VIA20r-WO4M.mp4",
-                "https://archive.org/download/fefdba/FEFDBA_1080p.mp4",
-                "https://archive.org/download/cosltx-Pet_Of_The_Week-_African_Grey_Parrot/Pet_Of_The_Week-_African_Grey_Parrot.mp4"
-            ]
-        }
+        state = {}
+        try:
+            with open(Path(__file__).resolve().parent / "state.json", "r", encoding="utf-8") as sf:
+                state = json.load(sf)
+        except Exception:
+            pass
+        run_count = state.get("run_count", 0)
+        selected_trend = get_next_viral_trend_from_bank(niche, run_count=run_count)
+        stream_url = selected_trend["stream"]
+        print(f"  [50-Trends Bank] Selected Fresh Trend: '{selected_trend['title'][:55]}...'")
 
-        active_mirrors = NICHE_MIRRORS.get(niche, NICHE_MIRRORS.get("animals"))
-        for mirror_choice in random.sample(active_mirrors, len(active_mirrors)):
-            try:
-                req = urllib.request.Request(mirror_choice, headers={'User-Agent': 'Mozilla/5.0'})
-                with urllib.request.urlopen(req, timeout=15) as resp, open(raw_video_path, 'wb') as out_f:
-                    out_f.write(resp.read())
-                print(f"  [Downloader Success] Stream downloaded via Cloud Mirror CDN ({Path(mirror_choice).name})!")
-                break
-            except Exception as e:
-                print(f"  [Mirror retry] Failed {mirror_choice.split('/')[-1]}: {e}")
-                continue
+        try:
+            req = urllib.request.Request(stream_url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=25) as resp, open(raw_video_path, 'wb') as out_f:
+                out_f.write(resp.read())
+            print(f"  [Downloader Success] Stream downloaded via High-Speed CDN ({Path(stream_url).name})!")
+            download_ok = True
+            best_entry = {
+                "title": selected_trend["title"],
+                "tags": [niche, "shorts", "viral", "trending"],
+                "description": selected_trend["title"],
+                "hook_banner": selected_trend.get("hook")
+            }
+        except Exception as e:
+            print(f"  [Downloader Error] Could not fetch stream {stream_url}: {e}")
 
-
-
-
-    
     return {
         "raw_video": str(raw_video_path),
         "title": best_entry.get("title", "Viral Trending Short"),
         "tags": best_entry.get("tags", []),
-        "description": best_entry.get("description", "")
+        "description": best_entry.get("description", ""),
+        "hook_banner": best_entry.get("hook_banner")
     }
 
 def apply_anti_copyright_edits(input_video: str, output_video: str, hook_banner: str = None, niche: str = "animals"):

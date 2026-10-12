@@ -48,10 +48,11 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
     
     print(f"[{channel_key.upper()}] 2. Applying anti-copyright modifications (Speedup, Pitch Shift, Color Grade)...")
     edited_video = str(out_dir / "edited_viral_short.mp4")
+    active_hook = data.get("hook_banner") or hook_banner
     res = apply_anti_copyright_edits(
         input_video=data["raw_video"],
         output_video=edited_video,
-        hook_banner=hook_banner,
+        hook_banner=active_hook,
         niche=target_niche
     )
     

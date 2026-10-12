@@ -135,45 +135,32 @@ def publish_next_cryptolab_language(publish_at: str = None):
     if not MASTER_VIDEO.exists():
         raise FileNotFoundError(f"Master video not found at {MASTER_VIDEO}")
 
-    # Load state
+    # Load state & cycle language
     state = {}
     if STATE_FILE.exists():
         with open(STATE_FILE, "r", encoding="utf-8") as f:
             state = json.load(f)
             
-    lang_idx = state.get("cryptolab_lang_index", 0) % len(CRYPTOLAB_LANGUAGES)
+    lang_idx = state.get("cryptolab_lang_index", state.get("polygon_channel_language_index", 0)) % len(CRYPTOLAB_LANGUAGES)
     curr_lang = CRYPTOLAB_LANGUAGES[lang_idx]
     
     print(f"\n[CRYPTOLAB] Publishing for Target Geography: {curr_lang['name']}")
     print(f"  Target Prime Time (UTC): {curr_lang['prime_time_utc']}")
     print(f"  Title: {curr_lang['title']}")
 
-    # Generate custom luxury thumbnail in target language
     out_dir = BASE_DIR / "output" / f"cryptolab_{curr_lang['code']}"
     out_dir.mkdir(parents=True, exist_ok=True)
-    thumb_path = out_dir / "thumbnail.jpg"
+    rendered_vid_path = out_dir / "cryptolab_short.mp4"
 
-    import subprocess
-    import shutil
-    import imageio_ffmpeg
-    ffmpeg_exe = shutil.which("ffmpeg") or imageio_ffmpeg.get_ffmpeg_exe()
-    
-    cmd_thumb = [
-        ffmpeg_exe, "-y",
-        "-ss", "00:00:03.000",
-        "-i", str(MASTER_VIDEO),
-        "-vframes", "1",
-        "-q:v", "2",
-        str(thumb_path)
-    ]
-    subprocess.run(cmd_thumb, check=True)
-
-    generate_luxury_thumbnail(
-        str(thumb_path),
-        str(thumb_path),
-        niche="cryptolab", # 21 Mega-Prompt High-CTR Web3 Obsidian & Gold
-        custom_text=curr_lang["badge"]
+    # Render with in-video hook banner & 22s sweet-spot duration
+    from video_editor_pro import render_300m_viral_short
+    render_res = render_300m_viral_short(
+        input_video=str(MASTER_VIDEO),
+        output_video=str(rendered_vid_path),
+        hook_banner=curr_lang["badge"],
+        niche="cryptolab"
     )
+    thumb_path = Path(render_res["thumbnail"])
 
     # Official PolyMint Links & Halal Crypto Authority Block
     POLYMINT_BRAND_BLOCK = (
@@ -198,7 +185,7 @@ def publish_next_cryptolab_language(publish_at: str = None):
     # Upload to CryptoLab YouTube Channel
     res = upload_short(
         channel_key="polygon",
-        video_path=str(MASTER_VIDEO),
+        video_path=str(rendered_vid_path),
         title=curr_lang["title"],
         description=full_description,
         tags=curr_lang["tags"],
@@ -215,7 +202,7 @@ def publish_next_cryptolab_language(publish_at: str = None):
             from instagram_publisher import publish_instagram_reel
             ig_caption = f"{curr_lang['title']}\n\n{curr_lang['desc']}\n\n{POLYMINT_BRAND_BLOCK}"
             publish_instagram_reel(
-                video_path=str(MASTER_VIDEO),
+                video_path=str(rendered_vid_path),
                 caption=ig_caption,
                 niche="cryptolab",
                 thumbnail_path=str(thumb_path),
@@ -224,17 +211,20 @@ def publish_next_cryptolab_language(publish_at: str = None):
         except Exception as e:
             print(f"  [Instagram Warning] CryptoLab Reel publish notice: {e}")
 
-    # Clean up generated thumbnail
+    # Clean up generated files
     try:
         if thumb_path.exists():
             thumb_path.unlink()
-            print(f"  [Cleanup] Deleted CryptoLab thumbnail file: {thumb_path.name}")
+        if rendered_vid_path.exists():
+            rendered_vid_path.unlink()
+            print(f"  [Cleanup] Deleted processed CryptoLab short")
     except Exception as e:
-
         print(f"  [Cleanup Warning] {e}")
 
     # Increment language index for tomorrow
-    state["cryptolab_lang_index"] = lang_idx + 1
+    next_idx = (lang_idx + 1) % len(CRYPTOLAB_LANGUAGES)
+    state["cryptolab_lang_index"] = next_idx
+    state["polygon_channel_language_index"] = next_idx
     state["cryptolab_last_lang"] = curr_lang["code"]
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
