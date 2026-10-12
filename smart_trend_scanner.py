@@ -12,7 +12,7 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
     cmd = [
         "yt-dlp",
         f"ytsearch{max_candidates}:{search_query}",
-        "--match-filter", "duration <= 60",
+        "--match-filter", "duration >= 10 & duration <= 30",
         "--dump-json",
         "--flat-playlist", "False",
         "--no-playlist"
@@ -31,7 +31,12 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
             views = item.get("view_count") or 0
             likes = item.get("like_count") or 0
             timestamp = item.get("timestamp") or (now_ts - 86400 * 30)
+            dur = item.get("duration") or 20
             
+            # Strict 10-30s Duration Lock for Ultra-High Looping Retention
+            if dur > 32 or dur < 8:
+                continue
+
             # Strict Moral & Halal Safety Check
             from halal_content_filter import is_content_halal_and_clean
             title = item.get("title", "")
@@ -48,8 +53,11 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
             # Engagement ratio
             engagement = (likes / views) if views > 0 else 0.05
             
-            # Viral Velocity Score: prioritize fresh exploding videos over stale old ones
-            viral_velocity = (views / (days_active ** 0.8)) * (1.0 + engagement * 10)
+            # 15-24s Retention Bonus (MrBeast & TikTok Viral Sweet Spot)
+            dur_bonus = 1.35 if 14 <= dur <= 25 else 1.0
+            
+            # Viral Velocity Score: prioritize fresh exploding short videos
+            viral_velocity = (views / (days_active ** 0.8)) * (1.0 + engagement * 10) * dur_bonus
             
             candidates.append({
                 "id": item.get("id"),
