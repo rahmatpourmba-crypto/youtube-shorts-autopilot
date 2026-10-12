@@ -94,7 +94,9 @@ def search_and_download_viral_short(search_query: str, download_dir: str, niche:
         "title": best_entry.get("title", "Viral Trending Short"),
         "tags": best_entry.get("tags", []),
         "description": best_entry.get("description", ""),
-        "hook_banner": best_entry.get("hook_banner")
+        "hook_banner": best_entry.get("hook_banner"),
+        "original_pub_utc": best_entry.get("original_pub_utc"),
+        "optimal_seed_utc": best_entry.get("optimal_seed_utc")
     }
 
 def apply_anti_copyright_edits(input_video: str, output_video: str, hook_banner: str = None, niche: str = "animals"):

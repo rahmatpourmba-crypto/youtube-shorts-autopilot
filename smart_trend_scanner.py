@@ -58,6 +58,12 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
             
             # Viral Velocity Score: prioritize fresh exploding short videos
             viral_velocity = (views / (days_active ** 0.8)) * (1.0 + engagement * 10) * dur_bonus
+
+            # Chrono-Intelligence: Reverse-Engineer Original Video Peak Upload Hour
+            import datetime
+            orig_dt_utc = datetime.datetime.utcfromtimestamp(timestamp) if timestamp else datetime.datetime.utcnow()
+            orig_tehran_dt = orig_dt_utc + datetime.timedelta(hours=3, minutes=30)
+            seed_hour_utc = (orig_dt_utc.hour - 2) % 24
             
             candidates.append({
                 "id": item.get("id"),
@@ -68,7 +74,10 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
                 "days_active": round(days_active, 1),
                 "velocity_score": viral_velocity,
                 "tags": tags,
-                "description": desc
+                "description": desc,
+                "original_pub_utc": f"{orig_dt_utc.hour:02d}:{orig_dt_utc.minute:02d} UTC",
+                "original_pub_tehran": orig_tehran_dt.strftime("%H:%M IRST"),
+                "optimal_seed_utc": f"{seed_hour_utc:02d}:{orig_dt_utc.minute:02d} UTC"
             })
         except Exception:
             continue
@@ -81,4 +90,6 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
     best = candidates[0]
     print(f"  [Smart Trend Scanner] Top Trend Selected: '{best['title'][:60]}...'")
     print(f"    Views: {best['views']:,} | Age: {best['days_active']} days | Velocity Score: {best['velocity_score']:,.0f}")
+    if best.get("original_pub_utc"):
+        print(f"    [Viral Chrono-Pattern] Original Peak: {best['original_pub_utc']} ({best['original_pub_tehran']}) | Optimal Seed Lead: {best['optimal_seed_utc']}")
     return best
