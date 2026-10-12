@@ -49,12 +49,24 @@ def main():
 
     from run_pipeline import process_and_upload_trend
 
-    # 5-SLOT ROUND-ROBIN ARCHITECTURE (هر ۵ ساعت یک هدف طلایی):
-    # Slot 0: Morning Peak (8:00 AM IRST) -> Quran Recitation + Instagram Reel
-    # Slot 1: Midday Tech (12:48 PM IRST) -> AI Tools Channel
-    # Slot 2: Evening World Peak (17:36 PM IRST) -> Towards Eternity Viral Quran + CryptoLab Multilingual
-    # Slot 3: Night Wildlife (22:24 PM IRST) -> Animals & Wildlife Channel
-    # Slot 4: Late Night Wisdom (03:12 AM IRST) -> Quranic Story / Wisdom + CryptoLab Reel
+    # PRE-PRODUCTION ARCHITECTURE (ترندیابی و تولید پیش از موعد ۲ ساعته):
+    # If run on schedule by GitHub Actions, video is pre-generated and scheduled to publish
+    # 2 hours later at the exact Golden Peak hour.
+    is_scheduled_run = os.environ.get("GITHUB_EVENT_NAME") == "schedule"
+    scheduled_publish_time = None
+    if is_scheduled_run:
+        scheduled_dt = utc_now + datetime.timedelta(hours=2)
+        scheduled_publish_time = scheduled_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+        print(f"[PRE-PRODUCTION] Pre-generating video now. YouTube Scheduled Publish set for: {scheduled_publish_time} (Golden Peak Window)")
+    else:
+        print("[DIRECT EXECUTION] Manual or local execution: Publishing immediately.")
+
+    # 5-SLOT MULTI-PEAK ZERO-DOWNTIME ARCHITECTURE:
+    # Slot 0: 02:12 UTC (05:42 IRST) -> Pre-generate Quran Recitation for 07:42 IRST peak
+    # Slot 1: 06:44 UTC (10:14 IRST) -> Midday Quran Wisdom / Towards Eternity
+    # Slot 2: 11:12 UTC (14:42 IRST) -> Pre-generate CryptoLab for 16:42 IRST peak (London/NY overlap)
+    # Slot 3: 15:44 UTC (19:14 IRST) -> Pre-generate Animals for 21:14 IRST peak (Global leisure peak)
+    # Slot 4: 20:14 UTC (23:44 IRST) -> Pre-generate AI Tools for 03:44 IRST peak (US/Europe tech peak)
     
     if slot_idx == 0:
         print("\n[DISPATCH] Executing Slot #1: Morning Quran Recitation & Instagram Reel...")
@@ -64,43 +76,33 @@ def main():
             hook_banner="تلاوة خاشعة تريح القلوب 🕊️",
             category_id="22",
             run_dir=run_dir / "quran_morning",
-            niche="quran"
+            niche="quran",
+            publish_at=scheduled_publish_time
         )
 
     elif slot_idx == 1:
-        print("\n[DISPATCH] Executing Slot #2: AI Tools Channel (USA & Europe Tech Peak)...")
-        ai_queries = ["trending insane AI tools 2026", "useful AI websites shorts", "mind blowing AI tech viral"]
-        a_query = ai_queries[run_count % len(ai_queries)]
-        process_and_upload_trend(
-            channel_key="ai",
-            search_query=a_query,
-            hook_banner="INSANE AI TOOL! 🤖⚡",
-            category_id="28",
-            run_dir=run_dir / "ai_tools",
-            niche="ai"
-        )
-
-    elif slot_idx == 2:
-        print("\n[DISPATCH] Executing Slot #3: Towards Eternity Style (Worldwide Viral) + CryptoLab Release...")
-        # 1. Towards Eternity High-CTR Video
+        print("\n[DISPATCH] Executing Slot #2: Midday Quran Wisdom & Towards Eternity Style...")
         process_and_upload_trend(
             channel_key="quran",
             search_query="Dajjal signs coming true end times towards eternity shorts",
             hook_banner="SIGNS COMING TRUE ⚠️",
             category_id="22",
             run_dir=run_dir / "quran_towards_eternity",
-            niche="islamic_mystery"
+            niche="islamic_mystery",
+            publish_at=scheduled_publish_time
         )
-        # 2. CryptoLab Multilingual Release
+
+    elif slot_idx == 2:
+        print("\n[DISPATCH] Executing Slot #3: CryptoLab Web3 Multilingual Release (London/NY Overlap)...")
         try:
             from cryptolab_multilingual import publish_next_cryptolab_language
-            publish_next_cryptolab_language()
+            publish_next_cryptolab_language(publish_at=scheduled_publish_time)
         except Exception as e:
             print(f"  [CryptoLab Warning] {e}")
 
     elif slot_idx == 3:
         print("\n[DISPATCH] Executing Slot #4: Wild Kingdom (Animal Rescue & Epic Nature)...")
-        animal_queries = ["wildlife animal rescue fight", "funny cute dogs cats pets", "crazy animal moments viral"]
+        animal_queries = ["wildlife animal rescue 4k nature", "cute dogs cats pets funny moments", "crazy animal moments nature"]
         an_query = animal_queries[run_count % len(animal_queries)]
         process_and_upload_trend(
             channel_key="animals",
@@ -108,18 +110,22 @@ def main():
             hook_banner="WAIT TILL THE END! 🐾❤️",
             category_id="15",
             run_dir=run_dir / "animals_wild",
-            niche="animals"
+            niche="animals",
+            publish_at=scheduled_publish_time
         )
 
     elif slot_idx == 4:
-        print("\n[DISPATCH] Executing Slot #5: Quranic Wisdom & Miracles Story...")
+        print("\n[DISPATCH] Executing Slot #5: AI Tools Channel (USA & Europe Tech Peak)...")
+        ai_queries = ["trending insane AI tools tech 2026", "useful AI websites shorts productivity", "mind blowing AI tech software"]
+        a_query = ai_queries[run_count % len(ai_queries)]
         process_and_upload_trend(
-            channel_key="quran",
-            search_query="قصص القران عبر ومواعظ مؤثرة راحة نفسية",
-            hook_banner="معجزة قرآنية تهز القلوب ✨",
-            category_id="22",
-            run_dir=run_dir / "quran_wisdom",
-            niche="quran"
+            channel_key="ai",
+            search_query=a_query,
+            hook_banner="INSANE AI TOOL! 🤖⚡",
+            category_id="28",
+            run_dir=run_dir / "ai_tools",
+            niche="ai",
+            publish_at=scheduled_publish_time
         )
 
     # Rotate Slot & Update State

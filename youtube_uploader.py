@@ -99,15 +99,24 @@ def add_pinned_engagement_comment(youtube, video_id: str, comment_text: str):
         print(f"  [Auto-Comment Warning] Could not post initial comment: {e}")
         return None
 
-def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None, pinned_comment: str = None):
+def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None, pinned_comment: str = None, publish_at: str = None):
     """
     Uploads a short video directly to YouTube, sets custom thumbnail, and leaves pinned engagement hook.
+    If publish_at (ISO 8601 string e.g. '2026-10-12T13:12:00Z') is provided, sets scheduled private publish.
     """
     try:
         youtube = get_authenticated_service(channel_key)
     except Exception as e:
         print(f"  [Upload Error] Authorization needed or failed for {channel_key}: {e}")
         return None
+
+    status_obj = {
+        "privacyStatus": "private" if publish_at else "public",
+        "selfDeclaredMadeForKids": False
+    }
+    if publish_at:
+        status_obj["publishAt"] = publish_at
+        print(f"  [Scheduled Publish] YouTube video scheduled for public release at: {publish_at}")
 
     body = {
         "snippet": {
@@ -118,10 +127,7 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
             "defaultLanguage": "ar" if channel_key == "quran" else ("en" if channel_key in ["ai", "animals"] else "en"),
             "defaultAudioLanguage": "ar" if channel_key == "quran" else "en"
         },
-        "status": {
-            "privacyStatus": "public",
-            "selfDeclaredMadeForKids": False
-        }
+        "status": status_obj
     }
 
     media = MediaFileUpload(video_path, chunksize=-1, resumable=True, mimetype="video/*")

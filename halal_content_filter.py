@@ -2,12 +2,17 @@ import re
 
 # Comprehensive Halal & Moral Safety Blacklist (لیست سیاه کلمات و مفاهیم غیراخلاقی و غیرشرعی)
 FORBIDDEN_KEYWORDS = [
-    # Immoral, nudity, revealing attire, romance, adult
+    # Immoral, nudity, revealing attire, romance, adult, dance & inappropriate women
     "bikini", "sexy", "hot girl", "lingerie", "naked", "nude", "kiss", "kissing", 
     "dating", "girlfriend", "boyfriend", "romance", "romantic", "adult", "erotic",
-    "dance", "dancing", "twerk", "belly dance", "model", "actress", "cleavage",
-    "رقص", "زن", "دختر", "عاشقانه", "برهنه", "بیکینی", "دوست دختر", "لب گرفتن", "مبتذل",
+    "dance", "dancing", "dancer", "dancers", "twerk", "belly dance", "model", "actress", "cleavage",
+    "tiktok dance", "dance challenge", "viral dance", "female model",
+    "رقص", "زن", "دختر", "عاشقانه", "برهنه", "بیکینی", "دوست دختر", "لب گرفتن", "مبتذل", "بی حجاب", "دنس",
     
+    # Inappropriate Ads, Scam & Gambling Sponsors
+    "sponsor", "betting app", "casino promo", "1xbet", "parimatch", "stake",
+    "تبلیغ نامناسب", "شرط‌بندی", "سایت بت",
+
     # LGBTQ+ and illicit relations
     "lgbt", "pride", "gay", "lesbian", "trans", "queer", "homosexual", "rainbow flag",
     "همجنس", "گی", "لزبين", "ترنس", "زنا", "لواط",
@@ -25,7 +30,7 @@ FORBIDDEN_KEYWORDS = [
     # Music & Songs (ممنوعیت انواع موسیقی و ترانه)
     "music", "song", "remix", "beat", "melody", "audio track", "soundtrack",
     "concert", "singer", "pop", "rap", "hip hop", "rock", "dj", "musical",
-    "آهنگ", "موزیک", "ترانه", "خواننده", "کنسرت", "موسیقی", "دنس", "ریمیکس"
+    "آهنگ", "موزیک", "ترانه", "خواننده", "کنسرت", "موسیقی", "ریمیکس"
 ]
 
 def is_content_halal_and_clean(title: str, description: str = "", tags: list = None) -> bool:
@@ -36,7 +41,7 @@ def is_content_halal_and_clean(title: str, description: str = "", tags: list = N
     text_to_scan = f"{title} {description} {' '.join(tags or [])}".lower()
     
     for word in FORBIDDEN_KEYWORDS:
-        # Match whole word or exact pattern
+        # Match word or subphrase
         pattern = r"\b" + re.escape(word.lower()) + r"\b"
         if re.search(pattern, text_to_scan):
             return False
@@ -48,12 +53,11 @@ def clean_search_query_for_halal(query: str, niche: str) -> str:
     Appends negative filter tags and halal/no-music enforcement to queries.
     """
     if niche == "quran":
-        # Pure authentic Quran without any background music or tunes
         return f"{query} بدون موسيقى no music -song -dance -remix"
     elif niche == "ai":
-        # Pure tech tutorial and tool demonstrations without background songs
-        return f"{query} no music tutorial tech -song -dance -remix"
+        # Pure tech tutorial and software interfaces without women/dancing/songs
+        return f"{query} tech tool screen tutorial no music -dance -dancing -girl -women -song -remix"
     elif niche == "animals":
-        # Pure natural wildlife sounds without songs or background beats
-        return f"{query} wildlife documentary pure nature sounds no music -song -dance -remix"
+        # Pure natural wildlife documentary without dance or human music
+        return f"{query} wildlife documentary pure nature sounds no music -dance -dancing -girl -women -song"
     return f"{query} no music -song -dance"

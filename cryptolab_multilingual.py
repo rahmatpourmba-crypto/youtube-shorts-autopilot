@@ -131,7 +131,7 @@ CRYPTOLAB_LANGUAGES = [
     }
 ]
 
-def publish_next_cryptolab_language():
+def publish_next_cryptolab_language(publish_at: str = None):
     if not MASTER_VIDEO.exists():
         raise FileNotFoundError(f"Master video not found at {MASTER_VIDEO}")
 
@@ -204,7 +204,8 @@ def publish_next_cryptolab_language():
         tags=curr_lang["tags"],
         category_id="28",
         thumbnail_path=str(thumb_path),
-        pinned_comment=pinned_comment_text
+        pinned_comment=pinned_comment_text,
+        publish_at=publish_at
     )
 
     # Cross-Post to CryptoLab Instagram Page (@cryp.tolab1)

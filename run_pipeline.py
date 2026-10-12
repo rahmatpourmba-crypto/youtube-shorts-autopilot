@@ -36,7 +36,7 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
-def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: str, category_id: str, run_dir: Path, niche: str = None):
+def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: str, category_id: str, run_dir: Path, niche: str = None, publish_at: str = None):
     ch_info = CHANNELS[channel_key]
     out_dir = run_dir / f"channel_{channel_key}"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -81,7 +81,8 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
             tags=tags,
             category_id=category_id,
             thumbnail_path=res["thumbnail"],
-            pinned_comment=opt.get("engagement_comment")
+            pinned_comment=opt.get("engagement_comment"),
+            publish_at=publish_at
         )
     else:
         print(f"  [Notice] Token not found for {channel_key}. Saved locally at {res['video']}.")
