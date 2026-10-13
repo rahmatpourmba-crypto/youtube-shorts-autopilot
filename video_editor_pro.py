@@ -10,13 +10,16 @@ FFMPEG_EXE = shutil.which("ffmpeg") or imageio_ffmpeg.get_ffmpeg_exe()
 
 def get_video_specs(video_path: str):
     """
-    Extracts exact width, height, duration, and FPS of input video.
+    Extracts exact width, height, duration, FPS, and whether audio stream exists.
     """
     cmd = [FFMPEG_EXE, "-i", video_path]
     res = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True, errors="ignore")
     width, height, duration, fps = 1080, 1920, 30.0, 30.0
+    has_audio = False
     
     for line in res.stderr.splitlines():
+        if "Audio:" in line:
+            has_audio = True
         if "Video:" in line:
             m = re.search(r"(\d{3,4})x(\d{3,4})", line)
             if m:
@@ -30,7 +33,7 @@ def get_video_specs(video_path: str):
                 h, m_val, s = dur_m.groups()
                 duration = float(h)*3600 + float(m_val)*60 + float(s)
                 
-    return width, height, duration, fps
+    return width, height, duration, fps, has_audio
 
 def create_in_video_banner_png(banner_text: str, niche: str, out_png_path: str):
     """
@@ -94,7 +97,7 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     out_dir = Path(output_video).parent
     out_dir.mkdir(parents=True, exist_ok=True)
     
-    w, h, duration, fps = get_video_specs(input_video)
+    w, h, duration, fps, has_audio = get_video_specs(input_video)
     ar = w / h if h > 0 else 0.5625
 
     banner_png = out_dir / "temp_in_video_banner.png"
@@ -145,9 +148,6 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     else:
         vf = f"{base_vf}[outv]"
 
-    # Audio Filters: 1.05x tempo with pitch shift to break Content-ID, Loudnorm -14 LUFS, and 1.5s smooth fadeout
-    af = "asetrate=44100*1.02,aresample=44100,atempo=1.05/1.02,loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=out:st=20.5:d=1.5"
-
     cmd = [
         FFMPEG_EXE, "-y",
         "-i", input_video
@@ -155,21 +155,39 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     if has_banner:
         cmd.extend(["-i", str(banner_png)])
 
-    cmd.extend([
-        "-vf", vf,
-        "-af", af,
-        "-map", "[outv]",
-        "-map", "0:a?",
-        "-t", "22",           # STRICT 22-SECOND VIRAL RETENTION CLAMP
-        "-c:v", "libx264",
-        "-preset", "ultrafast",
-        "-threads", "0",
-        "-crf", "19",
-        "-c:a", "aac",
-        "-b:a", "256k",
-        "-movflags", "+faststart",
-        output_video
-    ])
+    if has_audio:
+        af = "asetrate=44100*1.02,aresample=44100,atempo=1.05/1.02,loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=out:st=20.5:d=1.5"
+        cmd.extend([
+            "-vf", vf,
+            "-af", af,
+            "-map", "[outv]",
+            "-map", "0:a",
+            "-t", "22",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-threads", "0",
+            "-crf", "19",
+            "-c:a", "aac",
+            "-b:a", "256k",
+            "-movflags", "+faststart",
+            output_video
+        ])
+    else:
+        cmd.extend([
+            "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+            "-vf", vf,
+            "-map", "[outv]",
+            "-map", "1:a" if not has_banner else "2:a",
+            "-t", "22",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-threads", "0",
+            "-crf", "19",
+            "-c:a", "aac",
+            "-b:a", "128k",
+            "-movflags", "+faststart",
+            output_video
+        ])
     subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if has_banner and banner_png.exists():
