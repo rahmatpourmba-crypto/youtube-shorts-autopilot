@@ -197,7 +197,7 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
             pass
 
 
-    # 3. High-CTR Thumbnail Generation at peak visual energy (middle 25% or 3s)
+    # 3. High-CTR Thumbnail Generation directly from the video itself at peak moment
     thumb_path = out_dir / "thumbnail.jpg"
     thumb_sec = min(3.0, max(1.0, duration * 0.25)) if duration > 0 else 2.5
     cmd_thumb = [
@@ -209,15 +209,6 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
         str(thumb_path)
     ]
     subprocess.run(cmd_thumb, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-    # 4. Apply Ultra-High CTR Luxury Badge on Thumbnail
-    if thumb_path.exists():
-        try:
-            from metadata_optimizer import generate_luxury_thumbnail
-            generate_luxury_thumbnail(str(thumb_path), str(thumb_path), niche=niche, custom_text=hook_banner)
-        except Exception as e:
-            print(f"  [Thumbnail styling warning]: {e}")
-
 
     return {
         "video": output_video,

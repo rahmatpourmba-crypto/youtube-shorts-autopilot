@@ -2,15 +2,10 @@ name: 24/7 Active Shorts & Auto-Keepalive Pipeline
 
 on:
   schedule:
-    # 24/7 Zero-Downtime Multi-Peak Pre-Production Architecture:
-    # Triggers every ~4.5 hours (always under 5.5h inactivity threshold to keep repo alive forever):
-    # - 02:12 UTC (05:42 IRST) -> Pre-generates Slot 0: Quran (Scheduled for 07:42 IRST peak)
-    # - 06:44 UTC (10:14 IRST) -> Slot 1: Towards Eternity / Wisdom (Keepalive)
-    # - 11:12 UTC (14:42 IRST) -> Pre-generates Slot 2: CryptoLab (Scheduled for 16:42 IRST peak)
-    # - 15:44 UTC (19:14 IRST) -> Pre-generates Slot 3: Animals (Scheduled for 21:14 IRST peak)
-    # - 20:14 UTC (23:44 IRST) -> Pre-generates Slot 4: AI Tools (Scheduled for 03:44 IRST peak)
-    - cron: '12 2,11 * * *'
-    - cron: '44 6,15,20 * * *'
+    # 1. Quran Channel Prime Time: 15:00 IRST (11:30 UTC)
+    - cron: '30 11 * * *'
+    # 2. USA & Europe Prime Time (AI, CryptoLab, Animals): 03:30 IRST (00:00 UTC)
+    - cron: '0 0 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI anytime
 
 permissions:

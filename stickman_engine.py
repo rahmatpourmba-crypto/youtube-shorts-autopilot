@@ -208,9 +208,20 @@ def build_stickman_video(niche: str, run_count: int, out_video_path: str):
     ]
     subprocess.run(cmd_final, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    # High-CTR Viral Thumbnail Engine
+    # Thumbnail: Extracted directly from the video itself at peak moment (2.0s)
     thumb_path = out_dir / "thumbnail.jpg"
-    build_viral_stickman_thumbnail(ep, niche, thumb_path, brand_label)
+    cmd_thumb = [
+        FFMPEG_EXE, "-y",
+        "-ss", "00:00:02.000",
+        "-i", str(out_video_path),
+        "-vframes", "1",
+        "-q:v", "2",
+        str(thumb_path)
+    ]
+    subprocess.run(cmd_thumb, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if not thumb_path.exists() or thumb_path.stat().st_size == 0:
+        src_thumb = out_dir / "scene_1.jpg" if (out_dir / "scene_1.jpg").exists() else out_dir / "scene_0.jpg"
+        shutil.copy2(src_thumb, thumb_path)
 
     return {
         "video": str(out_video_path),
