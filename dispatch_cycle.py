@@ -159,6 +159,13 @@ def main():
     run_dir = OUTPUT_BASE / today_str
     run_dir.mkdir(parents=True, exist_ok=True)
 
+    # 0. RUN AUTONOMOUS GROWTH AUDITOR & FEEDBACK LOOP
+    try:
+        from autonomous_growth_auditor import audit_and_optimize_all_channels
+        audit_and_optimize_all_channels()
+    except Exception as e:
+        print(f"[Growth Brain Note]: {e}")
+
     # Check CLI arguments for manual override
     target_channel = None
     for arg in sys.argv[1:]:

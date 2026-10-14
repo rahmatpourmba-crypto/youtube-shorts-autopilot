@@ -1,0 +1,96 @@
+{
+  "last_audit_timestamp": "2026-10-14 22:58:54",
+  "total_audits_performed": 1,
+  "monetization_health": {
+    "quran": {
+      "status": "healthy",
+      "claims": 0,
+      "last_checked": "2026-10-14 22:58:54"
+    },
+    "ai": {
+      "status": "healthy",
+      "claims": 0,
+      "last_checked": "2026-10-14 22:58:54"
+    },
+    "polygon": {
+      "status": "healthy",
+      "claims": 0,
+      "last_checked": "2026-10-14 22:58:54"
+    },
+    "animals": {
+      "status": "healthy",
+      "claims": 0,
+      "last_checked": "2026-10-14 22:58:54"
+    }
+  },
+  "winning_topics": {
+    "quran": [
+      "دجال",
+      "علامات الساعة",
+      "تلاوة خاشعة",
+      "راحة نفسية",
+      "تميم الداري",
+      "trending",
+      "تلاوة"
+    ],
+    "ai": [
+      "ai takes over",
+      "robot",
+      "programmer bug",
+      "code breaks",
+      "autonomous ai",
+      "یەکەمین",
+      "نیشانەی",
+      "quran",
+      "recitation"
+    ],
+    "animals": [
+      "crow memory",
+      "predator survival",
+      "lion",
+      "honey badger",
+      "dinosaur escape",
+      "messed",
+      "مرگبار",
+      "اعماق",
+      "deadly",
+      "clash",
+      "crazy",
+      "facts",
+      "about"
+    ],
+    "cryptolab": [
+      "trader pain",
+      "buy the dip",
+      "leverage regret",
+      "polymint token",
+      "liquidation"
+    ],
+    "polygon": []
+  },
+  "underperforming_topics": {
+    "quran": [
+      "نفسية",
+      "كروما",
+      "حالات",
+      "القران",
+      "الكريم"
+    ],
+    "ai": [
+      "weeks",
+      "gemini",
+      "generated"
+    ],
+    "animals": [
+      "funy#funy"
+    ],
+    "cryptolab": [],
+    "polygon": [
+      "instant",
+      "karma",
+      "عملتك",
+      "اختصاصی"
+    ]
+  },
+  "performance_history": {}
+}
