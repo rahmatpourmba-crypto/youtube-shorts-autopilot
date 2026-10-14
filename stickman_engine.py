@@ -208,10 +208,9 @@ def build_stickman_video(niche: str, run_count: int, out_video_path: str):
     ]
     subprocess.run(cmd_final, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    # Generate Thumbnail
+    # High-CTR Viral Thumbnail Engine
     thumb_path = out_dir / "thumbnail.jpg"
-    src_thumb = out_dir / "scene_1.jpg" if (out_dir / "scene_1.jpg").exists() else out_dir / "scene_0.jpg"
-    shutil.copy2(src_thumb, thumb_path)
+    build_viral_stickman_thumbnail(ep, niche, thumb_path, brand_label)
 
     return {
         "video": str(out_video_path),
@@ -220,3 +219,82 @@ def build_stickman_video(niche: str, run_count: int, out_video_path: str):
         "description": ep["voice"] + "\n\nOfficial Web3 Hub: https://ploymint.polyganfactorytoken.workers.dev #Shorts #Viral",
         "tags": [niche, "stickman", "shorts", "viral", "2026"]
     }
+
+def build_viral_stickman_thumbnail(ep, niche, out_path, brand_label):
+    """
+    HIGH-CTR VIRAL SHORTS THUMBNAIL ENGINE:
+    - 12px Neon Edge Frame (Instant eye catch in YouTube mobile feed)
+    - Radial Spotlight Glow behind hero stickman
+    - Expressive 2.3x Hero Stickman
+    - Red Alert/Exclamation badge
+    - 3D Drop-Shadowed Shock Hook Typography
+    """
+    W, H = 1080, 1920
+    img = Image.new("RGB", (W, H), (10, 12, 22))
+    draw = ImageDraw.Draw(img)
+
+    # 1. Background grid with cyber glow
+    grid_color = (24, 30, 48)
+    for x in range(0, W, 70):
+        draw.line([(x, 0), (x, H)], fill=grid_color, width=1)
+    for y in range(0, H, 70):
+        draw.line([(0, y), (W, y)], fill=grid_color, width=1)
+
+    # 2. Glowing radial spotlight behind stickman
+    for r in range(400, 100, -25):
+        alpha_intensity = int(18 * (1 - r / 400))
+        glow_color = (15 + alpha_intensity, 25 + alpha_intensity * 2, 45 + alpha_intensity * 3)
+        draw.ellipse([540 - r, 720 - r, 540 + r, 720 + r], fill=glow_color)
+
+    # 3. Outer Neon Border Frame
+    border_color = CYAN_NEON if niche == "ai" else (GOLD_TEXT if niche == "cryptolab" else (255, 60, 60))
+    for b in range(12):
+        draw.rectangle([b, b, W - b - 1, H - b - 1], outline=border_color, width=1)
+
+    # 4. Top Shock Alert Pill / Header
+    draw.rounded_rectangle([(50, 80), (W - 50, 240)], radius=35, fill=(20, 24, 42), outline=border_color, width=6)
+    f_hook = get_font(50)
+    draw.text((W // 2, 160), ep.get("hook", "SHOCKING TRUTH! ⚠️"), font=f_hook, fill=border_color, anchor="mm")
+
+    # 5. Stickman Hero
+    hero_cfg = ep["scenes"][1] if len(ep["scenes"]) > 1 else ep["scenes"][0]
+    draw_stickman(
+        draw,
+        center_x=540,
+        center_y=720,
+        scale=2.3,
+        mood=hero_cfg.get("mood", "happy"),
+        arms=hero_cfg.get("arms", "celebrate"),
+        props=hero_cfg.get("props", "laptop" if niche in ["ai", "cryptolab"] else "none")
+    )
+
+    # 6. High-Contrast Red Warning Alert Circle near stickman
+    draw.ellipse([690, 510, 790, 610], fill=(230, 30, 30), outline=(255, 255, 255), width=5)
+    f_excl = get_font(68)
+    draw.text((740, 555), "!", font=f_excl, fill=(255, 255, 255), anchor="mm")
+
+    # 7. Giant Punchy Bottom Card with 3D Drop Shadow
+    card_top = 1380
+    card_bottom = 1750
+    # Shadow
+    draw.rounded_rectangle([(46, card_top + 10), (W - 46, card_bottom + 10)], radius=40, fill=(0, 0, 0))
+    # Main Card
+    draw.rounded_rectangle([(50, card_top), (W - 50, card_bottom)], radius=40, fill=(18, 22, 38), outline=GOLD_TEXT, width=5)
+
+    # Big Title with shadow
+    title_text = hero_cfg.get("title", "DON'T MISS THIS!")
+    f_title = get_font(56)
+    draw.text((W // 2 + 3, card_top + 100 + 3), title_text, font=f_title, fill=(0, 0, 0), anchor="mm")
+    draw.text((W // 2, card_top + 100), title_text, font=f_title, fill=(255, 255, 255), anchor="mm")
+
+    # Subtitle
+    sub_text = hero_cfg.get("sub", "The 1% Secret Revealed 💎")
+    f_sub = get_font(42)
+    draw.text((W // 2, card_top + 220), sub_text, font=f_sub, fill=GOLD_TEXT, anchor="mm")
+
+    # Bottom Brand Bar
+    f_brand = get_font(34)
+    draw.text((W // 2, 1840), brand_label, font=f_brand, fill=(140, 170, 220), anchor="mm")
+
+    img.save(out_path, quality=98)
+    return str(out_path)
