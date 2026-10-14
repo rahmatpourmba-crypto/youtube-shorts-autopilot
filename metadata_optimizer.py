@@ -118,10 +118,14 @@ PREMIUM_METADATA_CONFIG = {
         "luxury_badge": "CREATE TOKEN NO CODE! 🚀💎",
         "badge_color": (255, 215, 0),   # Bright Liquid Gold
         "badge_bg": (28, 12, 48),       # Deep Polygon Obsidian Violet
-        "hashtags": ["#shorts", "#crypto", "#polygon", "#web3", "#blockchain", "#token", "#polymint"],
-        "description_template": "",
-        "tags": ["Crypto", "Polygon", "Token", "PolyMint", "Web3", "Blockchain", "ERC20", "Shorts"],
-        "engagement_comment": "🚀 What name would you give to your own crypto token? Drop it below! 👇💎"
+        "description_template": (
+            "🚀 Experience the future of decentralized Web3 tokenization on Polygon!\n\n"
+            "💎 Official PolyMint Token Factory Platform: https://ploymint.polyganfactorytoken.workers.dev\n\n"
+            "🔥 Subscribe for daily crypto humor, Web3 tools, and Polygon trading insights!\n\n"
+            "#Crypto #Polygon #PolyMint #Web3 #Bitcoin #Ethereum #Trading #Shorts #Viral"
+        ),
+        "tags": ["Crypto", "Polygon", "Token", "PolyMint", "Web3", "Blockchain", "ERC20", "Trading", "Shorts"],
+        "engagement_comment": "🚀 Have you ever created your own crypto token? Drop your thoughts below! 👇💎"
     }
 }
 

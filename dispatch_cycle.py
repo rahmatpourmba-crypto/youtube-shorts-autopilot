@@ -59,8 +59,8 @@ def run_quran_channel(run_dir: Path, run_count: int):
 
 def run_cryptolab_channel(run_dir: Path, run_count: int):
     """
-    03:30 IRST (8:00 PM NY / 5:00 PM CA) USA & Europe Peak Window:
-    Alternating PolyMint multilingual promotion vs Stickman financial psychology
+    03:30 IRST (USA/Europe Peak):
+    Alternating PolyMint multilingual promotion vs Viral Trending Crypto/Trading Stickman Animation
     """
     print("\n[DISPATCH - CRYPTOLAB] 03:30 IRST (USA/Europe Peak): Web3 Wealth & PolyMint...")
     if run_count % 2 == 0:
@@ -71,64 +71,70 @@ def run_cryptolab_channel(run_dir: Path, run_count: int):
         except Exception as e:
             print(f"  [CryptoLab Promo Warning] {e}")
     else:
-        print("  -> Channel Mode: 100% Original Stickman Financial Psychology Episode 🎭📈")
-        from stickman_engine import build_stickman_video
-        from youtube_uploader import upload_short
-        cl_dir = run_dir / "cryptolab_stickman"
-        cl_video = cl_dir / "stickman_crypto.mp4"
-        prod = build_stickman_video("cryptolab", run_count=run_count, out_video_path=cl_video)
-        upload_short(
+        print("  -> Channel Mode: Viral Trending Crypto/Trading Stickman Animation 🎭📈")
+        from run_pipeline import process_and_upload_trend
+        crypto_queries = [
+            ("crypto stickman animation funny shorts", "TRADER LIQUIDATED 😭💸"),
+            ("bitcoin trading stickman funny animation", "BUY THE DIP THEY SAID! 📉💥"),
+            ("stickman crypto millionaire animation shorts", "100X LEVERAGE REGRET 💀💎"),
+            ("trading emotional roller coaster stickman", "BULL VS BEAR MADNESS 🐂🐻")
+        ]
+        q, hook = crypto_queries[run_count % len(crypto_queries)]
+        process_and_upload_trend(
             channel_key="polygon",
-            video_path=prod["video"],
-            title=prod["title"],
-            description=prod["description"],
-            tags=prod["tags"],
+            search_query=q,
+            hook_banner=hook,
             category_id="27",
-            thumbnail_path=prod["thumbnail"],
+            run_dir=run_dir / "cryptolab_trending_stickman",
+            niche="cryptolab",
             publish_at=None
         )
 
 def run_animals_channel(run_dir: Path, run_count: int):
     """
     03:30 IRST (USA/Europe Peak):
-    Wild Kingdom 100% Stickman Mind & Nature Secrets
+    Wild Kingdom: Viral Trending Stickman vs Animals & Survival Animation
     """
-    print("\n[DISPATCH - ANIMALS] 03:30 IRST (USA/Europe Peak): Wild Kingdom Mind & Nature Secrets...")
-    from stickman_engine import build_stickman_video
-    from youtube_uploader import upload_short
-    an_dir = run_dir / "animals_stickman"
-    an_video = an_dir / "stickman_nature.mp4"
-    prod = build_stickman_video("animals", run_count=run_count, out_video_path=an_video)
-    upload_short(
+    print("\n[DISPATCH - ANIMALS] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Animals Animation...")
+    from run_pipeline import process_and_upload_trend
+    animals_queries = [
+        ("stickman vs wild animals animation shorts", "STICKMAN SURVIVAL 🦁⚠️"),
+        ("stickman animal attack funny animation shorts", "NEVER MESS WITH ANIMALS! 😱🐾"),
+        ("stickman dinosaur prehistoric survival shorts", "JURASSIC ESCAPE! 🦖🔥"),
+        ("stickman vs honey badger bear animals shorts", "NATURE'S DEADLIEST BEAST 🦡⚡")
+    ]
+    q, hook = animals_queries[run_count % len(animals_queries)]
+    process_and_upload_trend(
         channel_key="animals",
-        video_path=prod["video"],
-        title=prod["title"],
-        description=prod["description"],
-        tags=prod["tags"],
+        search_query=q,
+        hook_banner=hook,
         category_id="15",
-        thumbnail_path=prod["thumbnail"],
+        run_dir=run_dir / "animals_trending_stickman",
+        niche="animals",
         publish_at=None
     )
 
 def run_ai_channel(run_dir: Path, run_count: int):
     """
     03:30 IRST (USA/Europe Peak):
-    AI Unveiled 100% Stickman Tech in 2026
+    AI Unveiled: Viral Trending Stickman AI & Robot Animation
     """
-    print("\n[DISPATCH - AI UNVEILED] 03:30 IRST (USA/Europe Peak): Stickman Tech 2026...")
-    from stickman_engine import build_stickman_video
-    from youtube_uploader import upload_short
-    ai_dir = run_dir / "ai_stickman"
-    ai_video = ai_dir / "stickman_ai.mp4"
-    prod = build_stickman_video("ai", run_count=run_count, out_video_path=ai_video)
-    upload_short(
+    print("\n[DISPATCH - AI UNVEILED] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Tech Animation...")
+    from run_pipeline import process_and_upload_trend
+    ai_queries = [
+        ("ai stickman animation funny shorts", "AI TAKES OVER! 🤖⚡"),
+        ("robot vs stickman funny viral animation shorts", "HUMAN VS MACHINE 🦾💥"),
+        ("programmer bug fixing stickman animation shorts", "WHEN CODE BREAKS AT 3AM 💻😫"),
+        ("future technology 2026 stickman animation shorts", "FUTURE TECH GONE WRONG! 🚀🤯")
+    ]
+    q, hook = ai_queries[run_count % len(ai_queries)]
+    process_and_upload_trend(
         channel_key="ai",
-        video_path=prod["video"],
-        title=prod["title"],
-        description=prod["description"],
-        tags=prod["tags"],
+        search_query=q,
+        hook_banner=hook,
         category_id="28",
-        thumbnail_path=prod["thumbnail"],
+        run_dir=run_dir / "ai_trending_stickman",
+        niche="ai",
         publish_at=None
     )
 
