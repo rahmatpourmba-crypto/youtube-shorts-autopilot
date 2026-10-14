@@ -49,17 +49,10 @@ def main():
 
     from run_pipeline import process_and_upload_trend
 
-    # PRE-PRODUCTION ARCHITECTURE (ترندیابی و تولید پیش از موعد ۲ ساعته):
-    # If run on schedule by GitHub Actions, video is pre-generated and scheduled to publish
-    # 2 hours later at the exact Golden Peak hour.
-    is_scheduled_run = os.environ.get("GITHUB_EVENT_NAME") == "schedule"
+    # IMMEDIATE PUBLIC PUBLISHING (انتشار فوری و ۱۰۰٪ عمومی):
+    # Videos are published as PUBLIC immediately on upload so they are instantly visible in channel feeds.
     scheduled_publish_time = None
-    if is_scheduled_run:
-        scheduled_dt = utc_now + datetime.timedelta(hours=2)
-        scheduled_publish_time = scheduled_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
-        print(f"[PRE-PRODUCTION] Pre-generating video now. YouTube Scheduled Publish set for: {scheduled_publish_time} (Golden Peak Window)")
-    else:
-        print("[DIRECT EXECUTION] Manual or local execution: Publishing immediately.")
+    print("[DIRECT PUBLIC EXECUTION] Publishing immediately as PUBLIC video.")
 
     # 5-SLOT MULTI-PEAK ZERO-DOWNTIME ARCHITECTURE:
     # Slot 0: 02:12 UTC (05:42 IRST) -> Pre-generate Quran Recitation for 07:42 IRST peak
