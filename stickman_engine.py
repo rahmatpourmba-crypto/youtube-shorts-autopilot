@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import shutil
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 import imageio_ffmpeg
@@ -19,7 +20,18 @@ BG_DARK = (15, 18, 30)
 WHITE = (255, 255, 255)
 CYAN_NEON = (0, 240, 255)
 GOLD_TEXT = (255, 215, 0)
-FONT_PATH = "C:/Windows/Fonts/arialbd.ttf" if os.path.exists("C:/Windows/Fonts/arialbd.ttf") else "C:/Windows/Fonts/tahomabd.ttf"
+FONT_PATH = None
+for _fp in [
+    "C:/Windows/Fonts/arialbd.ttf",
+    "C:/Windows/Fonts/tahomabd.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+]:
+    if os.path.exists(_fp):
+        FONT_PATH = _fp
+        break
+if FONT_PATH is None:
+    FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
 def draw_stickman(draw, center_x, center_y, scale=1.0, mood="neutral", arms="down", props="none"):
     head_r = int(45 * scale)
@@ -190,7 +202,8 @@ def build_stickman_video(niche: str, run_count: int, out_video_path: str):
 
     # Generate Thumbnail
     thumb_path = out_dir / "thumbnail.jpg"
-    shutil.copy2(out_dir / "scene_1.jpg" if (out_dir / "scene_1.jpg").exists() else out_dir / "scene_0.jpg", thumb_path)
+    src_thumb = out_dir / "scene_1.jpg" if (out_dir / "scene_1.jpg").exists() else out_dir / "scene_0.jpg"
+    shutil.copy2(src_thumb, thumb_path)
 
     return {
         "video": str(out_video_path),
