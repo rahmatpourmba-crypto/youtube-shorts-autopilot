@@ -144,9 +144,9 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
         )
 
     if has_banner:
-        vf = f"{base_vf}[base_comp];[base_comp][1:v]overlay=(W-w)/2:120[outv]"
+        filter_complex_str = f"[0:v]{base_vf}[base_comp];[base_comp][1:v]overlay=(W-w)/2:120[outv]"
     else:
-        vf = f"{base_vf}[outv]"
+        filter_complex_str = f"[0:v]{base_vf}[outv]"
 
     cmd = [
         FFMPEG_EXE, "-y",
@@ -158,7 +158,7 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     if has_audio:
         af = "asetrate=44100*1.02,aresample=44100,atempo=1.05/1.02,loudnorm=I=-14:TP=-1.5:LRA=11,afade=t=out:st=20.5:d=1.5"
         cmd.extend([
-            "-vf", vf,
+            "-filter_complex", filter_complex_str,
             "-af", af,
             "-map", "[outv]",
             "-map", "0:a",
@@ -175,7 +175,7 @@ def render_300m_viral_short(input_video: str, output_video: str, hook_banner: st
     else:
         cmd.extend([
             "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
-            "-vf", vf,
+            "-filter_complex", filter_complex_str,
             "-map", "[outv]",
             "-map", "1:a" if not has_banner else "2:a",
             "-t", "22",
