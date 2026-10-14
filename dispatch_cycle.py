@@ -93,38 +93,66 @@ def main():
         )
 
     elif slot_idx == 2:
-        print("\n[DISPATCH] Executing Slot #3: CryptoLab Web3 Multilingual Release (London/NY Overlap)...")
-        try:
-            from cryptolab_multilingual import publish_next_cryptolab_language
-            publish_next_cryptolab_language(publish_at=scheduled_publish_time)
-        except Exception as e:
-            print(f"  [CryptoLab Warning] {e}")
+        print("\n[DISPATCH] Executing Slot #3: CryptoLab (Alternating PolyMint Promotion vs Stickman Wealth)...")
+        # یک‌درمیان: اگر run_count زوج باشد تبلیغ PolyMint، اگر فرد باشد انیمیشن استیک‌من ثروت
+        if run_count % 2 == 0:
+            print("  -> Channel Mode: Official PolyMint Web3 Platform Promotion 🚀")
+            try:
+                from cryptolab_multilingual import publish_next_cryptolab_language
+                publish_next_cryptolab_language(publish_at=scheduled_publish_time)
+            except Exception as e:
+                print(f"  [CryptoLab Promo Warning] {e}")
+        else:
+            print("  -> Channel Mode: 100% Original Stickman Financial Psychology Episode 🎭📈")
+            from stickman_engine import build_stickman_video
+            from youtube_uploader import upload_short
+            cl_dir = run_dir / "cryptolab_stickman"
+            cl_video = cl_dir / "stickman_crypto.mp4"
+            prod = build_stickman_video("cryptolab", run_count=run_count, out_video_path=cl_video)
+            upload_short(
+                channel_key="polygon",
+                video_path=prod["video"],
+                title=prod["title"],
+                description=prod["description"],
+                tags=prod["tags"],
+                category_id="27",
+                thumbnail_path=prod["thumbnail"],
+                publish_at=scheduled_publish_time
+            )
 
     elif slot_idx == 3:
-        print("\n[DISPATCH] Executing Slot #4: Wild Kingdom (Animal Rescue & Epic Nature)...")
-        animal_queries = ["wildlife animal rescue 4k nature", "cute dogs cats pets funny moments", "crazy animal moments nature"]
-        an_query = animal_queries[run_count % len(animal_queries)]
-        process_and_upload_trend(
+        print("\n[DISPATCH] Executing Slot #4: Wild Kingdom (100% Stickman Mind & Nature Secrets)...")
+        from stickman_engine import build_stickman_video
+        from youtube_uploader import upload_short
+        an_dir = run_dir / "animals_stickman"
+        an_video = an_dir / "stickman_nature.mp4"
+        prod = build_stickman_video("animals", run_count=run_count, out_video_path=an_video)
+        upload_short(
             channel_key="animals",
-            search_query=an_query,
-            hook_banner="WAIT TILL THE END! 🐾❤️",
+            video_path=prod["video"],
+            title=prod["title"],
+            description=prod["description"],
+            tags=prod["tags"],
             category_id="15",
-            run_dir=run_dir / "animals_wild",
-            niche="animals",
+            thumbnail_path=prod["thumbnail"],
             publish_at=scheduled_publish_time
         )
 
     elif slot_idx == 4:
-        print("\n[DISPATCH] Executing Slot #5: AI Tools Channel (USA & Europe Tech Peak)...")
-        ai_queries = ["trending insane AI tools tech 2026", "useful AI websites shorts productivity", "mind blowing AI tech software"]
-        a_query = ai_queries[run_count % len(ai_queries)]
-        process_and_upload_trend(
+        print("\n[DISPATCH] Executing Slot #5: AI Tools Channel (100% Stickman Tech in 2026)...")
+        from stickman_engine import build_stickman_video
+        from youtube_uploader import upload_short
+        ai_dir = run_dir / "ai_stickman"
+        ai_video = ai_dir / "stickman_ai.mp4"
+        prod = build_stickman_video("ai", run_count=run_count, out_video_path=ai_video)
+        upload_short(
             channel_key="ai",
-            search_query=a_query,
-            hook_banner="INSANE AI TOOL! 🤖⚡",
+            video_path=prod["video"],
+            title=prod["title"],
+            description=prod["description"],
+            tags=prod["tags"],
             category_id="28",
-            run_dir=run_dir / "ai_tools",
-            niche="ai",
+            thumbnail_path=prod["thumbnail"],
             publish_at=scheduled_publish_time
         )
 
