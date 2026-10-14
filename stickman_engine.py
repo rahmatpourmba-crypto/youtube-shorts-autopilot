@@ -20,18 +20,26 @@ BG_DARK = (15, 18, 30)
 WHITE = (255, 255, 255)
 CYAN_NEON = (0, 240, 255)
 GOLD_TEXT = (255, 215, 0)
-FONT_PATH = None
-for _fp in [
+FONT_CANDIDATES = [
     "C:/Windows/Fonts/arialbd.ttf",
     "C:/Windows/Fonts/tahomabd.ttf",
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
     "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
-]:
-    if os.path.exists(_fp):
-        FONT_PATH = _fp
-        break
-if FONT_PATH is None:
-    FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+    "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf"
+]
+FONT_PATH = next((p for p in FONT_CANDIDATES if os.path.exists(p)), None)
+
+def get_font(size):
+    if FONT_PATH:
+        try:
+            return ImageFont.truetype(FONT_PATH, size)
+        except Exception:
+            pass
+    try:
+        return ImageFont.load_default(size=size)
+    except Exception:
+        return ImageFont.load_default()
 
 def draw_stickman(draw, center_x, center_y, scale=1.0, mood="neutral", arms="down", props="none"):
     head_r = int(45 * scale)
@@ -107,7 +115,7 @@ def render_stickman_frame(hook, main_title, subtitle, stickman_cfg, out_path, br
         draw.line([(0, y), (W, y)], fill=(22, 28, 45), width=1)
 
     draw.rounded_rectangle([(60, 90), (W-60, 230)], radius=30, fill=(25, 32, 58), outline=CYAN_NEON, width=4)
-    f_hook = ImageFont.truetype(FONT_PATH, 44)
+    f_hook = get_font(44)
     draw.text((W//2, 160), hook, font=f_hook, fill=CYAN_NEON, anchor="mm")
 
     draw_stickman(
@@ -121,13 +129,13 @@ def render_stickman_frame(hook, main_title, subtitle, stickman_cfg, out_path, br
     )
 
     draw.rounded_rectangle([(60, 1420), (W-60, 1720)], radius=35, fill=(22, 30, 52), outline=GOLD_TEXT, width=3)
-    f_main = ImageFont.truetype(FONT_PATH, 54)
+    f_main = get_font(54)
     draw.text((W//2, 1490), main_title, font=f_main, fill=WHITE, anchor="mm")
 
-    f_sub = ImageFont.truetype(FONT_PATH, 40)
+    f_sub = get_font(40)
     draw.text((W//2, 1610), subtitle, font=f_sub, fill=GOLD_TEXT, anchor="mm")
 
-    f_brand = ImageFont.truetype(FONT_PATH, 32)
+    f_brand = get_font(32)
     draw.text((W//2, 1820), brand_label, font=f_brand, fill=(130, 160, 210), anchor="mm")
 
     img.save(out_path, quality=95)
