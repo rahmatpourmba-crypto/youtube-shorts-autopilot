@@ -169,17 +169,25 @@ def main():
         run_animals_channel(run_dir, run_count)
     elif target_channel == "ai":
         run_ai_channel(run_dir, run_count)
+    elif target_channel == "quran_longform":
+        from documentary_remaster_pro import publish_next_quran_documentary
+        publish_next_quran_documentary()
     elif target_channel == "us_eu":
         run_cryptolab_channel(run_dir, run_count)
         run_animals_channel(run_dir, run_count)
         run_ai_channel(run_dir, run_count)
     else:
         # AUTOMATED SCHEDULE ROUTING:
-        # Window 1: 15:00 IRST (11:30 UTC): Quran Channel (triggered at 11:30 UTC)
-        # Window 2: 03:30 IRST (00:00 UTC): US/Europe Channels (triggered at 00:00 UTC)
-        if 13 <= tehran_hour <= 17:
-            print("\n[SCHEDULE MATCH] 15:00 IRST Window -> Publishing Quran Channel...")
+        # Window 1: 15:00 IRST (11:30 UTC) -> Quran Channel Daily Shorts & Reel
+        # Window 2: 20:30 IRST (17:00 UTC) -> Quran Channel Long-Form Documentary (Arabic/Persian/English)
+        # Window 3: 03:30 IRST (00:00 UTC) -> US & Europe Channels (CryptoLab, Animals, AI)
+        if 13 <= tehran_hour <= 16:
+            print("\n[SCHEDULE MATCH] 15:00 IRST Window -> Publishing Quran Channel Shorts & Reel...")
             run_quran_channel(run_dir, run_count)
+        elif 19 <= tehran_hour <= 22:
+            print("\n[SCHEDULE MATCH] 20:30 IRST Window -> Publishing Quran Long-Form Documentary...")
+            from documentary_remaster_pro import publish_next_quran_documentary
+            publish_next_quran_documentary()
         elif tehran_hour in [23, 0, 1, 2, 3, 4, 5]:
             print("\n[SCHEDULE MATCH] 03:30 IRST Window (USA & Europe Peak) -> Publishing CryptoLab, Animals, and AI Channels...")
             run_cryptolab_channel(run_dir, run_count)
