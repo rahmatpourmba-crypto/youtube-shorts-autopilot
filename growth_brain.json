@@ -1,30 +1,49 @@
 {
-  "last_audit_timestamp": "2026-10-14 22:58:54",
-  "total_audits_performed": 1,
+  "last_audit_timestamp": "2026-10-14 23:23:12",
+  "total_audits_performed": 2,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "last_checked": "2026-10-14 22:58:54"
+      "subscribers": 3910,
+      "views": 202864,
+      "sub_progress_percent": 100.0,
+      "last_checked": "2026-10-14 23:23:12"
     },
     "ai": {
       "status": "healthy",
       "claims": 0,
-      "last_checked": "2026-10-14 22:58:54"
+      "subscribers": 388,
+      "views": 1210,
+      "sub_progress_percent": 38.8,
+      "last_checked": "2026-10-14 23:23:12"
     },
     "polygon": {
       "status": "healthy",
       "claims": 0,
-      "last_checked": "2026-10-14 22:58:54"
+      "subscribers": 1,
+      "views": 121,
+      "sub_progress_percent": 0.1,
+      "last_checked": "2026-10-14 23:23:12"
     },
     "animals": {
       "status": "healthy",
       "claims": 0,
-      "last_checked": "2026-10-14 22:58:54"
+      "subscribers": 7,
+      "views": 3845,
+      "sub_progress_percent": 0.7,
+      "last_checked": "2026-10-14 23:23:12"
     }
   },
   "winning_topics": {
     "quran": [
+      "سوداء",
+      "شاشه",
+      "كروما",
+      "أجمل",
+      "about",
+      "truth",
+      "shocking",
       "دجال",
       "علامات الساعة",
       "تلاوة خاشعة",
@@ -34,6 +53,14 @@
       "تلاوة"
     ],
     "ai": [
+      "this",
+      "ڕۆژی",
+      "signs",
+      "great",
+      "smoke",
+      "save",
+      "that",
+      "websites",
       "ai takes over",
       "robot",
       "programmer bug",
@@ -45,6 +72,12 @@
       "recitation"
     ],
     "animals": [
+      "catlovers",
+      "prettycat",
+      "viral",
+      "نبرد",
+      "crow",
+      "with",
       "crow memory",
       "predator survival",
       "lion",
@@ -66,12 +99,20 @@
       "polymint token",
       "liquidation"
     ],
-    "polygon": []
+    "polygon": [
+      "your",
+      "create",
+      "خودت",
+      "اختصاصی",
+      "توکن",
+      "token",
+      "propio",
+      "¡crea"
+    ]
   },
   "underperforming_topics": {
     "quran": [
       "نفسية",
-      "كروما",
       "حالات",
       "القران",
       "الكريم"
@@ -82,7 +123,9 @@
       "generated"
     ],
     "animals": [
-      "funy#funy"
+      "funy#funy",
+      "catlovers",
+      "ronaldo"
     ],
     "cryptolab": [],
     "polygon": [
@@ -92,5 +135,103 @@
       "اختصاصی"
     ]
   },
-  "performance_history": {}
+  "performance_history": {},
+  "viral_spinoffs": {
+    "quran": [
+      "stickman سوداء survival",
+      "truth about سوداء",
+      "سوداء high velocity shorts",
+      "stickman شاشه survival",
+      "truth about شاشه",
+      "شاشه high velocity shorts",
+      "stickman كروما survival",
+      "truth about كروما",
+      "كروما high velocity shorts",
+      "stickman أجمل survival",
+      "truth about أجمل",
+      "أجمل high velocity shorts",
+      "stickman about survival",
+      "truth about about",
+      "about high velocity shorts",
+      "stickman truth survival",
+      "truth about truth",
+      "truth high velocity shorts",
+      "stickman shocking survival",
+      "truth about shocking",
+      "shocking high velocity shorts"
+    ],
+    "ai": [
+      "stickman this survival",
+      "truth about this",
+      "this high velocity shorts",
+      "stickman ڕۆژی survival",
+      "truth about ڕۆژی",
+      "ڕۆژی high velocity shorts",
+      "stickman signs survival",
+      "truth about signs",
+      "signs high velocity shorts",
+      "stickman great survival",
+      "truth about great",
+      "great high velocity shorts",
+      "stickman smoke survival",
+      "truth about smoke",
+      "smoke high velocity shorts",
+      "stickman save survival",
+      "truth about save",
+      "save high velocity shorts",
+      "stickman that survival",
+      "truth about that",
+      "that high velocity shorts",
+      "stickman websites survival",
+      "truth about websites",
+      "websites high velocity shorts"
+    ],
+    "polygon": [
+      "stickman your survival",
+      "truth about your",
+      "your high velocity shorts",
+      "stickman create survival",
+      "truth about create",
+      "create high velocity shorts",
+      "stickman خودت survival",
+      "truth about خودت",
+      "خودت high velocity shorts",
+      "stickman اختصاصی survival",
+      "truth about اختصاصی",
+      "اختصاصی high velocity shorts",
+      "stickman توکن survival",
+      "truth about توکن",
+      "توکن high velocity shorts",
+      "stickman token survival",
+      "truth about token",
+      "token high velocity shorts",
+      "stickman propio survival",
+      "truth about propio",
+      "propio high velocity shorts",
+      "stickman ¡crea survival",
+      "truth about ¡crea",
+      "¡crea high velocity shorts"
+    ],
+    "animals": [
+      "stickman catlovers survival",
+      "truth about catlovers",
+      "catlovers high velocity shorts",
+      "stickman prettycat survival",
+      "truth about prettycat",
+      "prettycat high velocity shorts",
+      "stickman viral survival",
+      "truth about viral",
+      "viral high velocity shorts",
+      "stickman نبرد survival",
+      "truth about نبرد",
+      "نبرد high velocity shorts",
+      "black bird survival",
+      "crow traps cat stickman",
+      "crow memory face recognition",
+      "raven intelligence 200 iq",
+      "stickman with survival",
+      "truth about with",
+      "with high velocity shorts"
+    ]
+  }
 }

@@ -33,36 +33,27 @@ def run_quran_channel(run_dir: Path, run_count: int):
     Dedicated to Quran Channel (تلاوت‌های خاشعه، آرامش‌بخش، حکمت‌های قرآنی) + Instagram Reel
     """
     from run_pipeline import process_and_upload_trend
-    quran_type = run_count % 2
-    if quran_type == 0:
-        print("\n[DISPATCH - QURAN] 15:00 IRST Window: High-Emotion Quran Recitation & Instagram Reel...")
-        process_and_upload_trend(
-            channel_key="quran",
-            search_query="تلاوة خاشعة تريح القلب قرآن كريم",
-            hook_banner="تلاوة خاشعة تريح القلوب 🕊️",
-            category_id="22",
-            run_dir=run_dir / "quran_recitation",
-            niche="quran",
-            publish_at=None
-        )
-    else:
-        print("\n[DISPATCH - QURAN] 15:00 IRST Window: Quran Wisdom & Towards Eternity Style...")
-        process_and_upload_trend(
-            channel_key="quran",
-            search_query="Dajjal signs coming true end times towards eternity shorts",
-            hook_banner="SIGNS COMING TRUE ⚠️",
-            category_id="22",
-            run_dir=run_dir / "quran_wisdom",
-            niche="islamic_mystery",
-            publish_at=None
-        )
+    from autonomous_growth_auditor import get_mega_query_for_channel
+    
+    quran_niche = "quran" if (run_count % 2 == 0) else "islamic_mystery"
+    q, hook = get_mega_query_for_channel(quran_niche, run_count)
+    print(f"\n[DISPATCH - QURAN 165-ENGINE] Window 15:00 IRST: '{q}' | Banner: '{hook}'")
+    process_and_upload_trend(
+        channel_key="quran",
+        search_query=q,
+        hook_banner=hook,
+        category_id="22",
+        run_dir=run_dir / f"quran_{quran_niche}",
+        niche=quran_niche,
+        publish_at=None
+    )
 
 def run_cryptolab_channel(run_dir: Path, run_count: int):
     """
     03:30 IRST (USA/Europe Peak):
     Alternating PolyMint multilingual promotion vs Viral Trending Crypto/Trading Stickman Animation
     """
-    print("\n[DISPATCH - CRYPTOLAB] 03:30 IRST (USA/Europe Peak): Web3 Wealth & PolyMint...")
+    print("\n[DISPATCH - CRYPTOLAB 165-ENGINE] 03:30 IRST (USA/Europe Peak): Web3 Wealth & PolyMint...")
     if run_count % 2 == 0:
         print("  -> Channel Mode: Official PolyMint Web3 Platform Promotion 🚀")
         try:
@@ -73,13 +64,9 @@ def run_cryptolab_channel(run_dir: Path, run_count: int):
     else:
         print("  -> Channel Mode: Viral Trending Crypto/Trading Stickman Animation 🎭📈")
         from run_pipeline import process_and_upload_trend
-        crypto_queries = [
-            ("crypto stickman animation funny shorts", "TRADER LIQUIDATED 😭💸"),
-            ("bitcoin trading stickman funny animation", "BUY THE DIP THEY SAID! 📉💥"),
-            ("stickman crypto millionaire animation shorts", "100X LEVERAGE REGRET 💀💎"),
-            ("trading emotional roller coaster stickman", "BULL VS BEAR MADNESS 🐂🐻")
-        ]
-        q, hook = crypto_queries[run_count % len(crypto_queries)]
+        from autonomous_growth_auditor import get_mega_query_for_channel
+        q, hook = get_mega_query_for_channel("cryptolab", run_count)
+        print(f"  -> 165-Engine Query: '{q}' | Banner: '{hook}'")
         process_and_upload_trend(
             channel_key="polygon",
             search_query=q,
@@ -95,15 +82,11 @@ def run_animals_channel(run_dir: Path, run_count: int):
     03:30 IRST (USA/Europe Peak):
     Wild Kingdom: Viral Trending Stickman vs Animals & Survival Animation
     """
-    print("\n[DISPATCH - ANIMALS] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Animals Animation...")
+    print("\n[DISPATCH - ANIMALS 165-ENGINE] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Animals Animation...")
     from run_pipeline import process_and_upload_trend
-    animals_queries = [
-        ("stickman vs wild animals animation shorts", "STICKMAN SURVIVAL 🦁⚠️"),
-        ("stickman animal attack funny animation shorts", "NEVER MESS WITH ANIMALS! 😱🐾"),
-        ("stickman dinosaur prehistoric survival shorts", "JURASSIC ESCAPE! 🦖🔥"),
-        ("stickman vs honey badger bear animals shorts", "NATURE'S DEADLIEST BEAST 🦡⚡")
-    ]
-    q, hook = animals_queries[run_count % len(animals_queries)]
+    from autonomous_growth_auditor import get_mega_query_for_channel
+    q, hook = get_mega_query_for_channel("animals", run_count)
+    print(f"  -> 165-Engine Query: '{q}' | Banner: '{hook}'")
     process_and_upload_trend(
         channel_key="animals",
         search_query=q,
@@ -119,15 +102,11 @@ def run_ai_channel(run_dir: Path, run_count: int):
     03:30 IRST (USA/Europe Peak):
     AI Unveiled: Viral Trending Stickman AI & Robot Animation
     """
-    print("\n[DISPATCH - AI UNVEILED] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Tech Animation...")
+    print("\n[DISPATCH - AI UNVEILED 165-ENGINE] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Tech Animation...")
     from run_pipeline import process_and_upload_trend
-    ai_queries = [
-        ("ai stickman animation funny shorts", "AI TAKES OVER! 🤖⚡"),
-        ("robot vs stickman funny viral animation shorts", "HUMAN VS MACHINE 🦾💥"),
-        ("programmer bug fixing stickman animation shorts", "WHEN CODE BREAKS AT 3AM 💻😫"),
-        ("future technology 2026 stickman animation shorts", "FUTURE TECH GONE WRONG! 🚀🤯")
-    ]
-    q, hook = ai_queries[run_count % len(ai_queries)]
+    from autonomous_growth_auditor import get_mega_query_for_channel
+    q, hook = get_mega_query_for_channel("ai", run_count)
+    print(f"  -> 165-Engine Query: '{q}' | Banner: '{hook}'")
     process_and_upload_trend(
         channel_key="ai",
         search_query=q,

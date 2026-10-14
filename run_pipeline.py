@@ -56,9 +56,9 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
         niche=target_niche
     )
     
-    # Premium Luxury Metadata Optimization
-    from metadata_optimizer import get_optimized_metadata
-    opt = get_optimized_metadata(niche=target_niche, raw_title=data.get("title"))
+    # 165 MEGA-ULTRA PROMPT & ALGORITHMIC METADATA OPTIMIZATION
+    from autonomous_growth_auditor import get_mega_metadata_for_upload
+    opt = get_mega_metadata_for_upload(niche=target_niche, raw_title=data.get("title"))
     title = opt["title"]
     desc = opt["description"]
     tags = opt["tags"]

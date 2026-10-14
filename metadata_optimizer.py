@@ -329,18 +329,36 @@ def apply_mega_prompt_ctr_engineering(raw_title: str, niche: str) -> str:
 
 def get_optimized_metadata(niche: str, raw_title: str = None):
     """
-    Returns high-CTR, luxury title, description, tags, and hashtags engineered with 21 Mega-Prompts.
+    Returns high-CTR, luxury title, description, tags, and hashtags engineered with 165 Mega-Ultra Prompts.
     """
-    config = PREMIUM_METADATA_CONFIG.get(niche, PREMIUM_METADATA_CONFIG["animals"])
-    
-    # 21 Mega-Prompt Driven High-CTR Title
-    title = apply_mega_prompt_ctr_engineering(raw_title, niche)
-        
-    return {
-        "title": title,
-        "description": config["description_template"],
-        "tags": config["tags"],
-        "hashtags": config["hashtags"],
-        "badge_text": config["luxury_badge"],
-        "engagement_comment": config.get("engagement_comment")
-    }
+    try:
+        from mega_prompt_youtube_engine import (
+            generate_165_mega_title,
+            generate_165_mega_description,
+            generate_165_algorithmic_tags,
+            generate_165_pinned_comment
+        )
+        title = generate_165_mega_title(niche, raw_title=raw_title)
+        desc = generate_165_mega_description(niche)
+        tags = generate_165_algorithmic_tags(niche)
+        comment = generate_165_pinned_comment(niche)
+        config = PREMIUM_METADATA_CONFIG.get(niche, PREMIUM_METADATA_CONFIG["animals"])
+        return {
+            "title": title,
+            "description": desc,
+            "tags": tags,
+            "hashtags": config.get("hashtags", ["#shorts", "#viral"]),
+            "badge_text": config.get("luxury_badge", "VIRAL SHORTS ⚡"),
+            "engagement_comment": comment
+        }
+    except Exception:
+        config = PREMIUM_METADATA_CONFIG.get(niche, PREMIUM_METADATA_CONFIG["animals"])
+        title = apply_mega_prompt_ctr_engineering(raw_title, niche)
+        return {
+            "title": title,
+            "description": config["description_template"],
+            "tags": config["tags"],
+            "hashtags": config["hashtags"],
+            "badge_text": config["luxury_badge"],
+            "engagement_comment": config.get("engagement_comment")
+        }
