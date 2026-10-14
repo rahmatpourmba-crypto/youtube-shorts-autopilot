@@ -104,6 +104,38 @@ def synthesize_viral_spinoffs(keyword: str, niche: str) -> list:
             return v
     return [f"{keyword} high velocity shorts", f"truth about {keyword}", f"stickman {keyword} survival"]
 
+def revitalize_stagnant_video(yt, video_id: str, old_title: str, niche: str) -> bool:
+    """
+    Applies Protocols T001-T025, T035, T158 & T165:
+    Automatically updates the title and tags of a stagnant video with an alternative
+    high-CTR Curiosity-Gap Neuro-Hook to trigger YouTube algorithm re-indexing!
+    """
+    try:
+        from mega_prompt_youtube_engine import generate_165_mega_title, generate_165_algorithmic_tags
+        new_title = generate_165_mega_title(niche, raw_title=old_title)
+        tags = generate_165_algorithmic_tags(niche)
+        
+        v_res = yt.videos().list(part="snippet", id=video_id).execute()
+        if not v_res.get("items"):
+            return False
+            
+        snippet = v_res["items"][0]["snippet"]
+        snippet["title"] = new_title
+        snippet["tags"] = tags
+        
+        yt.videos().update(
+            part="snippet",
+            body={
+                "id": video_id,
+                "snippet": snippet
+            }
+        ).execute()
+        print(f"  [🔄 ALGORITHM A/B RE-INDEX] Revitalized '{old_title[:28]}' -> '{new_title[:32]}'")
+        return True
+    except Exception as e:
+        print(f"  [Re-index Note for {video_id}]: {e}")
+        return False
+
 def audit_and_optimize_all_channels():
     """
     Executes the 165 Mega-Ultra Algorithmic Audit:
@@ -206,11 +238,18 @@ def audit_and_optimize_all_channels():
                     if words and words[0] in ch_under:
                         ch_under.remove(words[0])
                         
-                elif views < 3 and score < 5:
+                elif views < 10 and score < 12:
                     # Stagnant pattern; suppress from active seed generation
                     for w in words[:2]:
                         if w not in ch_under and len(w) > 4 and w not in ch_winning:
                             ch_under.append(w)
+                    
+                    # Protocol T158 & T165: Automated A/B Revitalization & Re-indexing
+                    rev_dict = brain.setdefault("revitalized_videos", {})
+                    if vid_id not in rev_dict:
+                        revitalized = revitalize_stagnant_video(yt, vid_id, title, ch_key)
+                        if revitalized:
+                            rev_dict[vid_id] = {"timestamp": now_str, "old_title": title}
                             
             # Update Brain with learned intelligence
             brain["winning_topics"][ch_key] = ch_winning[:20]
