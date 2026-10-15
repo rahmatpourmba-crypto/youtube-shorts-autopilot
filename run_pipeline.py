@@ -126,8 +126,51 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
 
     return upload_res
 
+def process_and_upload_money_printer_turbo(channel_key: str, category_id: str, run_dir: Path, niche: str = None, language: str = "en"):
+    """
+    Executes 100% automated MoneyPrinter Turbo Short generation with Edge-TTS, Hormozi subtitles, and upload.
+    """
+    ch_info = CHANNELS[channel_key]
+    out_dir = run_dir / f"turbo_{channel_key}"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    target_niche = niche or channel_key
 
+    from money_printer_turbo_engine import render_money_printer_turbo_short
+    turbo_data = render_money_printer_turbo_short(
+        niche=target_niche,
+        output_dir=out_dir,
+        language=language
+    )
 
+    title = turbo_data["title"]
+    desc = turbo_data["description"]
+    tags = turbo_data["tags"]
+
+    print(f"\n[{channel_key.upper()}] 3. Uploading MoneyPrinter Turbo Short to {ch_info['name']}...")
+    upload_res = None
+    if ch_info["token_file"].exists():
+        upload_res = upload_short(
+            channel_key=channel_key,
+            video_path=turbo_data["video"],
+            title=title,
+            description=desc,
+            tags=tags,
+            category_id=category_id,
+            thumbnail_path=turbo_data["thumbnail"]
+        )
+    else:
+        print(f"  [Notice] Token not found for {channel_key}. Output saved at {turbo_data['video']}.")
+
+    if channel_key == "quran" and upload_res:
+        try:
+            print(f"[{channel_key.upper()}] 4. Cross-posting Turbo Reel to Instagram (@abdol_basit_rahmatpour)...")
+            from instagram_publisher import publish_instagram_reel, build_bilingual_quran_caption
+            ig_caption = build_bilingual_quran_caption(base_title=title)
+            publish_instagram_reel(video_path=turbo_data["video"], caption=ig_caption, niche="quran", thumbnail_path=turbo_data["thumbnail"])
+        except Exception as e:
+            print(f"  [Instagram Warning] Cross-posting failed: {e}")
+
+    return upload_res
 
 def main():
     state = load_state()
