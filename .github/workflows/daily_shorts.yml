@@ -8,7 +8,21 @@ on:
     - cron: '0 17 * * *'
     # 3. USA & Europe Prime Time (AI, CryptoLab, Animals): 03:30 IRST (00:00 UTC)
     - cron: '0 0 * * *'
-  workflow_dispatch: # Allows manual trigger from GitHub UI anytime
+  workflow_dispatch:
+    inputs:
+      target_channel:
+        description: 'Target Channel to execute'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - quran
+          - quran_longform
+          - us_eu
+          - cryptolab
+          - animals
+          - ai
 
 permissions:
   contents: write
@@ -37,12 +51,25 @@ jobs:
 
       - name: Execute 5-Hour Round-Robin Active Dispatcher
         run: |
-          python dispatch_cycle.py
+          TARGET="${{ github.event.inputs.target_channel || 'auto' }}"
+          SCHEDULE="${{ github.event.schedule }}"
+          echo "Target input: '$TARGET' | Triggered Schedule: '$SCHEDULE'"
+          if [ "$TARGET" != "auto" ]; then
+            python dispatch_cycle.py --channel="$TARGET"
+          elif [ "$SCHEDULE" = "30 11 * * *" ]; then
+            python dispatch_cycle.py --channel=quran
+          elif [ "$SCHEDULE" = "0 17 * * *" ]; then
+            python dispatch_cycle.py --channel=quran_longform
+          elif [ "$SCHEDULE" = "0 0 * * *" ]; then
+            python dispatch_cycle.py --all-us-eu
+          else
+            python dispatch_cycle.py
+          fi
 
       - name: Commit and Push Updated State (Keepalive Activity)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add state.json growth_brain.json
+          git add state.json growth_brain.json used_trends_history.json
           git commit -m "Auto-keepalive heartbeat and AI growth brain update [skip ci]" || echo "No changes to state"
           git push

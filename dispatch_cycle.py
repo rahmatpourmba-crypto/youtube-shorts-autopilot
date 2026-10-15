@@ -152,11 +152,15 @@ def main():
     for arg in sys.argv[1:]:
         if arg.startswith("--channel="):
             target_channel = arg.split("=")[1].strip()
-        elif arg == "--all-us-eu":
+        elif arg in ["--all-us-eu", "--us-eu"]:
             target_channel = "us_eu"
+
+    today_date = tehran_now.strftime("%Y-%m-%d")
+    daily_uploads = state.setdefault("daily_uploads", {})
 
     if target_channel == "quran":
         run_quran_channel(run_dir, run_count)
+        daily_uploads["quran_short"] = today_date
     elif target_channel == "cryptolab":
         run_cryptolab_channel(run_dir, run_count)
     elif target_channel == "animals":
@@ -166,27 +170,30 @@ def main():
     elif target_channel == "quran_longform":
         from documentary_remaster_pro import publish_next_quran_documentary
         publish_next_quran_documentary()
-    elif target_channel == "us_eu":
+        daily_uploads["quran_longform"] = today_date
+    elif target_channel in ["us_eu", "all_us_eu", "all-us-eu"]:
         run_cryptolab_channel(run_dir, run_count)
         run_animals_channel(run_dir, run_count)
         run_ai_channel(run_dir, run_count)
+        daily_uploads["us_eu"] = today_date
     else:
-        # AUTOMATED SCHEDULE ROUTING:
-        # Window 1: 15:00 IRST (11:30 UTC) -> Quran Channel Daily Shorts & Reel
-        # Window 2: 20:30 IRST (17:00 UTC) -> Quran Channel Long-Form Documentary (Arabic/Persian/English)
-        # Window 3: 03:30 IRST (00:00 UTC) -> US & Europe Channels (CryptoLab, Animals, AI)
-        if 13 <= tehran_hour <= 16:
-            print("\n[SCHEDULE MATCH] 15:00 IRST Window -> Publishing Quran Channel Shorts & Reel...")
+        # AUTOMATED SCHEDULE ROUTING & CATCH-UP:
+        # If today's Quran short was NOT uploaded today, prioritize it immediately!
+        if daily_uploads.get("quran_short") != today_date:
+            print(f"\n[DAILY CATCHUP] Quran Daily Short for {today_date} has not been published yet! Publishing now...")
             run_quran_channel(run_dir, run_count)
-        elif 19 <= tehran_hour <= 22:
+            daily_uploads["quran_short"] = today_date
+        elif 19 <= tehran_hour <= 22 and daily_uploads.get("quran_longform") != today_date:
             print("\n[SCHEDULE MATCH] 20:30 IRST Window -> Publishing Quran Long-Form Documentary...")
             from documentary_remaster_pro import publish_next_quran_documentary
             publish_next_quran_documentary()
-        elif tehran_hour in [23, 0, 1, 2, 3, 4, 5]:
+            daily_uploads["quran_longform"] = today_date
+        elif tehran_hour in [23, 0, 1, 2, 3, 4, 5] and daily_uploads.get("us_eu") != today_date:
             print("\n[SCHEDULE MATCH] 03:30 IRST Window (USA & Europe Peak) -> Publishing CryptoLab, Animals, and AI Channels...")
             run_cryptolab_channel(run_dir, run_count)
             run_animals_channel(run_dir, run_count)
             run_ai_channel(run_dir, run_count)
+            daily_uploads["us_eu"] = today_date
         else:
             # Fallback round-robin for intermediate hours
             slot_idx = state.get("slot_index", 0) % 4
@@ -204,6 +211,7 @@ def main():
     # Update State
     state["last_run_timestamp"] = today_str
     state["run_count"] = run_count
+    state["daily_uploads"] = daily_uploads
     save_state(state)
 
     print("\n" + "=" * 65)
