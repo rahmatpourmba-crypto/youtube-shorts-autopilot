@@ -126,7 +126,7 @@ def process_and_upload_trend(channel_key: str, search_query: str, hook_banner: s
 
     return upload_res
 
-def process_and_upload_money_printer_turbo(channel_key: str, category_id: str, run_dir: Path, niche: str = None, language: str = "en"):
+def process_and_upload_money_printer_turbo(channel_key: str, category_id: str, run_dir: Path, niche: str = None, language: str = "en", run_count: int = 1):
     """
     Executes 100% automated MoneyPrinter Turbo Short generation with Edge-TTS, Hormozi subtitles, and upload.
     """
@@ -139,7 +139,8 @@ def process_and_upload_money_printer_turbo(channel_key: str, category_id: str, r
     turbo_data = render_money_printer_turbo_short(
         niche=target_niche,
         output_dir=out_dir,
-        language=language
+        language=language,
+        run_count=run_count
     )
 
     title = turbo_data["title"]

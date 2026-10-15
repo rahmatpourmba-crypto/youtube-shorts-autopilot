@@ -82,6 +82,44 @@ TURBO_SCRIPTS = {
             ],
             "title": "The Hidden Secret of Bitcoin Whales 🐋 | Wealth Mindset",
             "tags": ["bitcoin", "crypto", "trading", "whales", "finance", "shorts"]
+        },
+        {
+            "hook": "The Death of Fiat Money And Rise of Decentralized Wealth",
+            "body": [
+                "Every major fiat currency in human history has eventually collapsed to zero through inflation.",
+                "Printing endless trillions quietly robs you of your purchasing power every single day.",
+                "Decentralized Web3 protocols change the entire game forever.",
+                "With hard-capped digital assets, mathematical scarcity replaces government manipulation.",
+                "PolyMint puts the sovereign power of minting and value ownership directly in your hands.",
+                "Do not wait until your savings dissolve. Understand decentralized assets now."
+            ],
+            "title": "The Silent Death of Fiat Money 💸 | Decentralized Wealth",
+            "tags": ["web3", "crypto", "polymint", "bitcoin", "finance", "shorts"]
+        },
+        {
+            "hook": "How To Protect Your Crypto Assets From Exchange Collapses",
+            "body": [
+                "Remember this golden rule: Not your keys, not your crypto.",
+                "Leaving your hard-earned funds on centralized exchanges exposes you to sudden bankruptcy and frozen withdrawals.",
+                "True Web3 freedom requires non-custodial self-sovereignty.",
+                "Store your assets in decentralized smart vaults and interact only with verified protocols.",
+                "PolyMint was engineered to give users full unseizable control over their tokens.",
+                "Security is not an option in Web3. It is your ultimate foundation."
+            ],
+            "title": "How to Protect Your Crypto From Collapses 🔐 | Web3 Rules",
+            "tags": ["crypto", "security", "polymint", "web3", "defi", "shorts"]
+        },
+        {
+            "hook": "The Psychology of Market Cycles: From Despair to Euphoria",
+            "body": [
+                "Every single financial market is driven by two primal emotions: fear and greed.",
+                "When headlines declare crypto dead, institutional accumulators are quietly buying.",
+                "When taxi drivers and celebrities start giving you coin tips, the top is near.",
+                "Master your emotional discipline, ignore the daily market noise, and stick to your blueprint.",
+                "Wealth is transferred from the impatient to the disciplined."
+            ],
+            "title": "Master The Crypto Market Psychology 🧠📈 | Wealth Rules",
+            "tags": ["trading", "psychology", "crypto", "investing", "mindset", "shorts"]
         }
     ],
     "ai": [
@@ -109,6 +147,42 @@ TURBO_SCRIPTS = {
             ],
             "title": "The Robot That Learns By Watching Humans! 🦾",
             "tags": ["ai", "technology", "robotics", "innovation", "science", "shorts"]
+        },
+        {
+            "hook": "5 Insane AI Tools That Feel Absolutely Illegal To Know",
+            "body": [
+                "Here are futuristic AI tools that are completely reshaping the world.",
+                "First, autonomous multi-agent pipelines that conduct deep scientific research without sleep.",
+                "Second, real-time voice synthesis engines that replicate human emotion with zero latency.",
+                "Third, neural vision systems that diagnose complex engineering blueprints instantly.",
+                "The gap between knowledge and execution has dropped to zero.",
+                "Subscribe to AI Unveiled to stay on the cutting edge of the machine age."
+            ],
+            "title": "5 Insane AI Tools You Must Know in 2026! ⚡🤯",
+            "tags": ["aitools", "ai", "technology", "productivity", "future", "shorts"]
+        },
+        {
+            "hook": "When Artificial Intelligence Reaches True Superintelligence",
+            "body": [
+                "What happens when an AI model becomes capable of recursively improving its own code?",
+                "The intelligence explosion will compress centuries of scientific breakthroughs into mere weeks.",
+                "We could cure deadly diseases, solve limitless clean energy, or face existential misalignment.",
+                "The race for artificial superintelligence is the most consequential event in human history.",
+                "The decisions made today will echo for generations to come."
+            ],
+            "title": "The Dawn of Artificial Superintelligence 🌌 | Future of Humanity",
+            "tags": ["agi", "asi", "ai", "singularity", "future", "shorts"]
+        },
+        {
+            "hook": "Autonomous AI Swarms Are Running Entire Operations",
+            "body": [
+                "Imagine a company where the researchers, programmers, designers, and marketers are all autonomous AI agents.",
+                "They communicate in milliseconds, debug each other's code, and deploy solutions 24 hours a day.",
+                "This is not science fiction. Multi-agent orchestration is already happening right now.",
+                "The future belongs to the operators who know how to command these synthetic swarms."
+            ],
+            "title": "How AI Swarms Are Replacing Entire Companies! 🤖🏢",
+            "tags": ["aiagents", "automation", "tech", "startups", "future", "shorts"]
         }
     ],
     "animals": [
@@ -135,6 +209,42 @@ TURBO_SCRIPTS = {
             ],
             "title": "Never Look a Silverback Gorilla in the Eyes! 🦍⚠️",
             "tags": ["animals", "wildlife", "gorilla", "survival", "safari", "shorts"]
+        },
+        {
+            "hook": "The Deep Sea Monster That Was Born Before The Renaissance",
+            "body": [
+                "Swimming in the freezing depths of the Arctic Ocean lives the Greenland shark.",
+                "These slow-moving apex predators can live for over 400 to 500 years.",
+                "Some swimming today were already wandering the dark seas before the Taj Mahal was built.",
+                "Their metabolism is so slow that they only reach maturity at 150 years old.",
+                "The ocean keeps secrets that defy the limits of earthly biology."
+            ],
+            "title": "The 500-Year-Old Sea Monster! 🦈❄️ | Deep Sea Mystery",
+            "tags": ["animals", "ocean", "shark", "wildlife", "nature", "shorts"]
+        },
+        {
+            "hook": "The Deadliest Predator In The Ocean Is Not What You Think",
+            "body": [
+                "You probably think the great white shark is the ocean's deadliest killer.",
+                "You would be dead wrong.",
+                "Meet the Australian box jellyfish, a translucent creature with tentacles up to 10 feet long.",
+                "Each tentacle carries millions of microscopic venomous harpoons.",
+                "A single encounter can stop a human heart in less than two minutes.",
+                "Beauty in nature is often the deadliest warning."
+            ],
+            "title": "The Deadliest Creature in the Ocean! 🌊💀",
+            "tags": ["animals", "wildlife", "jellyfish", "ocean", "nature", "shorts"]
+        },
+        {
+            "hook": "Crows Never Forget A Human Face And They Hold Grudges For Life",
+            "body": [
+                "If you ever mistreat a crow, beware: they will remember your face for over a decade.",
+                "Not only do they remember who threatened them, they actively teach their chicks and flock members to target you.",
+                "They use complex tools, solve multi-step puzzles, and communicate in sophisticated regional dialects.",
+                "Never underestimate avian intelligence in the wild kingdom."
+            ],
+            "title": "Crows Never Forget Your Face! 🦅🧠 | Animal Intelligence",
+            "tags": ["animals", "wildlife", "crows", "birds", "intelligence", "shorts"]
         }
     ],
     "quran": [
@@ -149,9 +259,36 @@ TURBO_SCRIPTS = {
             ],
             "title": "A Verse to Heal Your Broken Heart 🕊️ | Holy Quran",
             "tags": ["quran", "islam", "peace", "allah", "spirituality", "shorts"]
+        },
+        {
+            "hook": "The Miraculous Quranic Description Of The Ocean Depths",
+            "body": [
+                "Over 1400 years ago, the Holy Quran described deep ocean phenomena that modern oceanography only discovered recently.",
+                "Surah An-Nur describes darkness in a deep sea, covered by waves, upon which are waves, upon which are clouds.",
+                "Modern science confirmed that deep internal waves exist hundreds of meters below the surface where no light penetrates.",
+                "Subhanallah, divine wisdom revealed long before submarines or modern technology existed."
+            ],
+            "title": "The Quranic Miracle of Deep Ocean Waves 🌊📖",
+            "tags": ["quran", "miracle", "science", "islam", "ocean", "shorts"]
+        },
+        {
+            "hook": "The Secret of Divine Patience: When An Answer Is Delayed",
+            "body": [
+                "When you pray sincerely and the relief seems delayed, know that Allah is orchestrating something far greater.",
+                "Every delay in life is divine protection from an unforeseen harm, or preparation for a greater blessing.",
+                "Remember the story of Prophet Yusuf: from the dark well to ruling an entire nation.",
+                "Trust Allah's timing. His plan for you is far kinder than your own fears."
+            ],
+            "title": "Trust Allah's Timing When Prayers Are Delayed 🤲✨",
+            "tags": ["quran", "patience", "sabr", "islam", "faith", "shorts"]
         }
     ]
 }
+
+def get_turbo_script_for_niche(niche: str, run_count: int) -> dict:
+    pool = TURBO_SCRIPTS.get(niche, TURBO_SCRIPTS["cryptolab"])
+    idx = (run_count - 1) % len(pool)
+    return pool[idx]
 
 # =====================================================================
 # 3. EDGE-TTS SYNTHESIZER WITH EXACT WORD TIMESTAMPS
@@ -323,7 +460,8 @@ def render_money_printer_turbo_short(
     niche: str,
     output_dir: Path,
     custom_script: Optional[Dict] = None,
-    language: str = "en"
+    language: str = "en",
+    run_count: int = 1
 ) -> Dict:
     """
     Main MoneyPrinter Turbo generation function:
@@ -335,10 +473,9 @@ def render_money_printer_turbo_short(
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # 1. Pick Script
+    # 1. Pick Script with deterministic anti-repeat rotation
     if not custom_script:
-        pool = TURBO_SCRIPTS.get(niche, TURBO_SCRIPTS["cryptolab"])
-        script_data = random.choice(pool)
+        script_data = get_turbo_script_for_niche(niche, run_count)
     else:
         script_data = custom_script
 

@@ -51,9 +51,9 @@ def run_quran_channel(run_dir: Path, run_count: int):
 def run_cryptolab_channel(run_dir: Path, run_count: int):
     """
     03:30 IRST (USA/Europe Peak):
-    Alternating PolyMint multilingual promotion vs Viral Trending Crypto/Trading Stickman Animation
+    Alternating PolyMint multilingual promotion vs 100% Original MoneyPrinter Turbo Web3 Wealth Video
     """
-    print("\n[DISPATCH - CRYPTOLAB 165-ENGINE] 03:30 IRST (USA/Europe Peak): Web3 Wealth & PolyMint...")
+    print("\n[DISPATCH - CRYPTOLAB TURBO ENGINE] 03:30 IRST: 100% Original Web3 Wealth & PolyMint...")
     if run_count % 2 == 0:
         print("  -> Channel Mode: Official PolyMint Web3 Platform Promotion 🚀")
         try:
@@ -62,59 +62,47 @@ def run_cryptolab_channel(run_dir: Path, run_count: int):
         except Exception as e:
             print(f"  [CryptoLab Promo Warning] {e}")
     else:
-        print("  -> Channel Mode: Viral Trending Crypto/Trading Stickman Animation 🎭📈")
-        from run_pipeline import process_and_upload_trend
-        from autonomous_growth_auditor import get_mega_query_for_channel
-        q, hook = get_mega_query_for_channel("cryptolab", run_count)
-        print(f"  -> 165-Engine Query: '{q}' | Banner: '{hook}'")
-        process_and_upload_trend(
+        print("  -> Channel Mode: MoneyPrinter Turbo (100% Original Script, Edge-TTS, Hormozi Subtitles) 💎")
+        from run_pipeline import process_and_upload_money_printer_turbo
+        process_and_upload_money_printer_turbo(
             channel_key="polygon",
-            search_query=q,
-            hook_banner=hook,
             category_id="27",
-            run_dir=run_dir / "cryptolab_trending_stickman",
+            run_dir=run_dir / "cryptolab_turbo",
             niche="cryptolab",
-            publish_at=None
+            language="en",
+            run_count=run_count
         )
 
 def run_animals_channel(run_dir: Path, run_count: int):
     """
     03:30 IRST (USA/Europe Peak):
-    Wild Kingdom: Viral Trending Stickman vs Animals & Survival Animation
+    Wild Kingdom: 100% Original MoneyPrinter Turbo Wildlife Survival & Predator Battles
     """
-    print("\n[DISPATCH - ANIMALS 165-ENGINE] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Animals Animation...")
-    from run_pipeline import process_and_upload_trend
-    from autonomous_growth_auditor import get_mega_query_for_channel
-    q, hook = get_mega_query_for_channel("animals", run_count)
-    print(f"  -> 165-Engine Query: '{q}' | Banner: '{hook}'")
-    process_and_upload_trend(
+    print("\n[DISPATCH - ANIMALS TURBO ENGINE] 03:30 IRST: 100% Original Wildlife Survival Short...")
+    from run_pipeline import process_and_upload_money_printer_turbo
+    process_and_upload_money_printer_turbo(
         channel_key="animals",
-        search_query=q,
-        hook_banner=hook,
         category_id="15",
-        run_dir=run_dir / "animals_trending_stickman",
+        run_dir=run_dir / "animals_turbo",
         niche="animals",
-        publish_at=None
+        language="en",
+        run_count=run_count
     )
 
 def run_ai_channel(run_dir: Path, run_count: int):
     """
     03:30 IRST (USA/Europe Peak):
-    AI Unveiled: Viral Trending Stickman AI & Robot Animation
+    AI Unveiled: 100% Original MoneyPrinter Turbo Future Tech & Robotics Breakthroughs
     """
-    print("\n[DISPATCH - AI UNVEILED 165-ENGINE] 03:30 IRST (USA/Europe Peak): Viral Trending Stickman Tech Animation...")
-    from run_pipeline import process_and_upload_trend
-    from autonomous_growth_auditor import get_mega_query_for_channel
-    q, hook = get_mega_query_for_channel("ai", run_count)
-    print(f"  -> 165-Engine Query: '{q}' | Banner: '{hook}'")
-    process_and_upload_trend(
+    print("\n[DISPATCH - AI UNVEILED TURBO ENGINE] 03:30 IRST: 100% Original AI Breakthrough Short...")
+    from run_pipeline import process_and_upload_money_printer_turbo
+    process_and_upload_money_printer_turbo(
         channel_key="ai",
-        search_query=q,
-        hook_banner=hook,
         category_id="28",
-        run_dir=run_dir / "ai_trending_stickman",
+        run_dir=run_dir / "ai_turbo",
         niche="ai",
-        publish_at=None
+        language="en",
+        run_count=run_count
     )
 
 def main():
