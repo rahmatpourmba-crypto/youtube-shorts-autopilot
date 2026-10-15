@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-14 23:23:12",
-  "total_audits_performed": 2,
+  "last_audit_timestamp": "2026-10-15 02:24:10",
+  "total_audits_performed": 3,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 3910,
       "views": 202864,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-14 23:23:12"
+      "last_checked": "2026-10-15 02:24:10"
     },
     "ai": {
       "status": "healthy",
@@ -16,7 +16,7 @@
       "subscribers": 388,
       "views": 1210,
       "sub_progress_percent": 38.8,
-      "last_checked": "2026-10-14 23:23:12"
+      "last_checked": "2026-10-15 02:24:10"
     },
     "polygon": {
       "status": "healthy",
@@ -24,7 +24,7 @@
       "subscribers": 1,
       "views": 121,
       "sub_progress_percent": 0.1,
-      "last_checked": "2026-10-14 23:23:12"
+      "last_checked": "2026-10-15 02:24:10"
     },
     "animals": {
       "status": "healthy",
@@ -32,7 +32,7 @@
       "subscribers": 7,
       "views": 3845,
       "sub_progress_percent": 0.7,
-      "last_checked": "2026-10-14 23:23:12"
+      "last_checked": "2026-10-15 02:24:10"
     }
   },
   "winning_topics": {
@@ -120,12 +120,18 @@
     "ai": [
       "weeks",
       "gemini",
-      "generated"
+      "generated",
+      "“create",
+      "videos"
     ],
     "animals": [
       "funy#funy",
       "catlovers",
-      "ronaldo"
+      "ronaldo",
+      "unbelievable",
+      "loyalty",
+      "walks",
+      "catsofinstagram"
     ],
     "cryptolab": [],
     "polygon": [
@@ -233,5 +239,79 @@
       "truth about with",
       "with high velocity shorts"
     ]
+  },
+  "revitalized_videos": {
+    "9pqfFHcGGGM": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "راحة نفسية لا توصف.. استمع بقلبك 🤍 تلاوة خاشعة تريح القلب قرآن كريم ✨ #Shorts #Quran"
+    },
+    "StcknrnOUGc": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "سورة تفيض بالطمأنينة والنور 🌿 #🌹🌹🌹 viral vedio # ✨ #Shorts #Quran"
+    },
+    "JT02L-IS3Ro": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "Trending سورة من القرآن تسكن الروح راحة نفسية ✨ #Shorts"
+    },
+    "kdhnOoUjMi8": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "Trending تلاوة خاشعة تريح القلب قرآن كريم ✨ #Shorts"
+    },
+    "C7BfFQ5jbpo": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "قران حالات واتس اب 🌼🖤 ✨ #Shorts"
+    },
+    "4k3UNn24fyQ": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "القران الكريم | سورة الحجر | القارئ شريف مصطفى | تلاوة خاشعة جميلة جدا 😌❤️  ✨ #Shorts"
+    },
+    "DFt4ifoeovs": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "قران حالات واتس اب 🌼🖤 ✨ #Shorts"
+    },
+    "3IxEhTCZgE8": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "BOB: 3 WEEKS OF BUG HUNTING 🤯 #Shorts"
+    },
+    "7Vc7FO33wHs": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "“Create AI Videos From Text & Images in Minutes 🔥 Runway AI Full Tutorial” #Shorts #AI"
+    },
+    "5Y4qT0bp2JA": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "gemini generated video 291a02ca"
+    },
+    "S_PvLLj6fek": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "Instant Karma! 🦝🍪 | Cute 3D Animated Short Film #animation #shorts"
+    },
+    "ul1HVC-uH78": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "🚀 أنشئ عملتك الرقمية الخاصة بدون أي برمجة! | PolyMint #crypto"
+    },
+    "gt8ZHQjbgYY": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "🚀 توکن اختصاصی خودت رو بدون کدنویسی بساز! | پولی‌مینت #cryptotutorial #crypto #blockchain"
+    },
+    "mBGgU7BqJ6U": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "Unbelievable Loyalty in The Wild! 🦁❤️ Flooded River Rescue: Soldiers Save Tr #Shorts"
+    },
+    "T5QPPAqoXN4": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "A Wolf Walks Through the Snow… But What’s That Black Shadow Behind Him? 🐺👤❄️"
+    },
+    "LXzNAh8bFGM": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "funy#funy"
+    },
+    "gkfAeMOPEtQ": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "#CatsOfInstagram- #CatLovers- #Meow- #Purrfect- #CatLife- #KittyLove- #Catstagram- #InstaCat- #Ca"
+    },
+    "v9sipZznRQk": {
+      "timestamp": "2026-10-15 02:24:10",
+      "old_title": "#catlovers #ronaldo #prettycat #cat #animals #messi"
+    }
   }
 }
