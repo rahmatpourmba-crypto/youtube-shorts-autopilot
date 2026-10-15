@@ -43,6 +43,8 @@ def search_and_download_viral_short(search_query: str, download_dir: str, niche:
         "--ffmpeg-location", FFMPEG_EXE,
         "--extractor-args", "youtube:player_client=tv,mweb,web",
         "--geo-bypass",
+        "--no-playlist",
+        "--proxy", "",
         "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
         "-f", "b/best[ext=mp4]/18/best",
         "-o", str(raw_video_path),

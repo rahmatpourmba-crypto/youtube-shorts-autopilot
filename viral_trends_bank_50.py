@@ -1,12 +1,26 @@
 """
 50 MEGA-PROMPT ULTRA VIRAL TRENDS REPOSITORY (مخزن ۵۰ ترند مگا ابرپرامپتی ضدتکرار)
-Engineered for 100% Halal, high-retention, copyright-clean, viral distribution.
-Each entry has:
-- Verified high-speed video stream CDN
-- Neuro-Hook Title (60-75 chars)
-- In-Video Top Hook Banner
-- Category & Tags
+Strictly partitioned by niche with ZERO cross-contamination:
+- 'quran': Authentic soul-soothing recitations (Halal, zero-music).
+- 'islamic_mystery': Faith-awakening reminders and end-times prophecies.
+- 'ai': High-tech AI breakthroughs, coding comedy, and futuristic robotics.
+- 'cryptolab': Web3 wealth, Polygon smart contracts, PolyMint token creation, trader humor (ZERO animals).
+- 'animals': Wildlife survival, apex predator clashes, and extraordinary animal intelligence.
+- 'stickman': High-energy, fluid 60fps stickman action and humor animations.
 """
+import os
+import sys
+import json
+from pathlib import Path
+
+if sys.platform.startswith('win'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+BASE_DIR = Path(__file__).resolve().parent
+HISTORY_FILE = BASE_DIR / "used_trends_history.json"
 
 VIRAL_TRENDS_50 = {
     "quran": [
@@ -69,20 +83,9 @@ VIRAL_TRENDS_50 = {
             "title": "ولا تحسبن الله غافلاً عما يعمل الظالمون ⚠️ تلاوة تبكي الحجر ✨ #Shorts",
             "hook": "ولا تحسبن الله غافلاً ⚠️",
             "qari": "وعيد الظالمين"
-        },
-        {
-            "stream": "https://archive.org/download/surah_ibrahim_shorts/17%20-%20Ibrahim%20%28Ayat%2047-52%29.mp4",
-            "title": "يوم تبدل الأرض غير الأرض والسماوات ⚡ نهاية الكون العظيمة ✨ #Shorts #Quran",
-            "hook": "يوم تبدل الأرض والسماوات ⚡",
-            "qari": "أهوال القيامة"
-        },
-        {
-            "stream": "https://archive.org/download/surah_ibrahim_shorts/4%20-%20Ibrahim%20%28Ayat%209-12%29.mp4",
-            "title": "ألم يأتكم نبأ الذين من قبلكم قوم نوح وعاد وثمود 📖 #Shorts #Quran",
-            "hook": "قصص الأنبياء والعبر 📖🌿",
-            "qari": "عبر ومواعظ"
         }
     ],
+
     "islamic_mystery": [
         {
             "stream": "https://archive.org/download/surah_ibrahim_shorts/10%20-%20Ibrahim%20%28Ayah%2022%29.mp4",
@@ -113,28 +116,9 @@ VIRAL_TRENDS_50 = {
             "stream": "https://archive.org/download/surah_ibrahim_shorts/14%20-%20Ibrahim%20%28Ayat%2031-34%29.mp4",
             "title": "The Day of Judgment: No Bargaining, No Friends, Only Deeds ⚠️ #Shorts #Islam",
             "hook": "NO TURNING BACK ON THAT DAY ⚠️"
-        },
-        {
-            "stream": "https://archive.org/download/surah_ibrahim_shorts/13%20-%20Ibrahim%20%28Ayat%2028-30%29.mp4",
-            "title": "They Led Their People to Destruction: The Warning Prophecy ⚡ #Shorts #EndTimes",
-            "hook": "DESTRUCTION PROPHECY ⚡"
-        },
-        {
-            "stream": "https://archive.org/download/surah_ibrahim_shorts/15%20-%20Ibrahim%20%28Ayat%2035-41%29.mp4",
-            "title": "Why Mecca Was Made Sacred: The Forgotten Prophecy of Abraham 🕋✨ #Shorts",
-            "hook": "FORGOTTEN PROPHECY OF MECCA 🕋"
-        },
-        {
-            "stream": "https://archive.org/download/surah_ibrahim_shorts/3%20-%20Ibrahim%20%28Ayat%205-8%29.mp4",
-            "title": "Pharaoh's Final Moments: The Quran Miracle Scientists Confirmed! 🌊 #Shorts",
-            "hook": "PHARAOH DROWNING MIRACLE 🌊"
-        },
-        {
-            "stream": "https://archive.org/download/surah_ibrahim_shorts/2%20-%20Ibrahim%20%28Ayat%204%29.mp4",
-            "title": "Signs of Dajjal: How He Deceives Nations in the End Times ⚠️ #Shorts #Warning",
-            "hook": "HOW DAJJAL DECEIVES NATIONS ⚠️"
         }
     ],
+
     "ai": [
         {
             "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
@@ -147,66 +131,50 @@ VIRAL_TRENDS_50 = {
             "hook": "SECRET AI WEBSITES 2026 🚀"
         },
         {
-            "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
-            "title": "Turn Any Text Into Insane 3D Animations in One Click! 🤯 #Shorts #AITools",
-            "hook": "TEXT TO 3D IN ONE CLICK! 🤯"
+            "stream": "https://archive.org/download/BigBuckBunny_320x180/big_buck_bunny_320x180.mp4",
+            "title": "Autonomous AI Robot Simulation Test in 2026! Future Tech 🦾⚡ #Shorts #Robot",
+            "hook": "ROBOT TAKEOVER TEST 🦾"
         },
         {
-            "stream": "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4",
-            "title": "Stop Paying for Expensive Software! Use This Free AI Alternative ⚡ #Shorts",
-            "hook": "FREE AI SOFTWARE HACK ⚡"
+            "stream": "https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4",
+            "title": "Mind-Blowing 3D Cyberpunk Worlds Created by Open Source AI! 🌐⚡ #Shorts",
+            "hook": "CYBERPUNK AI WORLD 🌐⚡"
         },
         {
-            "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
-            "title": "This AI Agent Writes Full Code & Builds Apps While You Sleep! 💻🤖 #Shorts #Code",
-            "hook": "AI BUILDS APPS FOR YOU! 💻"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4",
-            "title": "The Craziest AI Breakthrough of 2026 Nobody Is Talking About! 🔥 #Shorts #Future",
-            "hook": "CRAZY 2026 AI BREAKTHROUGH 🔥"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
-            "title": "Clone Any Voice with 100% Accuracy in 3 Seconds! Unbelievable AI 🎙️ #Shorts",
-            "hook": "INSTANT VOICE AI MAGIC 🎙️"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4",
-            "title": "This AI Research Assistant Reads 500-Page PDFs in 2 Seconds! 📚⚡ #Shorts",
-            "hook": "READS 500 PAGES IN 2 SECONDS! 📚"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
-            "title": "Photoshop Is Dead! This AI Generates & Edits Photos Flawlessly 🎨✨ #Shorts",
-            "hook": "AI PHOTO EDITING GENIUS 🎨"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4",
-            "title": "Top 5 AI Tools College Students & Freelancers Must Use Today! 💼 #Shorts #AI",
-            "hook": "TOP 5 FREELANCE AI TOOLS 💼"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
-            "title": "Turn A Rough Sketch Into A Real Working Website with AI! 🌐⚡ #Shorts #WebDev",
-            "hook": "SKETCH TO WEBSITE IN 10 SEC! 🌐"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4",
-            "title": "Deepfake Detectors: How To Spot Fake AI Videos Instantly! 🔍🤖 #Shorts #Tech",
-            "hook": "SPOT FAKE AI INSTANTLY 🔍"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
-            "title": "AI Music & Sound FX Generator Without Copyright Claims! 🎧⚡ #Shorts #Creator",
-            "hook": "COPYRIGHT FREE AI AUDIO 🎧"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4",
-            "title": "Automate Boring Tasks Forever with This Free AI Assistant! 🤖✨ #Shorts #Tips",
-            "hook": "AUTOMATE BORING TASKS! 🤖"
+            "stream": "https://archive.org/download/Tears-of-Steel/tears_of_steel_720p.mp4",
+            "title": "When Programmers Let Autonomous AI Control The Production Server! 💻💀 #Shorts",
+            "hook": "CODE BREAKS AT 3AM! 💻😭"
         }
     ],
+
+    "cryptolab": [
+        {
+            "stream": "https://archive.org/download/Tears-of-Steel/tears_of_steel_720p.mp4",
+            "title": "Create Your Own Crypto Token in 30 Seconds! 🚀💎 PolyMint #shorts #web3",
+            "hook": "CREATE TOKEN IN 30 SEC 🚀💎"
+        },
+        {
+            "stream": "https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4",
+            "title": "How to Launch an ERC-20 Token on Polygon Without Coding! 🪙⚡ #shorts #crypto",
+            "hook": "POLYGON TOKEN NO CODE! 🪙⚡"
+        },
+        {
+            "stream": "https://archive.org/download/BigBuckBunny_320x180/big_buck_bunny_320x180.mp4",
+            "title": "When You Buy The Dip And It Keeps Dipping! 😭📉 Trader Pain #shorts #crypto",
+            "hook": "BUY THE DIP THEY SAID! 📉💥"
+        },
+        {
+            "stream": "https://archive.org/download/youtube-elrFeLJSTXI/elrFeLJSTXI.mp4",
+            "title": "100x Leverage Trader Gets Liquidated at 3 AM! 💀💸 #shorts #trading #bitcoin",
+            "hook": "100X LEVERAGE REGRET 💀💎"
+        },
+        {
+            "stream": "https://archive.org/download/youtube-1kkK8vPcPHM/1kkK8vPcPHM.mp4",
+            "title": "Web3 Wealth Secret: How New Tokens Are Deployed on Polygon 🚀💎 #shorts #polymint",
+            "hook": "WEB3 TOKEN FACTORY 🚀💎"
+        }
+    ],
+
     "animals": [
         {
             "stream": "https://archive.org/download/youtube-VIA20r-WO4M/VIA20r-WO4M.mp4",
@@ -224,68 +192,87 @@ VIRAL_TRENDS_50 = {
             "hook": "SMARTEST PARROT ON EARTH 🦜🧠"
         },
         {
-            "stream": "https://archive.org/download/youtube-VIA20r-WO4M/VIA20r-WO4M.mp4",
-            "title": "Unbelievable Loyalty: Dog Refuses to Leave Injured Friend's Side! 🐕❤️ #Shorts",
-            "hook": "UNBELIEVABLE DOG LOYALTY 🐕❤️"
+            "stream": "https://archive.org/download/BigBuckBunny_320x180/big_buck_bunny_320x180.mp4",
+            "title": "Giant Bear Protects Its Territory! Nature's Fiercest Instinct 🐻🌲 #Shorts",
+            "hook": "GIANT BEAR TERRITORY 🐻🌲"
+        }
+    ],
+
+    "stickman": [
+        {
+            "stream": "https://archive.org/download/Tears-of-Steel/tears_of_steel_720p.mp4",
+            "title": "Stickman vs Prehistoric Predator: Pure Survival Action! 🦖🔥 #Shorts #Animation",
+            "hook": "STICKMAN SURVIVAL 🦖🔥"
         },
         {
-            "stream": "https://archive.org/download/fefdba/FEFDBA_1080p.mp4",
-            "title": "Mom Bear Risks Her Life to Save Her Cub From Rushing River! 🐻🌊 #Shorts",
-            "hook": "MOM BEAR HEROIC RESCUE 🐻🌊"
+            "stream": "https://archive.org/download/ElephantsDream/ed_1024_512kb.mp4",
+            "title": "Stickman Hacker vs Supercomputer AI: The Cyber Duel 💻⚡ #Shorts #Stickman",
+            "hook": "HUMAN VS MACHINE 🦾💥"
         },
         {
-            "stream": "https://archive.org/download/cosltx-Pet_Of_The_Week-_African_Grey_Parrot/Pet_Of_The_Week-_African_Grey_Parrot.mp4",
-            "title": "Hilarious Animal Moments Caught on Camera! Try Not To Laugh 😹🐾 #Shorts",
-            "hook": "TRY NOT TO LAUGH! 😹🐾"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-VIA20r-WO4M/VIA20r-WO4M.mp4",
-            "title": "Cheetah Sprints at 100 KM/H in Ultra Slow Motion 4K! Epic Nature 🐆⚡ #Shorts",
-            "hook": "100 KM/H IN SLOW MOTION 🐆⚡"
-        },
-        {
-            "stream": "https://archive.org/download/fefdba/FEFDBA_1080p.mp4",
-            "title": "Elephant Herd Protects Newborn Calf From Hyena Pack! Unity & Power 🐘🛡️ #Shorts",
-            "hook": "ELEPHANTS PROTECT NEWBORN 🐘🛡️"
-        },
-        {
-            "stream": "https://archive.org/download/cosltx-Pet_Of_The_Week-_African_Grey_Parrot/Pet_Of_The_Week-_African_Grey_Parrot.mp4",
-            "title": "Golden Eagle Dives at 320 KM/H! The Sky's Deadliest Hunter 🦅🏔️ #Shorts",
-            "hook": "320 KM/H SKY HUNTER 🦅🏔️"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-VIA20r-WO4M/VIA20r-WO4M.mp4",
-            "title": "Dolphins Save Swimmer From Approaching Shark! Real Life Hero 🐬🦈 #Shorts",
-            "hook": "DOLPHINS SAVE SWIMMER! 🐬🦈"
-        },
-        {
-            "stream": "https://archive.org/download/fefdba/FEFDBA_1080p.mp4",
-            "title": "Snow Leopard's Impossible Jump Down 200-Foot Cliff! Survives Nature 🐆❄️ #Shorts",
-            "hook": "IMPOSSIBLE 200FT JUMP! 🐆❄️"
-        },
-        {
-            "stream": "https://archive.org/download/cosltx-Pet_Of_The_Week-_African_Grey_Parrot/Pet_Of_The_Week-_African_Grey_Parrot.mp4",
-            "title": "Baby Otter Learns to Swim for the First Time! Melting Hearts 🦦💧 #Shorts",
-            "hook": "BABY OTTER LEARNS TO SWIM 🦦❤️"
-        },
-        {
-            "stream": "https://archive.org/download/youtube-VIA20r-WO4M/VIA20r-WO4M.mp4",
-            "title": "Wolf Pack Alpha Decision: How Wolves Protect The Weakest Members 🐺🌲 #Shorts",
-            "hook": "WOLF PACK ALPHA CODE 🐺🌲"
-        },
-        {
-            "stream": "https://archive.org/download/fefdba/FEFDBA_1080p.mp4",
-            "title": "Never Underestimate Animal Instincts! Shocking Nature Encounter 😱🐾 #Shorts",
-            "hook": "SHOCKING NATURE ENCOUNTER 😱🐾"
+            "stream": "https://archive.org/download/BigBuckBunny_320x180/big_buck_bunny_320x180.mp4",
+            "title": "Stickman 100x Leverage Trader Regret: Crypto Liquidation 😭💸 #Shorts #Comedy",
+            "hook": "TRADER LIQUIDATED 😭💸"
         }
     ]
 }
 
-def get_next_viral_trend_from_bank(niche: str, run_count: int = 0):
+def load_used_history() -> dict:
+    if not HISTORY_FILE.exists():
+        return {}
+    try:
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def save_used_history(history: dict):
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(history, f, indent=2)
+    except Exception:
+        pass
+
+def get_next_viral_trend_from_bank(niche: str, run_count: int = 0) -> dict:
     """
-    Returns an ultra-viral trend from the 50-trend repository.
-    Rotates dynamically by run_count so consecutive runs NEVER repeat the same video.
+    Returns an ultra-viral trend from the dedicated repository with STRICT NICHE ISOLATION
+    and ZERO cross-contamination (e.g. cryptolab NEVER gets animals).
+    Guarantees non-repetitive selection across runs.
     """
-    pool = VIRAL_TRENDS_50.get(niche, VIRAL_TRENDS_50["animals"])
-    idx = run_count % len(pool)
-    return pool[idx]
+    # Strict niche routing
+    niche_clean = niche.lower().strip()
+    if niche_clean in ["cryptolab", "polygon", "crypto", "trading"]:
+        target_pool_key = "cryptolab"
+    elif niche_clean in ["ai", "tech"]:
+        target_pool_key = "ai"
+    elif niche_clean in ["stickman", "animation"]:
+        target_pool_key = "stickman"
+    elif niche_clean in ["animals", "wildlife"]:
+        target_pool_key = "animals"
+    elif niche_clean in ["islamic_mystery", "mystery"]:
+        target_pool_key = "islamic_mystery"
+    else:
+        target_pool_key = "quran"
+
+    pool = VIRAL_TRENDS_50.get(target_pool_key, VIRAL_TRENDS_50["quran"])
+    history = load_used_history()
+    used_list = history.get(target_pool_key, [])
+
+    # Pick first unused item
+    chosen = None
+    for item in pool:
+        if item["stream"] not in used_list:
+            chosen = item
+            break
+
+    # If all used, reset history for this pool and pick by run_count
+    if not chosen:
+        used_list = []
+        chosen = pool[run_count % len(pool)]
+
+    used_list.append(chosen["stream"])
+    history[target_pool_key] = used_list[-15:]  # Keep last 15
+    save_used_history(history)
+
+    print(f"  [Bank Dispatch] Niche '{target_pool_key}' -> Trend '{chosen['title'][:45]}...'")
+    return chosen

@@ -9,16 +9,19 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
     Scans the top candidates, computes their Viral Growth Velocity,
     and returns the #1 exploding video right now.
     """
+    clean_q = search_query.strip()
+    if "#shorts" not in clean_q.lower():
+        clean_q = f"{clean_q} #shorts"
+
     cmd = [
         "yt-dlp",
-        f"ytsearch{max_candidates}:{search_query}",
-        "--match-filter", "duration >= 10 & duration <= 30",
+        "--proxy", "",
+        f"ytsearch{max_candidates}:{clean_q}",
         "--dump-json",
-        "--flat-playlist", "False",
+        "--flat-playlist",
         "--no-playlist"
     ]
 
-    
     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="ignore")
     candidates = []
     
@@ -31,10 +34,10 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
             views = item.get("view_count") or 0
             likes = item.get("like_count") or 0
             timestamp = item.get("timestamp") or (now_ts - 86400 * 30)
-            dur = item.get("duration") or 20
+            dur = item.get("duration")
             
-            # Strict 10-30s Duration Lock for Ultra-High Looping Retention
-            if dur > 32 or dur < 8:
+            # Duration filter if available
+            if dur is not None and (dur > 60 or dur < 5):
                 continue
 
             # Strict Moral & Halal Safety Check
