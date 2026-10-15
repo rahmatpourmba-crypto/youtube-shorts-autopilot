@@ -155,6 +155,13 @@ def audit_and_optimize_all_channels():
     print(f"Active Algorithmic Optimization Protocols: {len(MEGA_165_PROTOCOLS)} / 165 Active")
     print("=" * 70)
 
+    # Ingest Champion Intelligence from World Million-View Channels
+    try:
+        from competitor_intelligence_engine import transfer_million_view_intelligence_to_brain
+        transfer_million_view_intelligence_to_brain()
+    except Exception as e:
+        print(f"  [Competitor Ingestion Note]: {e}")
+
     from googleapiclient.discovery import build
     
     for ch_key, ch_name, token_name in CHANNELS_CONFIG:
