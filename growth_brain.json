@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-15 20:09:50",
-  "total_audits_performed": 6,
+  "last_audit_timestamp": "2026-10-16 02:17:36",
+  "total_audits_performed": 7,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 3910,
       "views": 202918,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-15 20:09:50"
+      "last_checked": "2026-10-16 02:17:36"
     },
     "ai": {
       "status": "healthy",
@@ -16,7 +16,7 @@
       "subscribers": 388,
       "views": 1242,
       "sub_progress_percent": 38.8,
-      "last_checked": "2026-10-15 20:09:50"
+      "last_checked": "2026-10-16 02:17:36"
     },
     "polygon": {
       "status": "healthy",
@@ -24,7 +24,7 @@
       "subscribers": 1,
       "views": 132,
       "sub_progress_percent": 0.1,
-      "last_checked": "2026-10-15 20:09:50"
+      "last_checked": "2026-10-16 02:17:36"
     },
     "animals": {
       "status": "healthy",
@@ -32,11 +32,15 @@
       "subscribers": 7,
       "views": 4076,
       "sub_progress_percent": 0.7,
-      "last_checked": "2026-10-15 20:09:50"
+      "last_checked": "2026-10-16 02:17:36"
     }
   },
   "winning_topics": {
     "quran": [
+      "Pharaoh Drowning",
+      "أجمل",
+      "about",
+      "truth",
       "shocking",
       "right",
       "happening",
@@ -53,10 +57,7 @@
       "Dajjal Island Mystery",
       "Mountain Roots",
       "Two Seas Never Mixing",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "سوداء",
-      "شاشه"
+      "Iron Coming From Stars"
     ],
     "ai": [
       "نیشانەی",
@@ -81,6 +82,9 @@
       "programmer bug"
     ],
     "animals": [
+      "Apex Lion Pride",
+      "Prehistoric Raptor",
+      "A Black Eagle",
       "A Wounded Leopard",
       "A Honey Badger Facing 3 Lions",
       "A Crow That Remembers Faces",
@@ -100,10 +104,7 @@
       "Dog Defending Injured Pack",
       "Brother Lions Reuniting",
       "King Cobra",
-      "Giant Anaconda",
-      "Apex Lion Pride",
-      "Prehistoric Raptor",
-      "A Black Eagle"
+      "Giant Anaconda"
     ],
     "cryptolab": [
       "Deploy Verified ERC-20 Tokens on Po",
@@ -164,6 +165,15 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman أجمل survival",
+      "truth about أجمل",
+      "أجمل high velocity shorts",
+      "stickman about survival",
+      "truth about about",
+      "about high velocity shorts",
+      "stickman truth survival",
+      "truth about truth",
+      "truth high velocity shorts",
       "truth about shocking",
       "shocking high velocity shorts",
       "stickman right survival",
@@ -179,16 +189,7 @@
       "truth about تلاوة",
       "تلاوة high velocity shorts",
       "stickman trending survival",
-      "truth about trending",
-      "trending high velocity shorts",
-      "stickman سوداء survival",
-      "truth about سوداء",
-      "سوداء high velocity shorts",
-      "stickman شاشه survival",
-      "truth about شاشه",
-      "شاشه high velocity shorts",
-      "stickman كروما survival",
-      "truth about كروما"
+      "truth about trending"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -347,6 +348,10 @@
     "Fe3yrwtWVB8": {
       "timestamp": "2026-10-15 15:32:53",
       "old_title": "Never Mess With Nature's Deadliest Beasts! 🦡⚡ - Wolf Pack Alpha Decision.."
+    },
+    "242C-Cjz7Og": {
+      "timestamp": "2026-10-16 02:17:36",
+      "old_title": "رحلة تميم الداري إلى جزيرة المسيح الدجال ⚠️ | الوثائقي الكامل للقصة الحقيقية"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
@@ -356,7 +361,7 @@
     "total_network_views": 208368,
     "progress_to_million_subs_percent": 0.431,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-15 20:09:54"
+    "last_hyper_sync": "2026-10-16 02:17:39"
   },
   "empire_channel_blueprints": {
     "quran": {
