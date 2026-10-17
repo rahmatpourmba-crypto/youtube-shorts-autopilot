@@ -30,22 +30,20 @@ def save_state(state):
 def run_quran_channel(run_dir: Path, run_count: int):
     """
     15:00 IRST (3:00 PM Tehran Time) Window:
-    Dedicated to Quran Channel (تلاوت‌های خاشعه، آرامش‌بخش، حکمت‌های قرآنی) + Instagram Reel
+    Dedicated to Quran Channel: 100% Original MoneyPrinter Turbo Quranic Wisdom & Prophetic Mysteries
+    + Instagram Reel
     """
-    from run_pipeline import process_and_upload_trend
-    from autonomous_growth_auditor import get_mega_query_for_channel
+    print(f"\n[DISPATCH - QURAN TURBO ENGINE] Window 15:00 IRST: 100% Original Quranic Wisdom Short (Run #{run_count})...")
+    from run_pipeline import process_and_upload_money_printer_turbo
     
-    quran_niche = "quran" if (run_count % 2 == 0) else "islamic_mystery"
-    q, hook = get_mega_query_for_channel(quran_niche, run_count)
-    print(f"\n[DISPATCH - QURAN 165-ENGINE] Window 15:00 IRST: '{q}' | Banner: '{hook}'")
-    process_and_upload_trend(
+    quran_niche = "quran"
+    process_and_upload_money_printer_turbo(
         channel_key="quran",
-        search_query=q,
-        hook_banner=hook,
         category_id="22",
-        run_dir=run_dir / f"quran_{quran_niche}",
+        run_dir=run_dir / "quran_turbo",
         niche=quran_niche,
-        publish_at=None
+        language="en",
+        run_count=run_count
     )
 
 def run_cryptolab_channel(run_dir: Path, run_count: int):
