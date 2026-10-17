@@ -327,11 +327,10 @@ def generate_voice_and_subtitles(text: str, language: str, out_dir: Path, voice_
     chosen_voice = voice_map.get(voice_gender, list(voice_map.values())[0])
     
     print(f"  [MoneyPrinter TTS] Synthesizing speech with voice: '{chosen_voice}'...")
-    success = False
     try:
-        success = asyncio.run(_async_edge_tts(text, chosen_voice, out_audio, out_srt))
+        success = asyncio.run(asyncio.wait_for(_async_edge_tts(text, chosen_voice, out_audio, out_srt), timeout=6.0))
     except Exception as e:
-        print(f"  [MoneyPrinter TTS] Asyncio run failed: {e}")
+        print(f"  [MoneyPrinter TTS] Edge-TTS timeout or unreachable ({e}), immediately falling back...")
         
     # Offline Fallback (pyttsx3 or gTTS or pure synthesis)
     if not success or not out_audio.exists() or out_audio.stat().st_size == 0:
@@ -561,8 +560,8 @@ def render_money_printer_turbo_short(
         "-filter_complex", filter_complex,
         "-map", "[v_out]",
         "-map", "1:a",
-        "-c:v", "libx264", "-preset", "fast", "-crf", "20",
-        "-c:a", "aac", "-b:a", "192k",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "24", "-b:v", "2800k", "-maxrate", "3500k", "-bufsize", "6000k", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "128k",
         "-shortest",
         str(final_output)
     ]
@@ -578,8 +577,8 @@ def render_money_printer_turbo_short(
             "-stream_loop", "-1", "-i", str(bg_video_raw),
             "-i", str(voice_audio),
             "-vf", "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920",
-            "-c:v", "libx264", "-preset", "veryfast", "-crf", "22",
-            "-c:a", "aac", "-b:a", "192k",
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "25", "-b:v", "2500k", "-pix_fmt", "yuv420p",
+            "-c:a", "aac", "-b:a", "128k",
             "-shortest",
             str(final_output)
         ]

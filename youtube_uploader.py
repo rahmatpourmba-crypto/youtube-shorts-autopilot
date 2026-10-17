@@ -130,7 +130,8 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
         "status": status_obj
     }
 
-    media = MediaFileUpload(video_path, chunksize=-1, resumable=True, mimetype="video/*")
+    chunk_size = 5 * 1024 * 1024  # 5MB chunks for reliable fast upload
+    media = MediaFileUpload(video_path, chunksize=chunk_size, resumable=True, mimetype="video/*")
     request = youtube.videos().insert(
         part="snippet,status",
         body=body,

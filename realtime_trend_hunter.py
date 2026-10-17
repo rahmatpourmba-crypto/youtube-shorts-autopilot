@@ -123,7 +123,7 @@ def fetch_live_ai_trend() -> Dict[str, Any]:
         "title": "This Brand New AI Breakthrough Changes Everything! 🤖⚡ #Shorts #Tech",
         "tags": ["ai", "technology", "artificialintelligence", "future", "coding", "shorts"],
         "pinned_comment": "Will AI take over more than half of white-collar jobs by 2028? Drop YES or NO! 🤖👇",
-        "synth_filter": "mandelbrot=s=1080x1920:r=30:maxiter=90"
+        "synth_filter": "cellauto=s=1080x1920:r=30:rule=90"
     }
 
 def fetch_live_animals_trend() -> Dict[str, Any]:
@@ -178,7 +178,7 @@ def fetch_live_quran_trend() -> Dict[str, Any]:
             "title": "Iron Sent Down From Supernovas! 🌌⚔️ | Quranic Astronomy #Shorts",
             "tags": ["quran", "miracle", "astronomy", "science", "islam", "shorts"],
             "pinned_comment": "Subhanallah! Which Surah brings the most peace to your heart? 🕊️🤲",
-            "synth_filter": "mandelbrot=s=1080x1920:r=30:maxiter=140"
+            "synth_filter": "cellauto=s=1080x1920:r=30:rule=30"
         },
         {
             "hook": "A 1400-Year-Old Verse That Stunned Modern Oceanographers",
@@ -217,7 +217,7 @@ def fetch_live_quran_trend() -> Dict[str, Any]:
             "title": "The Expanding Universe in the Quran! 🌌🔭 #Shorts #Miracle #Science",
             "tags": ["quran", "astronomy", "universe", "science", "islam", "shorts"],
             "pinned_comment": "Share this with someone who loves astronomy and faith! ✨🌌",
-            "synth_filter": "mandelbrot=s=1080x1920:r=30:maxiter=110"
+            "synth_filter": "cellauto=s=1080x1920:r=30:rule=110"
         }
     ]
     import random
