@@ -4,5 +4,13 @@ output/
 *.mp4
 *.m4a
 *.webm
-test_*.mp3
-test_*.py
+*.mp3
+*.aac
+*.jpg
+*.png
+*.log
+*.txt
+reauth.log
+temp_*
+stickman_demo/
+
