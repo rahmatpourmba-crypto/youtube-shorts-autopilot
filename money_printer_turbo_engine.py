@@ -502,9 +502,10 @@ def render_money_printer_turbo_short(
     convert_srt_to_hormozi_ass(srt_file, ass_file, highlight_color="yellow")
     print(f"  ✓ Hormozi Dynamic Subtitles built: {ass_file.name}")
 
-    # 3. Dynamic Video Background (from 50-Trends Bank or Thematic Stock)
+    # 3. Dynamic Video Background (clean textless footage for AI narratives)
     from viral_trends_bank_50 import get_next_viral_trend_from_bank
-    trend_entry = get_next_viral_trend_from_bank(niche, run_count=random.randint(1, 99))
+    footage_niche = "quran_cinematic" if niche in ["quran", "islamic_mystery"] else niche
+    trend_entry = get_next_viral_trend_from_bank(footage_niche, run_count=random.randint(1, 99))
     stream_url = trend_entry["stream"]
     
     bg_video_raw = output_dir / "bg_raw.mp4"

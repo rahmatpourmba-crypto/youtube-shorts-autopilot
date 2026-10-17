@@ -86,6 +86,29 @@ VIRAL_TRENDS_50 = {
         }
     ],
 
+    "quran_cinematic": [
+        {
+            "stream": "https://archive.org/download/HubbleUltraDeepField3D/HubbleUltraDeepField3D_512kb.mp4",
+            "title": "Iron Sent Down From Supernovas! 🌌⚔️ | Quranic Astronomy #Shorts",
+            "hook": "IRON SENT FROM STARS 🌌"
+        },
+        {
+            "stream": "https://archive.org/download/OceanWavesCrashing/OceanWavesCrashing.mp4",
+            "title": "The Deep Ocean Miracle in the Quran! 🌊📖 | Modern Science #Shorts",
+            "hook": "DEEP OCEAN WAVES 🌊"
+        },
+        {
+            "stream": "https://archive.org/download/NatureRelaxationTimelapse/NatureRelaxation.mp4",
+            "title": "A Verse to Heal Your Broken Heart 🕊️🤍 | Quran Khushu #Shorts",
+            "hook": "PEACE TO A BROKEN HEART 🕊️"
+        },
+        {
+            "stream": "https://archive.org/download/clouds-timelapse-stock-footage/clouds-timelapse.mp4",
+            "title": "Why Mountains Are Described As Pegs Deep Inside The Earth ⛰️ #Shorts",
+            "hook": "SECRET ROOTS OF MOUNTAINS ⛰️"
+        }
+    ],
+
     "islamic_mystery": [
         {
             "stream": "https://archive.org/download/surah_ibrahim_shorts/10%20-%20Ibrahim%20%28Ayah%2022%29.mp4",
