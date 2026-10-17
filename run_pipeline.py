@@ -157,7 +157,8 @@ def process_and_upload_money_printer_turbo(channel_key: str, category_id: str, r
             description=desc,
             tags=tags,
             category_id=category_id,
-            thumbnail_path=turbo_data["thumbnail"]
+            thumbnail_path=turbo_data["thumbnail"],
+            pinned_comment=turbo_data.get("pinned_comment")
         )
     else:
         print(f"  [Notice] Token not found for {channel_key}. Output saved at {turbo_data['video']}.")

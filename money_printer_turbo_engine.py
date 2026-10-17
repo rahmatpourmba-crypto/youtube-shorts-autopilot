@@ -593,7 +593,8 @@ def render_money_printer_turbo_short(
         "title": script_data["title"],
         "description": f"{script_data['title']}\n\n#shorts #viral #moneyprinter #{niche}",
         "tags": script_data["tags"],
-        "hook": script_data["hook"]
+        "hook": script_data["hook"],
+        "pinned_comment": script_data.get("pinned_comment")
     }
 
 if __name__ == "__main__":

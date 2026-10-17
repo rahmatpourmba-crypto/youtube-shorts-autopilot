@@ -44,6 +44,7 @@ MEGA_SCRIPTS = {
             ],
             "loop_back": "The Animal That Literally Defies Death Every Single Day",
             "title": "The Fearless Animal That Laughs at Death! 🦡🔥 #Shorts",
+            "pinned_comment": "Who wins in a 1v1 battle: The Honey Badger or 3 Hyenas? Vote 1 or 2 below! 👇🦁",
             "tags": ["animals", "wildlife", "honeybadger", "nature", "survival", "shorts"],
             "category_id": "15"
         },
@@ -312,6 +313,18 @@ MEGA_SCRIPTS = {
     ]
 }
 
+DEFAULT_PINNED_COMMENTS = {
+    "animals": "Who wins in a 1v1 battle: The Honey Badger or 3 Hyenas? Vote 1 or 2 below! 👇🦁",
+    "quran": "Which Surah brings the deepest peace to your heart when you feel anxious? Share with us below 🕊️🤍",
+    "ai": "Will autonomous AI replace 50% of software engineers by 2027? Drop YES or NO below! 🤖⚡",
+    "cryptolab": "Are you accumulating through the dip or waiting for cheaper prices? Comment below! 💎📉"
+}
+
+def get_pinned_comment_for_script(script: Dict[str, Any], niche: str) -> str:
+    if script and script.get("pinned_comment"):
+        return script["pinned_comment"]
+    return DEFAULT_PINNED_COMMENTS.get(niche, "Drop your thoughts below! 👇🔥")
+
 def get_mega_prompt_script(niche: str, run_count: int) -> Dict[str, Any]:
     """
     Selects and validates an elite script adhering to the 21 Mega-Prompt Rules.
@@ -319,7 +332,10 @@ def get_mega_prompt_script(niche: str, run_count: int) -> Dict[str, Any]:
     """
     pool = MEGA_SCRIPTS.get(niche, MEGA_SCRIPTS["cryptolab"])
     idx = (run_count - 1) % len(pool)
-    return pool[idx]
+    s = pool[idx].copy()
+    if "pinned_comment" not in s:
+        s["pinned_comment"] = get_pinned_comment_for_script(s, niche)
+    return s
 
 def get_all_mega_scripts(niche: str) -> List[Dict[str, Any]]:
     return MEGA_SCRIPTS.get(niche, [])
