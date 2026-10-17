@@ -286,9 +286,13 @@ TURBO_SCRIPTS = {
 }
 
 def get_turbo_script_for_niche(niche: str, run_count: int) -> dict:
-    pool = TURBO_SCRIPTS.get(niche, TURBO_SCRIPTS["cryptolab"])
-    idx = (run_count - 1) % len(pool)
-    return pool[idx]
+    try:
+        from mega_prompt_engine_21 import get_mega_prompt_script
+        return get_mega_prompt_script(niche, run_count)
+    except Exception as e:
+        pool = TURBO_SCRIPTS.get(niche, TURBO_SCRIPTS["cryptolab"])
+        idx = (run_count - 1) % len(pool)
+        return pool[idx]
 
 # =====================================================================
 # 3. EDGE-TTS SYNTHESIZER WITH EXACT WORD TIMESTAMPS
