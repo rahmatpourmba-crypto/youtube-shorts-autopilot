@@ -29,79 +29,53 @@ def save_state(state):
 
 def run_quran_channel(run_dir: Path, run_count: int):
     """
-    15:00 IRST (3:00 PM Tehran Time) Window:
-    Dedicated to Quran Channel: 100% Original MoneyPrinter Turbo Quranic Wisdom & Prophetic Mysteries
-    + Instagram Reel
+    100% DEDICATED QURAN CHANNEL PIPELINE (Pinterest Aesthetic Stories + Yasser Al-Dosari / Youssef Saghir)
     """
-    print(f"\n[DISPATCH - QURAN TURBO ENGINE] Window 15:00 IRST: 100% Original Quranic Wisdom Short (Run #{run_count})...")
-    from run_pipeline import process_and_upload_money_printer_turbo
+    print(f"\n[DISPATCH - QURAN PINTEREST AESTHETIC] Window Active: Quranic Story & Soul-Touching Recitation (Run #{run_count})...")
+    from quran_pinterest_aesthetic_engine import render_quran_aesthetic_short
+    from youtube_uploader import upload_short, CHANNELS
     
-    quran_niche = "quran"
-    process_and_upload_money_printer_turbo(
+    out_dir = run_dir / "quran_aesthetic"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Render Master Aesthetic Short
+    quran_data = render_quran_aesthetic_short(story_index=run_count, output_dir=out_dir)
+    
+    # Upload to YouTube
+    print(f"\n[QURAN] Uploading Master Aesthetic Short to {CHANNELS['quran']['name']}...")
+    upload_res = upload_short(
         channel_key="quran",
+        video_path=quran_data["video"],
+        title=quran_data["title"],
+        description=quran_data["description"],
+        tags=quran_data["tags"],
         category_id="22",
-        run_dir=run_dir / "quran_turbo",
-        niche=quran_niche,
-        language="en",
-        run_count=run_count
+        thumbnail_path=quran_data["thumbnail"],
+        pinned_comment=quran_data.get("pinned_comment")
     )
+    
+    # Cross-post to Instagram
+    if upload_res:
+        try:
+            print("[QURAN] Cross-posting to Instagram (@abdol_basit_rahmatpour)...")
+            from instagram_publisher import publish_instagram_reel
+            publish_instagram_reel(video_path=quran_data["video"], caption=quran_data["title"], niche="quran", thumbnail_path=quran_data["thumbnail"])
+        except Exception as e:
+            print(f"  [Instagram Notice] {e}")
+
+    return upload_res
 
 def run_cryptolab_channel(run_dir: Path, run_count: int):
-    """
-    03:30 IRST (USA/Europe Peak):
-    Alternating PolyMint multilingual promotion vs 100% Original MoneyPrinter Turbo Web3 Wealth Video
-    """
-    print("\n[DISPATCH - CRYPTOLAB TURBO ENGINE] 03:30 IRST: 100% Original Web3 Wealth & PolyMint...")
-    if run_count % 2 == 0:
-        print("  -> Channel Mode: Official PolyMint Web3 Platform Promotion 🚀")
-        try:
-            from cryptolab_multilingual import publish_next_cryptolab_language
-            publish_next_cryptolab_language(publish_at=None)
-        except Exception as e:
-            print(f"  [CryptoLab Promo Warning] {e}")
-    else:
-        print("  -> Channel Mode: MoneyPrinter Turbo (100% Original Script, Edge-TTS, Hormozi Subtitles) 💎")
-        from run_pipeline import process_and_upload_money_printer_turbo
-        process_and_upload_money_printer_turbo(
-            channel_key="polygon",
-            category_id="27",
-            run_dir=run_dir / "cryptolab_turbo",
-            niche="cryptolab",
-            language="en",
-            run_count=run_count
-        )
+    print("\n[DISPATCH - CRYPTOLAB] On hold: 100% Focused on Quran Channel.")
+    return None
 
 def run_animals_channel(run_dir: Path, run_count: int):
-    """
-    03:30 IRST (USA/Europe Peak):
-    Wild Kingdom: 100% Original MoneyPrinter Turbo Wildlife Survival & Predator Battles
-    """
-    print("\n[DISPATCH - ANIMALS TURBO ENGINE] 03:30 IRST: 100% Original Wildlife Survival Short...")
-    from run_pipeline import process_and_upload_money_printer_turbo
-    process_and_upload_money_printer_turbo(
-        channel_key="animals",
-        category_id="15",
-        run_dir=run_dir / "animals_turbo",
-        niche="animals",
-        language="en",
-        run_count=run_count
-    )
+    print("\n[DISPATCH - ANIMALS] On hold: 100% Focused on Quran Channel.")
+    return None
 
 def run_ai_channel(run_dir: Path, run_count: int):
-    """
-    03:30 IRST (USA/Europe Peak):
-    AI Unveiled: 100% Original MoneyPrinter Turbo Future Tech & Robotics Breakthroughs
-    """
-    print("\n[DISPATCH - AI UNVEILED TURBO ENGINE] 03:30 IRST: 100% Original AI Breakthrough Short...")
-    from run_pipeline import process_and_upload_money_printer_turbo
-    process_and_upload_money_printer_turbo(
-        channel_key="ai",
-        category_id="28",
-        run_dir=run_dir / "ai_turbo",
-        niche="ai",
-        language="en",
-        run_count=run_count
-    )
+    print("\n[DISPATCH - AI] On hold: 100% Focused on Quran Channel.")
+    return None
 
 def main():
     state = load_state()
