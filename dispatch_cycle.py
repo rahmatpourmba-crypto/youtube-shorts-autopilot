@@ -41,29 +41,10 @@ def run_quran_channel(run_dir: Path, run_count: int):
     # Render Master Aesthetic Short
     quran_data = render_quran_aesthetic_short(story_index=run_count, output_dir=out_dir)
     
-    # Upload to YouTube
-    print(f"\n[QURAN] Uploading Master Aesthetic Short to {CHANNELS['quran']['name']}...")
-    upload_res = upload_short(
-        channel_key="quran",
-        video_path=quran_data["video"],
-        title=quran_data["title"],
-        description=quran_data["description"],
-        tags=quran_data["tags"],
-        category_id="22",
-        thumbnail_path=quran_data["thumbnail"],
-        pinned_comment=quran_data.get("pinned_comment")
-    )
-    
-    # Cross-post to Instagram
-    if upload_res:
-        try:
-            print("[QURAN] Cross-posting to Instagram (@abdol_basit_rahmatpour)...")
-            from instagram_publisher import publish_instagram_reel
-            publish_instagram_reel(video_path=quran_data["video"], caption=quran_data["title"], niche="quran", thumbnail_path=quran_data["thumbnail"])
-        except Exception as e:
-            print(f"  [Instagram Notice] {e}")
+    # UPLOADS PAUSED BY USER INSTRUCTION
+    print(f"\n🛑 [UPLOADS PAUSED] Render completed successfully. Uploads to YouTube and Instagram are disabled by user directive.")
+    return None
 
-    return upload_res
 
 def run_cryptolab_channel(run_dir: Path, run_count: int):
     print("\n[DISPATCH - CRYPTOLAB] On hold: 100% Focused on Quran Channel.")

@@ -1,14 +1,16 @@
 name: 24/7 Active Shorts & Auto-Keepalive Pipeline
 
+# on:
+#   schedule:
+#     # 1. Quran Channel Daily Shorts & Reel: 15:00 IRST (11:30 UTC)
+#     - cron: '30 11 * * *'
+#     # 2. Quran Channel Long-Form Trending Documentary (Arabic/Persian/English): 20:30 IRST (17:00 UTC)
+#     - cron: '0 17 * * *'
+#     # 3. USA & Europe Prime Time (AI, CryptoLab, Animals): 03:30 IRST (00:00 UTC)
+#     - cron: '0 0 * * *'
 on:
-  schedule:
-    # 1. Quran Channel Daily Shorts & Reel: 15:00 IRST (11:30 UTC)
-    - cron: '30 11 * * *'
-    # 2. Quran Channel Long-Form Trending Documentary (Arabic/Persian/English): 20:30 IRST (17:00 UTC)
-    - cron: '0 17 * * *'
-    # 3. USA & Europe Prime Time (AI, CryptoLab, Animals): 03:30 IRST (00:00 UTC)
-    - cron: '0 0 * * *'
   workflow_dispatch:
+
     inputs:
       target_channel:
         description: 'Target Channel to execute'

@@ -76,14 +76,11 @@ def build_bilingual_quran_caption(base_title: str) -> str:
 
 def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", thumbnail_path: str = None, initial_comment: str = None):
     """
-    Uploads a vertical 9:16 video as an Instagram Reel completely FREE using direct instagrapi.
+    Uploads a vertical 9:16 video as an Instagram Reel.
     """
-    acc = ACCOUNTS.get(niche, ACCOUNTS["quran"])
-    target_video = Path(video_path)
+    print("\n🛑 [GLOBAL KILLSWITCH ACTIVE] User requested: STOP ALL UPLOADS EVERYWHERE. Skipping Instagram upload.")
+    return None
 
-    if not target_video.exists():
-        print(f"  [Instagram Error] Video file does not exist: {video_path}")
-        return None
 
     try:
         print(f"  [Instagram-{niche.upper()}] Connecting to Instagram as {acc['display']}...")
