@@ -29,21 +29,41 @@ def save_state(state):
 
 def run_quran_channel(run_dir: Path, run_count: int):
     """
-    100% DEDICATED QURAN CHANNEL PIPELINE (Pinterest Aesthetic Stories + Yasser Al-Dosari / Youssef Saghir)
+    VIRAL QURAN CHANNEL PIPELINE (Sheikh Yasser Al-Dosari >500k Views from Instagram)
+    Direct Unmodified Re-Upload to YouTube Quran Channel
     """
-    print(f"\n[DISPATCH - QURAN PINTEREST AESTHETIC] Window Active: Quranic Story & Soul-Touching Recitation (Run #{run_count})...")
-    from quran_pinterest_aesthetic_engine import render_quran_aesthetic_short
+    print(f"\n[DISPATCH - QURAN VIRAL REELS] Window Active: Sheikh Yasser Al-Dosari (>500k Views)...")
+    from fetch_and_upload_yasser_viral import find_and_download_viral_reel
     from youtube_uploader import upload_short, CHANNELS
     
-    out_dir = run_dir / "quran_aesthetic"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Render Master Aesthetic Short
-    quran_data = render_quran_aesthetic_short(story_index=run_count, output_dir=out_dir)
-    
-    # UPLOADS PAUSED BY USER INSTRUCTION
-    print(f"\n🛑 [UPLOADS PAUSED] Render completed successfully. Uploads to YouTube and Instagram are disabled by user directive.")
-    return None
+    reel_data = find_and_download_viral_reel(min_views=500000)
+    if not reel_data:
+        print("  [Notice] Live Instagram search did not return eligible reel. Trying general top viral...")
+        reel_data = find_and_download_viral_reel(min_views=50000)
+
+    if not reel_data:
+        print("  [Error] No viral reel available to upload.")
+        return None
+
+    print(f"\n[QURAN] Uploading Unmodified Viral Short to {CHANNELS['quran']['name']}...")
+    upload_res = upload_short(
+        channel_key="quran",
+        video_path=reel_data["video"],
+        title=reel_data["title"],
+        description=reel_data["description"],
+        tags=reel_data["tags"],
+        category_id="22"
+    )
+
+    if upload_res:
+        from fetch_and_upload_yasser_viral import load_history, save_history
+        history = load_history()
+        history.append(reel_data["code"])
+        save_history(history)
+        print(f"  ✓ Published Viral Short: https://youtube.com/shorts/{upload_res['id']}")
+
+    return upload_res
+
 
 
 def run_cryptolab_channel(run_dir: Path, run_count: int):
