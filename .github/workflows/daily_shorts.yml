@@ -39,10 +39,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install System FFmpeg, Node.js and Fonts
+      - name: Install System FFmpeg and Node.js
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg nodejs fonts-amiri fonts-noto-core
+          sudo apt-get install -y ffmpeg nodejs
 
       - name: Install Python Dependencies
         run: |
