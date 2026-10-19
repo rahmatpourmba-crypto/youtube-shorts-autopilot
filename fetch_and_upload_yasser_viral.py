@@ -55,9 +55,9 @@ def clean_arabic_title(caption: str) -> str:
     full_title = f"{cleaned} | الشيخ ياسر الدوسري #Shorts #Quran"
     return full_title[:100]
 
-def find_and_download_viral_reel(min_views: int = 500000, target_reciter: str = "ياسر الدوسري"):
+def find_and_download_viral_reel(min_views: int = 100000, target_reciter: str = "ياسر الدوسري"):
     """
-    Finds top Instagram reels for Sheikh Yasser Al-Dosari with views > 500k,
+    Finds top Instagram reels for Sheikh Yasser Al-Dosari with views > 100k,
     downloads the exact original video file without modification.
     """
     used_codes = set(load_history())
@@ -97,21 +97,22 @@ def find_and_download_viral_reel(min_views: int = 500000, target_reciter: str = 
                     if tag in ["تلاوة_خاشعة", "قران_كريم"]:
                         continue
 
-                # Check duration (must be <= 60 seconds for YouTube Shorts)
+                # Check duration (must be < 50 seconds per user instruction)
                 duration = getattr(m, "video_duration", 0)
-                if duration and duration > 60:
+                if duration and duration >= 50:
                     continue
+
 
                 views = getattr(m, "view_count", 0) or 0
                 plays = getattr(m, "play_count", 0) or 0
                 likes = m.like_count or 0
                 
-                # Check metrics: views/plays > 500k, or likes > 20k (which corresponds to 500k+ plays)
+                # Check metrics: views/plays > 100k, or likes > 4k (which corresponds to 100k+ plays)
                 effective_score = max(views, plays, likes * 25)
                 
                 print(f"  [Reel {m.code}] Plays: {plays:,} | Views: {views:,} | Likes: {likes:,} | Score: {effective_score:,}")
                 
-                if effective_score >= min_views or likes >= 20000:
+                if effective_score >= min_views or likes >= 4000:
                     candidate_reels.append({
                         "code": m.code,
                         "pk": m.pk,
@@ -123,7 +124,8 @@ def find_and_download_viral_reel(min_views: int = 500000, target_reciter: str = 
                         "duration": duration,
                         "score": effective_score
                     })
-                    print(f"  🔥 MATCH FOUND: Reel {m.code} meets >500k threshold!")
+                    print(f"  🔥 MATCH FOUND: Reel {m.code} meets >100k threshold!")
+
                     
         except Exception as e:
             print(f"  [Warning] Tag #{tag} query error: {e}")
@@ -140,6 +142,9 @@ def find_and_download_viral_reel(min_views: int = 500000, target_reciter: str = 
                 top_m = cl.hashtag_medias_top(tag, amount=10)
                 for m in top_m:
                     if m.media_type == 2 and m.code not in used_codes:
+                        dur = getattr(m, "video_duration", 0)
+                        if dur and dur >= 50:
+                            continue
                         candidate_reels.append({
                             "code": m.code,
                             "pk": m.pk,
@@ -148,9 +153,10 @@ def find_and_download_viral_reel(min_views: int = 500000, target_reciter: str = 
                             "plays": getattr(m, "play_count", 0),
                             "views": getattr(m, "view_count", 0),
                             "likes": m.like_count or 0,
-                            "duration": getattr(m, "video_duration", 0),
+                            "duration": dur,
                             "score": m.like_count or 0
                         })
+
                 candidate_reels.sort(key=lambda x: x["score"], reverse=True)
             except Exception:
                 pass

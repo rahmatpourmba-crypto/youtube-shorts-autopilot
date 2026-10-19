@@ -1,30 +1,23 @@
-name: 24/7 Active Shorts & Auto-Keepalive Pipeline
+name: 3x Daily Quran Viral Shorts Autopilot (15:00, 20:30, 22:00 IRST)
 
-# on:
-#   schedule:
-#     # 1. Quran Channel Daily Shorts & Reel: 15:00 IRST (11:30 UTC)
-#     - cron: '30 11 * * *'
-#     # 2. Quran Channel Long-Form Trending Documentary (Arabic/Persian/English): 20:30 IRST (17:00 UTC)
-#     - cron: '0 17 * * *'
-#     # 3. USA & Europe Prime Time (AI, CryptoLab, Animals): 03:30 IRST (00:00 UTC)
-#     - cron: '0 0 * * *'
 on:
+  schedule:
+    # 1. First Daily Slot: 15:00 IRST (11:30 UTC)
+    - cron: '30 11 * * *'
+    # 2. Second Daily Slot: 20:30 IRST (17:00 UTC)
+    - cron: '0 17 * * *'
+    # 3. Third Daily Slot: 22:00 IRST (18:30 UTC)
+    - cron: '30 18 * * *'
   workflow_dispatch:
-
     inputs:
       target_channel:
         description: 'Target Channel to execute'
         required: false
-        default: 'auto'
+        default: 'quran'
         type: choice
         options:
-          - auto
           - quran
-          - quran_longform
-          - us_eu
-          - cryptolab
-          - animals
-          - ai
+          - auto
 
 permissions:
   contents: write
@@ -51,27 +44,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Execute 5-Hour Round-Robin Active Dispatcher
+      - name: Execute Quran Viral Reel Dispatcher (>100k views, <50s)
         run: |
-          TARGET="${{ github.event.inputs.target_channel || 'auto' }}"
-          SCHEDULE="${{ github.event.schedule }}"
-          echo "Target input: '$TARGET' | Triggered Schedule: '$SCHEDULE'"
-          if [ "$TARGET" != "auto" ]; then
-            python dispatch_cycle.py --channel="$TARGET"
-          elif [ "$SCHEDULE" = "30 11 * * *" ]; then
-            python dispatch_cycle.py --channel=quran
-          elif [ "$SCHEDULE" = "0 17 * * *" ]; then
-            python dispatch_cycle.py --channel=quran_longform
-          elif [ "$SCHEDULE" = "0 0 * * *" ]; then
-            python dispatch_cycle.py --all-us-eu
-          else
-            python dispatch_cycle.py
-          fi
+          python dispatch_cycle.py --channel=quran
 
       - name: Commit and Push Updated State (Keepalive Activity)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add state.json growth_brain.json used_trends_history.json
-          git commit -m "Auto-keepalive heartbeat and AI growth brain update [skip ci]" || echo "No changes to state"
+          git add state.json growth_brain.json used_trends_history.json used_viral_reels.json
+          git commit -m "Auto-keepalive heartbeat and viral reels state update [skip ci]" || echo "No changes to state"
           git push
+
