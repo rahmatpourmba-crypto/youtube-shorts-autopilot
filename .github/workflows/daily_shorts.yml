@@ -1,12 +1,18 @@
-name: 3x Daily Quran Viral Shorts Autopilot (15:00, 20:30, 22:00 IRST)
+name: 24/7 Quran Viral Shorts Autopilot (Every 4 Hours - 6x Daily)
 
 on:
   schedule:
-    # 1. First Daily Slot: 15:00 IRST (11:30 UTC)
-    - cron: '30 11 * * *'
-    # 2. Second Daily Slot: 20:30 IRST (17:00 UTC)
-    - cron: '0 17 * * *'
-    # 3. Third Daily Slot: 22:00 IRST (18:30 UTC)
+    # Slot 1: 02:00 IRST (22:30 UTC) - Abdul Rahman Mossad / Raad Al-Kurdi
+    - cron: '30 22 * * *'
+    # Slot 2: 06:00 IRST (02:30 UTC) - Sheikh Yasser Al-Dosari (Fajr Peak)
+    - cron: '30 2 * * *'
+    # Slot 3: 10:00 IRST (06:30 UTC) - Youssef Saghir
+    - cron: '30 6 * * *'
+    # Slot 4: 14:00 IRST (10:30 UTC) - Sheikh Yasser Al-Dosari
+    - cron: '30 10 * * *'
+    # Slot 5: 18:00 IRST (14:30 UTC) - Muhammad Al-Luhaidan / Islam Sobhi (Maghrib Peak)
+    - cron: '30 14 * * *'
+    # Slot 6: 22:00 IRST (18:30 UTC) - Sheikh Yasser Al-Dosari (Bedtime Peace)
     - cron: '30 18 * * *'
   workflow_dispatch:
     inputs:
@@ -55,4 +61,3 @@ jobs:
           git add state.json growth_brain.json used_trends_history.json used_viral_reels.json
           git commit -m "Auto-keepalive heartbeat and viral reels state update [skip ci]" || echo "No changes to state"
           git push
-

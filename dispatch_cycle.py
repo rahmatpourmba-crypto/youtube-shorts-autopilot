@@ -32,14 +32,14 @@ def run_quran_channel(run_dir: Path, run_count: int):
     VIRAL QURAN CHANNEL PIPELINE (Sheikh Yasser Al-Dosari >500k Views from Instagram)
     Direct Unmodified Re-Upload to YouTube Quran Channel
     """
-    print(f"\n[DISPATCH - QURAN VIRAL REELS] Window Active: Sheikh Yasser Al-Dosari (>500k Views)...")
+    print(f"\n[DISPATCH - QURAN VIRAL REELS] Window Active: Elite Quran Reciters (Every 4h - >100k Views, <50s)...")
     from fetch_and_upload_yasser_viral import find_and_download_viral_reel
     from youtube_uploader import upload_short, CHANNELS
     
-    reel_data = find_and_download_viral_reel(min_views=500000)
+    reel_data = find_and_download_viral_reel(min_views=100000, max_duration=49.9)
     if not reel_data:
         print("  [Notice] Live Instagram search did not return eligible reel. Trying general top viral...")
-        reel_data = find_and_download_viral_reel(min_views=50000)
+        reel_data = find_and_download_viral_reel(min_views=30000, max_duration=49.9)
 
     if not reel_data:
         print("  [Error] No viral reel available to upload.")
