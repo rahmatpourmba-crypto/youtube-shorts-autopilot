@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-20 17:21:25",
-  "total_audits_performed": 19,
+  "last_audit_timestamp": "2026-10-20 21:48:59",
+  "total_audits_performed": 20,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 3940,
       "views": 204092,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-20 17:21:25"
+      "last_checked": "2026-10-20 21:48:59"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,11 @@
   },
   "winning_topics": {
     "quran": [
+      "Mountain Roots",
+      "Two Seas Never Mixing",
+      "Iron Coming From Stars",
+      "Pharaoh Drowning",
+      "تلاوة",
       "The Day of Reckoning",
       "The Gates of Jannah",
       "The Moment of Death",
@@ -55,12 +60,7 @@
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
-      "Dajjal Island Mystery",
-      "Mountain Roots",
-      "Two Seas Never Mixing",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "أجمل"
+      "Dajjal Island Mystery"
     ],
     "ai": [
       "نیشانەی",
@@ -171,6 +171,9 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman تلاوة survival",
+      "truth about تلاوة",
+      "تلاوة high velocity shorts",
       "stickman اكسبلور survival",
       "truth about اكسبلور",
       "اكسبلور high velocity shorts",
@@ -192,10 +195,7 @@
       "stickman بی‌پایان survival",
       "truth about بی‌پایان",
       "بی‌پایان high velocity shorts",
-      "stickman آرامش survival",
-      "truth about آرامش",
-      "آرامش high velocity shorts",
-      "stickman د.ياسر survival"
+      "stickman آرامش survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -386,6 +386,10 @@
     "pWfAx-J7YnM": {
       "timestamp": "2026-10-20 17:21:25",
       "old_title": "آرامش بی‌پایان با کلام الهی 🌿 تلاوت خاشعانه | آرامش بی‌پایان با کلام ال.."
+    },
+    "zNQeq4sQ9a4": {
+      "timestamp": "2026-10-20 21:48:59",
+      "old_title": "دعاء 🤲🏻) -الشيخ د.ياسر الدوسري 1445هـ | الشيخ ياسر الدوسري #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
@@ -395,7 +399,7 @@
     "total_network_views": 209542,
     "progress_to_million_subs_percent": 0.434,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-20 17:21:28"
+    "last_hyper_sync": "2026-10-20 21:49:01"
   },
   "empire_channel_blueprints": {
     "quran": {
