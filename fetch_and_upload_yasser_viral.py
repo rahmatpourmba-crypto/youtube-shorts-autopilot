@@ -237,7 +237,7 @@ def main():
         history.append(reel_data["code"])
         save_history(history)
         print(f"\n🎉 SUCCESS: Viral Reel {reel_data['code']} uploaded to YouTube Quran Channel!")
-        print(f"URL: https://youtube.com/shorts/{upload_res['id']}")
+        print(f"URL: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
     else:
         print("[Upload Notice] YouTube upload did not return an ID.")
 

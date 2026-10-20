@@ -60,7 +60,7 @@ def run_quran_channel(run_dir: Path, run_count: int):
         history = load_history()
         history.append(reel_data["code"])
         save_history(history)
-        print(f"  ✓ Published Viral Short: https://youtube.com/shorts/{upload_res['id']}")
+        print(f"  ✓ Published Viral Short: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
 
     return upload_res
 

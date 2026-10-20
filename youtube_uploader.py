@@ -172,6 +172,7 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
 
     return {
         "video_id": video_id,
+        "id": video_id,
         "url": short_url
     }
 
