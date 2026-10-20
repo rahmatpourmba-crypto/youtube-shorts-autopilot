@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-18 08:34:07",
-  "total_audits_performed": 18,
+  "last_audit_timestamp": "2026-10-20 17:21:25",
+  "total_audits_performed": 19,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 3910,
-      "views": 203074,
+      "subscribers": 3940,
+      "views": 204092,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-18 08:34:07"
+      "last_checked": "2026-10-20 17:21:25"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,21 @@
   },
   "winning_topics": {
     "quran": [
+      "The Day of Reckoning",
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "اكسبلور",
+      "yasseraldossary",
+      "yasrr",
+      "مبكية",
+      "خاشعة",
+      "کلام",
+      "بی‌پایان",
+      "آرامش",
+      "د.ياسر",
+      "الشيخ",
+      "دعاء",
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
@@ -45,19 +60,7 @@
       "Two Seas Never Mixing",
       "Iron Coming From Stars",
       "Pharaoh Drowning",
-      "أجمل",
-      "about",
-      "truth",
-      "shocking",
-      "right",
-      "happening",
-      "signs",
-      "تلاوة",
-      "trending",
-      "The Day of Reckoning",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave"
+      "أجمل"
     ],
     "ai": [
       "نیشانەی",
@@ -133,11 +136,11 @@
       "حالات",
       "القران",
       "الكريم",
-      "آرامش",
       "بی‌پایان",
       "expanding",
       "universe",
-      "الأرض"
+      "الأرض",
+      "خاشعة"
     ],
     "ai": [
       "weeks",
@@ -168,31 +171,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
-      "stickman أجمل survival",
-      "truth about أجمل",
-      "أجمل high velocity shorts",
-      "stickman about survival",
-      "truth about about",
-      "about high velocity shorts",
-      "stickman truth survival",
-      "truth about truth",
-      "truth high velocity shorts",
-      "truth about shocking",
-      "shocking high velocity shorts",
-      "stickman right survival",
-      "truth about right",
-      "right high velocity shorts",
-      "stickman happening survival",
-      "truth about happening",
-      "happening high velocity shorts",
-      "stickman signs survival",
-      "truth about signs",
-      "signs high velocity shorts",
-      "stickman تلاوة survival",
-      "truth about تلاوة",
-      "تلاوة high velocity shorts",
-      "stickman trending survival",
-      "truth about trending"
+      "stickman اكسبلور survival",
+      "truth about اكسبلور",
+      "اكسبلور high velocity shorts",
+      "stickman yasseraldossary survival",
+      "truth about yasseraldossary",
+      "yasseraldossary high velocity shorts",
+      "stickman yasrr survival",
+      "truth about yasrr",
+      "yasrr high velocity shorts",
+      "stickman مبكية survival",
+      "truth about مبكية",
+      "مبكية high velocity shorts",
+      "stickman خاشعة survival",
+      "truth about خاشعة",
+      "خاشعة high velocity shorts",
+      "stickman کلام survival",
+      "truth about کلام",
+      "کلام high velocity shorts",
+      "stickman بی‌پایان survival",
+      "truth about بی‌پایان",
+      "بی‌پایان high velocity shorts",
+      "stickman آرامش survival",
+      "truth about آرامش",
+      "آرامش high velocity shorts",
+      "stickman د.ياسر survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -375,16 +378,24 @@
     "m7xOnWw_J-c": {
       "timestamp": "2026-10-18 02:10:02",
       "old_title": "The Expanding Universe in the Quran! 🌌🔭 #Shorts #Miracle #Science"
+    },
+    "nawJ-QlddxI": {
+      "timestamp": "2026-10-20 17:21:25",
+      "old_title": "تلاوة خاشعة مبكية | الشيخ ياسر الدوسري 🕊️✨ | الشيخ ياسر الدوسري #Shorts #Quran"
+    },
+    "pWfAx-J7YnM": {
+      "timestamp": "2026-10-20 17:21:25",
+      "old_title": "آرامش بی‌پایان با کلام الهی 🌿 تلاوت خاشعانه | آرامش بی‌پایان با کلام ال.."
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4306,
-    "total_network_views": 208524,
-    "progress_to_million_subs_percent": 0.431,
+    "total_network_subscribers": 4336,
+    "total_network_views": 209542,
+    "progress_to_million_subs_percent": 0.434,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-18 08:34:08"
+    "last_hyper_sync": "2026-10-20 17:21:28"
   },
   "empire_channel_blueprints": {
     "quran": {
