@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-21 12:10:04",
-  "total_audits_performed": 23,
+  "last_audit_timestamp": "2026-10-21 15:27:21",
+  "total_audits_performed": 24,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 3940,
       "views": 205270,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-21 12:10:04"
+      "last_checked": "2026-10-21 15:27:21"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,18 @@
   },
   "winning_topics": {
     "quran": [
+      "Euphrates Gold Mountain",
+      "Green Arabia Prophecy",
+      "Dukhan Smoke Prophecy",
+      "Dajjal Island Mystery",
+      "Mountain Roots",
+      "Two Seas Never Mixing",
+      "Iron Coming From Stars",
+      "اكسبلور",
+      "تلاوة",
+      "الايه",
+      "وتنشر",
+      "والله",
       "The Day of Reckoning",
       "The Gates of Jannah",
       "The Moment of Death",
@@ -51,17 +63,7 @@
       "آرامش",
       "د.ياسر",
       "الشيخ",
-      "دعاء",
-      "Euphrates Gold Mountain",
-      "Green Arabia Prophecy",
-      "Dukhan Smoke Prophecy",
-      "Dajjal Island Mystery",
-      "القارئ",
-      "تشرفني))",
-      "((متابعتك",
-      "Mountain Roots",
-      "Two Seas Never Mixing",
-      "Iron Coming From Stars"
+      "دعاء"
     ],
     "ai": [
       "نیشانەی",
@@ -172,6 +174,21 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman اكسبلور survival",
+      "truth about اكسبلور",
+      "اكسبلور high velocity shorts",
+      "stickman تلاوة survival",
+      "truth about تلاوة",
+      "تلاوة high velocity shorts",
+      "stickman الايه survival",
+      "truth about الايه",
+      "الايه high velocity shorts",
+      "stickman وتنشر survival",
+      "truth about وتنشر",
+      "وتنشر high velocity shorts",
+      "stickman والله survival",
+      "truth about والله",
+      "والله high velocity shorts",
       "truth about yasseraldossary",
       "yasseraldossary high velocity shorts",
       "stickman yasrr survival",
@@ -181,22 +198,7 @@
       "truth about مبكية",
       "مبكية high velocity shorts",
       "stickman خاشعة survival",
-      "truth about خاشعة",
-      "خاشعة high velocity shorts",
-      "stickman کلام survival",
-      "truth about کلام",
-      "کلام high velocity shorts",
-      "stickman بی‌پایان survival",
-      "truth about بی‌پایان",
-      "بی‌پایان high velocity shorts",
-      "stickman آرامش survival",
-      "truth about آرامش",
-      "آرامش high velocity shorts",
-      "stickman د.ياسر survival",
-      "truth about د.ياسر",
-      "د.ياسر high velocity shorts",
-      "stickman الشيخ survival",
-      "truth about الشيخ"
+      "truth about خاشعة"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -408,7 +410,7 @@
     "total_network_views": 210720,
     "progress_to_million_subs_percent": 0.434,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-21 12:10:06"
+    "last_hyper_sync": "2026-10-21 15:27:22"
   },
   "empire_channel_blueprints": {
     "quran": {
