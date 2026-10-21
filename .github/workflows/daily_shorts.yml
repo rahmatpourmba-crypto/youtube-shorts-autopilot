@@ -1,19 +1,21 @@
-name: 24/7 Quran Viral Shorts Autopilot (Every 4 Hours - 6x Daily)
+name: 24/7 Quran Viral Shorts Clustered Autopilot (7x Daily)
 
 on:
   schedule:
-    # Slot 1: 02:00 IRST (22:30 UTC) - Abdul Rahman Mossad / Raad Al-Kurdi
+    # Slot 1: 02:00 IRST (22:30 UTC) - Abdul Rahman Mossad / Raad Al-Kurdi (Tahajjud & Western Peak)
     - cron: '30 22 * * *'
-    # Slot 2: 06:00 IRST (02:30 UTC) - Sheikh Yasser Al-Dosari (Fajr Peak)
-    - cron: '30 2 * * *'
-    # Slot 3: 10:00 IRST (06:30 UTC) - Youssef Saghir
-    - cron: '30 6 * * *'
-    # Slot 4: 14:00 IRST (10:30 UTC) - Sheikh Yasser Al-Dosari
-    - cron: '30 10 * * *'
-    # Slot 5: 18:00 IRST (14:30 UTC) - Muhammad Al-Luhaidan / Islam Sobhi (Maghrib Peak)
-    - cron: '30 14 * * *'
-    # Slot 6: 22:00 IRST (18:30 UTC) - Sheikh Yasser Al-Dosari (Bedtime Peace)
-    - cron: '30 18 * * *'
+    # Slot 2: 07:30 IRST (04:00 UTC) - Sheikh Yasser Al-Dosari (Morning Awakening & Keepalive)
+    - cron: '0 4 * * *'
+    # Slot 3: 15:00 IRST (11:30 UTC) - Sheikh Yasser Al-Dosari (Afternoon Prime Wave 1)
+    - cron: '30 11 * * *'
+    # Slot 4: 16:30 IRST (13:00 UTC) - Youssef Saghir (Afternoon Prime Wave 2 - Top Record Hour)
+    - cron: '0 13 * * *'
+    # Slot 5: 19:45 IRST (16:15 UTC) - Muhammad Al-Luhaidan (Maghrib / Evening Surge)
+    - cron: '15 16 * * *'
+    # Slot 6: 21:00 IRST (17:30 UTC) - Sheikh Yasser Al-Dosari (Prime Night Wave 1 - Top Record Hour)
+    - cron: '30 17 * * *'
+    # Slot 7: 22:30 IRST (19:00 UTC) - Islam Sobhi / Yasser Al-Dosari (Bedtime Peace)
+    - cron: '0 19 * * *'
   workflow_dispatch:
     inputs:
       target_channel:
@@ -54,10 +56,15 @@ jobs:
         run: |
           python dispatch_cycle.py --channel=quran
 
-      - name: Commit and Push Updated State (Keepalive Activity)
+      - name: Commit and Push Updated State (Keepalive Heartbeat Activity)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add state.json growth_brain.json used_trends_history.json used_viral_reels.json
           git commit -m "Auto-keepalive heartbeat and viral reels state update [skip ci]" || echo "No changes to state"
           git push
+
+      - name: GitHub Actions Active Keepalive Safeguard
+        uses: gautamkrishnar/keepalive-workflow@v1
+        with:
+          use_api: true

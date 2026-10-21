@@ -85,17 +85,19 @@ def get_reciter_key_for_current_slot() -> str:
     tehran_now = utc_now + datetime.timedelta(hours=3, minutes=30)
     hour = tehran_now.hour
 
-    if 4 <= hour < 8:
+    if 5 <= hour < 12: # around 07:30
         return "yasser"
-    elif 8 <= hour < 12:
+    elif 12 <= hour < 16: # around 15:00
+        return "yasser"
+    elif 16 <= hour < 18: # around 16:30
         return "youssef"
-    elif 12 <= hour < 16:
-        return "yasser"
-    elif 16 <= hour < 20:
+    elif 18 <= hour < 21: # around 19:45
         return "luhaidan"
-    elif 20 <= hour < 24:
+    elif 21 <= hour < 22: # around 21:00
         return "yasser"
-    else: # 0 <= hour < 4
+    elif 22 <= hour < 24: # around 22:30
+        return "islam_sobhi"
+    else: # 0 <= hour < 5: around 02:00
         return "mossad"
 
 def load_history():
