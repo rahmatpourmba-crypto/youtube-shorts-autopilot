@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-20 21:48:59",
-  "total_audits_performed": 20,
+  "last_audit_timestamp": "2026-10-21 00:47:48",
+  "total_audits_performed": 21,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 3940,
       "views": 204092,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-20 21:48:59"
+      "last_checked": "2026-10-21 00:47:48"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,13 @@
   },
   "winning_topics": {
     "quran": [
+      "Euphrates Gold Mountain",
+      "Green Arabia Prophecy",
+      "Dukhan Smoke Prophecy",
+      "Dajjal Island Mystery",
+      "القارئ",
+      "تشرفني))",
+      "((متابعتك",
       "Mountain Roots",
       "Two Seas Never Mixing",
       "Iron Coming From Stars",
@@ -53,14 +60,7 @@
       "خاشعة",
       "کلام",
       "بی‌پایان",
-      "آرامش",
-      "د.ياسر",
-      "الشيخ",
-      "دعاء",
-      "Euphrates Gold Mountain",
-      "Green Arabia Prophecy",
-      "Dukhan Smoke Prophecy",
-      "Dajjal Island Mystery"
+      "آرامش"
     ],
     "ai": [
       "نیشانەی",
@@ -171,6 +171,15 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman القارئ survival",
+      "truth about القارئ",
+      "القارئ high velocity shorts",
+      "stickman تشرفني)) survival",
+      "truth about تشرفني))",
+      "تشرفني)) high velocity shorts",
+      "stickman ((متابعتك survival",
+      "truth about ((متابعتك",
+      "((متابعتك high velocity shorts",
       "stickman تلاوة survival",
       "truth about تلاوة",
       "تلاوة high velocity shorts",
@@ -186,16 +195,7 @@
       "stickman مبكية survival",
       "truth about مبكية",
       "مبكية high velocity shorts",
-      "stickman خاشعة survival",
-      "truth about خاشعة",
-      "خاشعة high velocity shorts",
-      "stickman کلام survival",
-      "truth about کلام",
-      "کلام high velocity shorts",
-      "stickman بی‌پایان survival",
-      "truth about بی‌پایان",
-      "بی‌پایان high velocity shorts",
-      "stickman آرامش survival"
+      "stickman خاشعة survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -399,7 +399,7 @@
     "total_network_views": 209542,
     "progress_to_million_subs_percent": 0.434,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-20 21:49:01"
+    "last_hyper_sync": "2026-10-21 00:47:50"
   },
   "empire_channel_blueprints": {
     "quran": {
