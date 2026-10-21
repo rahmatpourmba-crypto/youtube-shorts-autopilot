@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-21 07:54:05",
-  "total_audits_performed": 22,
+  "last_audit_timestamp": "2026-10-21 12:10:04",
+  "total_audits_performed": 23,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 3940,
       "views": 205270,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-21 07:54:05"
+      "last_checked": "2026-10-21 12:10:04"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,18 @@
   },
   "winning_topics": {
     "quran": [
+      "The Day of Reckoning",
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "Pharaoh Drowning",
+      "yasseraldossary",
+      "yasrr",
+      "مبكية",
+      "خاشعة",
+      "کلام",
+      "بی‌پایان",
+      "آرامش",
       "د.ياسر",
       "الشيخ",
       "دعاء",
@@ -49,14 +61,7 @@
       "((متابعتك",
       "Mountain Roots",
       "Two Seas Never Mixing",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "تلاوة",
-      "The Day of Reckoning",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave",
-      "اكسبلور"
+      "Iron Coming From Stars"
     ],
     "ai": [
       "نیشانەی",
@@ -167,31 +172,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "truth about yasseraldossary",
+      "yasseraldossary high velocity shorts",
+      "stickman yasrr survival",
+      "truth about yasrr",
+      "yasrr high velocity shorts",
+      "stickman مبكية survival",
+      "truth about مبكية",
+      "مبكية high velocity shorts",
+      "stickman خاشعة survival",
+      "truth about خاشعة",
+      "خاشعة high velocity shorts",
+      "stickman کلام survival",
+      "truth about کلام",
+      "کلام high velocity shorts",
+      "stickman بی‌پایان survival",
+      "truth about بی‌پایان",
+      "بی‌پایان high velocity shorts",
+      "stickman آرامش survival",
+      "truth about آرامش",
+      "آرامش high velocity shorts",
       "stickman د.ياسر survival",
       "truth about د.ياسر",
       "د.ياسر high velocity shorts",
       "stickman الشيخ survival",
-      "truth about الشيخ",
-      "الشيخ high velocity shorts",
-      "stickman دعاء survival",
-      "truth about دعاء",
-      "دعاء high velocity shorts",
-      "stickman القارئ survival",
-      "truth about القارئ",
-      "القارئ high velocity shorts",
-      "stickman تشرفني)) survival",
-      "truth about تشرفني))",
-      "تشرفني)) high velocity shorts",
-      "stickman ((متابعتك survival",
-      "truth about ((متابعتك",
-      "((متابعتك high velocity shorts",
-      "stickman تلاوة survival",
-      "truth about تلاوة",
-      "تلاوة high velocity shorts",
-      "stickman اكسبلور survival",
-      "truth about اكسبلور",
-      "اكسبلور high velocity shorts",
-      "stickman yasseraldossary survival"
+      "truth about الشيخ"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -390,6 +395,10 @@
     "06UIeh63_ug": {
       "timestamp": "2026-10-21 07:54:05",
       "old_title": "تلاوة خاشعة مبكية | الشيخ ياسر الدوسري 🕊️✨ | الشيخ ياسر الدوسري #Shorts #Quran"
+    },
+    "QZFBDpM6BUY": {
+      "timestamp": "2026-10-21 12:10:04",
+      "old_title": "تلاوة تأسر القلوب بصوت القارئ يوسف صقير 🕊️✨ | القارئ يوسف صقير #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
@@ -399,7 +408,7 @@
     "total_network_views": 210720,
     "progress_to_million_subs_percent": 0.434,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-21 07:54:07"
+    "last_hyper_sync": "2026-10-21 12:10:06"
   },
   "empire_channel_blueprints": {
     "quran": {
