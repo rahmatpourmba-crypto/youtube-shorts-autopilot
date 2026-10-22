@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-22 20:05:28",
-  "total_audits_performed": 28,
+  "last_audit_timestamp": "2026-10-22 20:44:24",
+  "total_audits_performed": 29,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 4010,
+      "subscribers": 4030,
       "views": 209831,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-22 20:05:28"
+      "last_checked": "2026-10-22 20:44:24"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,22 @@
   },
   "winning_topics": {
     "quran": [
+      "The Day of Reckoning",
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "Iron Coming From Stars",
+      "Pharaoh Drowning",
+      "د.ياسر",
+      "الشيخ",
+      "دعاء",
+      "فريضة",
+      "الإسلام",
+      "کلام",
+      "بی‌پایان",
+      "آرامش",
+      "مبكية",
+      "خاشعة",
       "القارئ",
       "تشرفني))",
       "((متابعتك",
@@ -46,17 +62,7 @@
       "Dukhan Smoke Prophecy",
       "Dajjal Island Mystery",
       "Mountain Roots",
-      "Two Seas Never Mixing",
-      "تلاوة",
-      "الايه",
-      "وتنشر",
-      "والله",
-      "The Day of Reckoning",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning"
+      "Two Seas Never Mixing"
     ],
     "ai": [
       "نیشانەی",
@@ -136,7 +142,8 @@
       "expanding",
       "universe",
       "الأرض",
-      "خاشعة"
+      "خاشعة",
+      "سيصيب"
     ],
     "ai": [
       "weeks",
@@ -167,31 +174,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
-      "stickman القارئ survival",
-      "truth about القارئ",
-      "القارئ high velocity shorts",
-      "stickman تشرفني)) survival",
-      "truth about تشرفني))",
-      "تشرفني)) high velocity shorts",
-      "stickman ((متابعتك survival",
-      "truth about ((متابعتك",
-      "((متابعتك high velocity shorts",
-      "stickman الحجاب survival",
-      "truth about الحجاب",
-      "الحجاب high velocity shorts",
-      "stickman تلاوة survival",
-      "truth about تلاوة",
-      "تلاوة high velocity shorts",
-      "stickman الايه survival",
-      "truth about الايه",
-      "الايه high velocity shorts",
-      "stickman وتنشر survival",
-      "truth about وتنشر",
-      "وتنشر high velocity shorts",
-      "stickman والله survival",
-      "truth about والله",
-      "والله high velocity shorts",
-      "stickman مبكية survival"
+      "stickman د.ياسر survival",
+      "truth about د.ياسر",
+      "د.ياسر high velocity shorts",
+      "stickman الشيخ survival",
+      "truth about الشيخ",
+      "الشيخ high velocity shorts",
+      "stickman دعاء survival",
+      "truth about دعاء",
+      "دعاء high velocity shorts",
+      "stickman فريضة survival",
+      "truth about فريضة",
+      "فريضة high velocity shorts",
+      "stickman الإسلام survival",
+      "truth about الإسلام",
+      "الإسلام high velocity shorts",
+      "stickman کلام survival",
+      "truth about کلام",
+      "کلام high velocity shorts",
+      "stickman بی‌پایان survival",
+      "truth about بی‌پایان",
+      "بی‌پایان high velocity shorts",
+      "stickman آرامش survival",
+      "truth about آرامش",
+      "آرامش high velocity shorts",
+      "truth about مبكية"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -402,16 +409,20 @@
     "-uE5aXrSEuw": {
       "timestamp": "2026-10-22 17:56:05",
       "old_title": "⁨ ⁨ ⁨ ⁨ الشيخ ياسر بن راشد الدوسري | الشيخ ياسر الدوسري #Shorts #Quran"
+    },
+    "SIEr9Drq9gU": {
+      "timestamp": "2026-10-22 20:44:24",
+      "old_title": "سيصيب امتي داء الامم (حديث) | القارئ إسلام صبحي #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4406,
+    "total_network_subscribers": 4426,
     "total_network_views": 215281,
-    "progress_to_million_subs_percent": 0.441,
+    "progress_to_million_subs_percent": 0.443,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-22 20:05:29"
+    "last_hyper_sync": "2026-10-22 20:44:26"
   },
   "empire_channel_blueprints": {
     "quran": {
