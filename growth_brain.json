@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-22 20:44:24",
-  "total_audits_performed": 29,
+  "last_audit_timestamp": "2026-10-22 22:01:09",
+  "total_audits_performed": 30,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 4030,
+      "subscribers": 4040,
       "views": 209831,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-22 20:44:24"
+      "last_checked": "2026-10-22 22:01:09"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,19 @@
   },
   "winning_topics": {
     "quran": [
+      "Euphrates Gold Mountain",
+      "Green Arabia Prophecy",
+      "Dukhan Smoke Prophecy",
+      "Dajjal Island Mystery",
+      "Mountain Roots",
+      "Two Seas Never Mixing",
+      "الايه",
+      "وتنشر",
+      "والله",
+      "تلاوة",
+      "عليه",
+      "تؤجر",
+      "اكتب",
       "The Day of Reckoning",
       "The Gates of Jannah",
       "The Moment of Death",
@@ -49,20 +62,7 @@
       "فريضة",
       "الإسلام",
       "کلام",
-      "بی‌پایان",
-      "آرامش",
-      "مبكية",
-      "خاشعة",
-      "القارئ",
-      "تشرفني))",
-      "((متابعتك",
-      "الحجاب",
-      "Euphrates Gold Mountain",
-      "Green Arabia Prophecy",
-      "Dukhan Smoke Prophecy",
-      "Dajjal Island Mystery",
-      "Mountain Roots",
-      "Two Seas Never Mixing"
+      "بی‌پایان"
     ],
     "ai": [
       "نیشانەی",
@@ -174,31 +174,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman الايه survival",
+      "truth about الايه",
+      "الايه high velocity shorts",
+      "stickman وتنشر survival",
+      "truth about وتنشر",
+      "وتنشر high velocity shorts",
+      "stickman والله survival",
+      "truth about والله",
+      "والله high velocity shorts",
+      "stickman تلاوة survival",
+      "truth about تلاوة",
+      "تلاوة high velocity shorts",
+      "stickman عليه survival",
+      "truth about عليه",
+      "عليه high velocity shorts",
+      "stickman تؤجر survival",
+      "truth about تؤجر",
+      "تؤجر high velocity shorts",
+      "stickman اكتب survival",
+      "truth about اكتب",
+      "اكتب high velocity shorts",
       "stickman د.ياسر survival",
       "truth about د.ياسر",
       "د.ياسر high velocity shorts",
-      "stickman الشيخ survival",
-      "truth about الشيخ",
-      "الشيخ high velocity shorts",
-      "stickman دعاء survival",
-      "truth about دعاء",
-      "دعاء high velocity shorts",
-      "stickman فريضة survival",
-      "truth about فريضة",
-      "فريضة high velocity shorts",
-      "stickman الإسلام survival",
-      "truth about الإسلام",
-      "الإسلام high velocity shorts",
-      "stickman کلام survival",
-      "truth about کلام",
-      "کلام high velocity shorts",
-      "stickman بی‌پایان survival",
-      "truth about بی‌پایان",
-      "بی‌پایان high velocity shorts",
-      "stickman آرامش survival",
-      "truth about آرامش",
-      "آرامش high velocity shorts",
-      "truth about مبكية"
+      "stickman الشيخ survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -418,11 +418,11 @@
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4426,
+    "total_network_subscribers": 4436,
     "total_network_views": 215281,
-    "progress_to_million_subs_percent": 0.443,
+    "progress_to_million_subs_percent": 0.444,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-22 20:44:26"
+    "last_hyper_sync": "2026-10-22 22:01:10"
   },
   "empire_channel_blueprints": {
     "quran": {
