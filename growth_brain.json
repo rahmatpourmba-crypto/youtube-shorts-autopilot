@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-22 17:46:15",
-  "total_audits_performed": 26,
+  "last_audit_timestamp": "2026-10-22 17:56:05",
+  "total_audits_performed": 27,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 3980,
       "views": 209831,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-22 17:46:15"
+      "last_checked": "2026-10-22 17:56:05"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,16 @@
   },
   "winning_topics": {
     "quran": [
+      "Euphrates Gold Mountain",
+      "Green Arabia Prophecy",
+      "Dukhan Smoke Prophecy",
+      "Dajjal Island Mystery",
+      "Mountain Roots",
+      "Two Seas Never Mixing",
+      "تلاوة",
+      "الايه",
+      "وتنشر",
+      "والله",
       "The Day of Reckoning",
       "The Gates of Jannah",
       "The Moment of Death",
@@ -52,17 +62,7 @@
       "الشيخ",
       "دعاء",
       "فريضة",
-      "الإسلام",
-      "الحجاب",
-      "القارئ",
-      "تشرفني))",
-      "((متابعتك",
-      "Euphrates Gold Mountain",
-      "Green Arabia Prophecy",
-      "Dukhan Smoke Prophecy",
-      "Dajjal Island Mystery",
-      "Mountain Roots",
-      "Two Seas Never Mixing"
+      "الإسلام"
     ],
     "ai": [
       "نیشانەی",
@@ -173,6 +173,18 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman تلاوة survival",
+      "truth about تلاوة",
+      "تلاوة high velocity shorts",
+      "stickman الايه survival",
+      "truth about الايه",
+      "الايه high velocity shorts",
+      "stickman وتنشر survival",
+      "truth about وتنشر",
+      "وتنشر high velocity shorts",
+      "stickman والله survival",
+      "truth about والله",
+      "والله high velocity shorts",
       "stickman مبكية survival",
       "truth about مبكية",
       "مبكية high velocity shorts",
@@ -185,19 +197,7 @@
       "stickman بی‌پایان survival",
       "truth about بی‌پایان",
       "بی‌پایان high velocity shorts",
-      "stickman آرامش survival",
-      "truth about آرامش",
-      "آرامش high velocity shorts",
-      "stickman د.ياسر survival",
-      "truth about د.ياسر",
-      "د.ياسر high velocity shorts",
-      "stickman الشيخ survival",
-      "truth about الشيخ",
-      "الشيخ high velocity shorts",
-      "stickman دعاء survival",
-      "truth about دعاء",
-      "دعاء high velocity shorts",
-      "stickman فريضة survival"
+      "stickman آرامش survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -404,6 +404,10 @@
     "ddxf61H7hOM": {
       "timestamp": "2026-10-21 18:49:58",
       "old_title": "تلاوة خاشعة تهز القلوب | الشيخ محمد اللحيدان 🕊️✨ | الشيخ محمد اللحيدان #Shorts #Quran"
+    },
+    "-uE5aXrSEuw": {
+      "timestamp": "2026-10-22 17:56:05",
+      "old_title": "⁨ ⁨ ⁨ ⁨ الشيخ ياسر بن راشد الدوسري | الشيخ ياسر الدوسري #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
@@ -413,7 +417,7 @@
     "total_network_views": 215281,
     "progress_to_million_subs_percent": 0.438,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-22 17:46:17"
+    "last_hyper_sync": "2026-10-22 17:56:08"
   },
   "empire_channel_blueprints": {
     "quran": {
