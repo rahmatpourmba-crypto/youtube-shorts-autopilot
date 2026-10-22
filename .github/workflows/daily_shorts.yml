@@ -63,8 +63,3 @@ jobs:
           git add state.json growth_brain.json used_trends_history.json used_viral_reels.json
           git commit -m "Auto-keepalive heartbeat and viral reels state update [skip ci]" || echo "No changes to state"
           git push
-
-      - name: GitHub Actions Active Keepalive Safeguard
-        uses: gautamkrishnar/keepalive-workflow@v1
-        with:
-          use_api: true
