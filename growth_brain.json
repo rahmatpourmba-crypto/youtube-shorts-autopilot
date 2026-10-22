@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-22 17:56:05",
-  "total_audits_performed": 27,
+  "last_audit_timestamp": "2026-10-22 20:05:28",
+  "total_audits_performed": 28,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 3980,
+      "subscribers": 4010,
       "views": 209831,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-22 17:56:05"
+      "last_checked": "2026-10-22 20:05:28"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,10 @@
   },
   "winning_topics": {
     "quran": [
+      "القارئ",
+      "تشرفني))",
+      "((متابعتك",
+      "الحجاب",
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
@@ -52,17 +56,7 @@
       "The Moment of Death",
       "The First Night in Grave",
       "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "مبكية",
-      "خاشعة",
-      "کلام",
-      "بی‌پایان",
-      "آرامش",
-      "د.ياسر",
-      "الشيخ",
-      "دعاء",
-      "فريضة",
-      "الإسلام"
+      "Pharaoh Drowning"
     ],
     "ai": [
       "نیشانەی",
@@ -173,6 +167,18 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman القارئ survival",
+      "truth about القارئ",
+      "القارئ high velocity shorts",
+      "stickman تشرفني)) survival",
+      "truth about تشرفني))",
+      "تشرفني)) high velocity shorts",
+      "stickman ((متابعتك survival",
+      "truth about ((متابعتك",
+      "((متابعتك high velocity shorts",
+      "stickman الحجاب survival",
+      "truth about الحجاب",
+      "الحجاب high velocity shorts",
       "stickman تلاوة survival",
       "truth about تلاوة",
       "تلاوة high velocity shorts",
@@ -185,19 +191,7 @@
       "stickman والله survival",
       "truth about والله",
       "والله high velocity shorts",
-      "stickman مبكية survival",
-      "truth about مبكية",
-      "مبكية high velocity shorts",
-      "stickman خاشعة survival",
-      "truth about خاشعة",
-      "خاشعة high velocity shorts",
-      "stickman کلام survival",
-      "truth about کلام",
-      "کلام high velocity shorts",
-      "stickman بی‌پایان survival",
-      "truth about بی‌پایان",
-      "بی‌پایان high velocity shorts",
-      "stickman آرامش survival"
+      "stickman مبكية survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -413,11 +407,11 @@
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4376,
+    "total_network_subscribers": 4406,
     "total_network_views": 215281,
-    "progress_to_million_subs_percent": 0.438,
+    "progress_to_million_subs_percent": 0.441,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-22 17:56:08"
+    "last_hyper_sync": "2026-10-22 20:05:29"
   },
   "empire_channel_blueprints": {
     "quran": {
