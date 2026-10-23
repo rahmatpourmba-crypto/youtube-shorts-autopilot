@@ -243,23 +243,54 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
         print("[Error] No new viral reels found matching criteria (<50s, >100k views).")
         return None
 
-    chosen = candidate_reels[0]
+    chosen = None
+    target_video_file = None
+    for idx, cand in enumerate(candidate_reels):
+        candidate_code = cand["code"]
+        candidate_url = cand["video_url"]
+        temp_file = OUTPUT_DIR / f"quran_{candidate_code}.mp4"
+        print(f"  [{idx+1}/{len(candidate_reels)}] Downloading Reel {candidate_code} from Instagram CDN...")
+        try:
+            req = urllib.request.Request(
+                candidate_url,
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+            )
+            with urllib.request.urlopen(req, timeout=35) as resp, open(temp_file, 'wb') as f_out:
+                f_out.write(resp.read())
+
+            if temp_file.exists() and temp_file.stat().st_size > 50000:
+                chosen = cand
+                target_video_file = temp_file
+                print(f"  ✓ Downloaded successfully: {target_video_file.name} ({target_video_file.stat().st_size // 1024} KB)")
+                break
+            else:
+                print(f"  [Warning] Downloaded file invalid or too small for {candidate_code}. Trying next candidate...")
+                if temp_file.exists():
+                    try:
+                        temp_file.unlink()
+                    except Exception:
+                        pass
+        except Exception as dl_err:
+            print(f"  [Warning] Download failed for {candidate_code}: {dl_err}. Trying next candidate...")
+            if temp_file.exists():
+                try:
+                    temp_file.unlink()
+                except Exception:
+                    pass
+            continue
+
+    if not chosen or not target_video_file:
+        print("[Self-Healing Recovery] Could not download any candidate in current pool. Trying Yasser Al-Dosari master catalog...")
+        if target_reciter_key != "yasser":
+            return find_and_download_viral_reel(min_views=min_views, max_duration=max_duration, target_reciter_key="yasser")
+        print("[Error] No viral reels could be downloaded.")
+        return None
+
     rec = chosen["reciter"]
     print("\n" + "=" * 65)
     print(f"★ SELECTED VIRAL REEL: {chosen['code']} | Reciter: {rec['name_ar']}")
     print(f"Estimated Impact: {chosen['score']:,} engagements | Likes: {chosen['likes']:,}")
     print("=" * 65)
-
-    target_video_file = OUTPUT_DIR / f"quran_{chosen['code']}.mp4"
-    print(f"Downloading original video from Instagram CDN...")
-    req = urllib.request.Request(
-        chosen["video_url"],
-        headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-    )
-    with urllib.request.urlopen(req, timeout=30) as resp, open(target_video_file, 'wb') as f_out:
-        f_out.write(resp.read())
-
-    print(f"✓ Original Reel downloaded: {target_video_file.name} ({target_video_file.stat().st_size // 1024} KB)")
 
     title = clean_arabic_title(chosen["caption"], rec)
     description = (

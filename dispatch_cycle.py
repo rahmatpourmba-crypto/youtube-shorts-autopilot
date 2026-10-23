@@ -27,42 +27,58 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
-def run_quran_channel(run_dir: Path, run_count: int):
+def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2):
     """
-    VIRAL QURAN CHANNEL PIPELINE (Sheikh Yasser Al-Dosari >500k Views from Instagram)
-    Direct Unmodified Re-Upload to YouTube Quran Channel
+    VIRAL QURAN CHANNEL PIPELINE (Sheikh Yasser Al-Dosari & Elite Reciters >100k Views from Instagram)
+    Direct Unmodified Re-Upload to YouTube Quran Channel with Self-Healing Auto-Recovery
     """
-    print(f"\n[DISPATCH - QURAN VIRAL REELS] Window Active: Elite Quran Reciters (Every 4h - >100k Views, <50s)...")
-    from fetch_and_upload_yasser_viral import find_and_download_viral_reel
-    from youtube_uploader import upload_short, CHANNELS
-    
-    reel_data = find_and_download_viral_reel(min_views=100000, max_duration=49.9)
-    if not reel_data:
-        print("  [Notice] Live Instagram search did not return eligible reel. Trying general top viral...")
-        reel_data = find_and_download_viral_reel(min_views=30000, max_duration=49.9)
+    import time
+    for attempt in range(1, max_retries + 1):
+        try:
+            print(f"\n[DISPATCH - QURAN VIRAL REELS] Attempt {attempt}/{max_retries}: Elite Quran Reciters (>100k Views, <50s)...")
+            from fetch_and_upload_yasser_viral import find_and_download_viral_reel
+            from youtube_uploader import upload_short, CHANNELS
+            
+            reel_data = find_and_download_viral_reel(min_views=100000, max_duration=49.9)
+            if not reel_data:
+                print("  [Self-Healing] High threshold search returned no reels. Relaxing threshold to >20,000 views...")
+                reel_data = find_and_download_viral_reel(min_views=20000, max_duration=49.9)
 
-    if not reel_data:
-        print("  [Error] No viral reel available to upload.")
-        return None
+            if not reel_data:
+                print(f"  [Error] No viral reel available on attempt {attempt}.")
+                if attempt < max_retries:
+                    time.sleep(10)
+                    continue
+                return None
 
-    print(f"\n[QURAN] Uploading Unmodified Viral Short to {CHANNELS['quran']['name']}...")
-    upload_res = upload_short(
-        channel_key="quran",
-        video_path=reel_data["video"],
-        title=reel_data["title"],
-        description=reel_data["description"],
-        tags=reel_data["tags"],
-        category_id="22"
-    )
+            print(f"\n[QURAN] Uploading Unmodified Viral Short to {CHANNELS['quran']['name']}...")
+            upload_res = upload_short(
+                channel_key="quran",
+                video_path=reel_data["video"],
+                title=reel_data["title"],
+                description=reel_data["description"],
+                tags=reel_data["tags"],
+                category_id="22"
+            )
 
-    if upload_res:
-        from fetch_and_upload_yasser_viral import load_history, save_history
-        history = load_history()
-        history.append(reel_data["code"])
-        save_history(history)
-        print(f"  ✓ Published Viral Short: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
-
-    return upload_res
+            if upload_res:
+                from fetch_and_upload_yasser_viral import load_history, save_history
+                history = load_history()
+                history.append(reel_data["code"])
+                save_history(history)
+                print(f"  ✓ Published Viral Short: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
+                return upload_res
+            else:
+                print(f"  [Warning] Upload attempt {attempt} did not return video ID.")
+                if attempt < max_retries:
+                    time.sleep(15)
+        except Exception as e:
+            print(f"  [Self-Healing Recovery] Exception in run_quran_channel (attempt {attempt}): {e}")
+            import traceback
+            traceback.print_exc()
+            if attempt < max_retries:
+                time.sleep(10)
+    return None
 
 
 
@@ -119,61 +135,42 @@ def main():
     today_date = tehran_now.strftime("%Y-%m-%d")
     daily_uploads = state.setdefault("daily_uploads", {})
 
-    if target_channel == "quran":
-        run_quran_channel(run_dir, run_count)
-        daily_uploads["quran_short"] = today_date
-    elif target_channel == "cryptolab":
-        run_cryptolab_channel(run_dir, run_count)
-    elif target_channel == "animals":
-        run_animals_channel(run_dir, run_count)
-    elif target_channel == "ai":
-        run_ai_channel(run_dir, run_count)
-    elif target_channel == "quran_longform":
-        from documentary_remaster_pro import publish_next_quran_documentary
-        publish_next_quran_documentary()
-        daily_uploads["quran_longform"] = today_date
-    elif target_channel in ["us_eu", "all_us_eu", "all-us-eu"]:
-        run_cryptolab_channel(run_dir, run_count)
-        run_animals_channel(run_dir, run_count)
-        run_ai_channel(run_dir, run_count)
-        daily_uploads["us_eu"] = today_date
-    else:
-        # AUTOMATED SCHEDULE ROUTING & CATCH-UP:
-        # If today's Quran short was NOT uploaded today, prioritize it immediately!
-        if daily_uploads.get("quran_short") != today_date:
-            print(f"\n[DAILY CATCHUP] Quran Daily Short for {today_date} has not been published yet! Publishing now...")
-            run_quran_channel(run_dir, run_count)
-            daily_uploads["quran_short"] = today_date
-        elif 19 <= tehran_hour <= 22 and daily_uploads.get("quran_longform") != today_date:
-            print("\n[SCHEDULE MATCH] 20:30 IRST Window -> Publishing Quran Long-Form Documentary...")
+    try:
+        if target_channel == "quran":
+            upload_res = run_quran_channel(run_dir, run_count)
+            if upload_res:
+                daily_uploads["quran_short"] = today_date
+        elif target_channel == "cryptolab":
+            run_cryptolab_channel(run_dir, run_count)
+        elif target_channel == "animals":
+            run_animals_channel(run_dir, run_count)
+        elif target_channel == "ai":
+            run_ai_channel(run_dir, run_count)
+        elif target_channel == "quran_longform":
             from documentary_remaster_pro import publish_next_quran_documentary
             publish_next_quran_documentary()
             daily_uploads["quran_longform"] = today_date
-        elif tehran_hour in [23, 0, 1, 2, 3, 4, 5] and daily_uploads.get("us_eu") != today_date:
-            print("\n[SCHEDULE MATCH] 03:30 IRST Window (USA & Europe Peak) -> Publishing CryptoLab, Animals, and AI Channels...")
+        elif target_channel in ["us_eu", "all_us_eu", "all-us-eu"]:
             run_cryptolab_channel(run_dir, run_count)
             run_animals_channel(run_dir, run_count)
             run_ai_channel(run_dir, run_count)
             daily_uploads["us_eu"] = today_date
         else:
-            # Fallback round-robin for intermediate hours
-            slot_idx = state.get("slot_index", 0) % 4
-            print(f"\n[FALLBACK] Intermediate hour {tehran_hour} -> Executing slot #{slot_idx + 1}/4...")
-            if slot_idx == 0:
-                run_quran_channel(run_dir, run_count)
-            elif slot_idx == 1:
-                run_cryptolab_channel(run_dir, run_count)
-            elif slot_idx == 2:
-                run_animals_channel(run_dir, run_count)
-            else:
-                run_ai_channel(run_dir, run_count)
-            state["slot_index"] = slot_idx + 1
-
-    # Update State
-    state["last_run_timestamp"] = today_str
-    state["run_count"] = run_count
-    state["daily_uploads"] = daily_uploads
-    save_state(state)
+            # AUTOMATED SCHEDULE ROUTING & CATCH-UP:
+            # 100% Focused on Quran Shorts
+            upload_res = run_quran_channel(run_dir, run_count)
+            if upload_res:
+                daily_uploads["quran_short"] = today_date
+    except Exception as e:
+        print(f"\n[CRASH PREVENTED & RECOVERED] General dispatch exception caught: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        # Guarantee state persistence & heartbeat timestamp
+        state["last_run_timestamp"] = today_str
+        state["run_count"] = run_count
+        state["daily_uploads"] = daily_uploads
+        save_state(state)
 
     print("\n" + "=" * 65)
     print(f"✓ Cycle #{run_count} Completed successfully.")

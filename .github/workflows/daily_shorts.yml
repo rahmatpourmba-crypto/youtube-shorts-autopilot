@@ -57,6 +57,7 @@ jobs:
           python dispatch_cycle.py --channel=quran
 
       - name: Commit and Push Updated State (Keepalive Heartbeat Activity)
+        if: always()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
