@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-23 16:22:56",
-  "total_audits_performed": 34,
+  "last_audit_timestamp": "2026-10-23 17:51:09",
+  "total_audits_performed": 35,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 4160,
-      "views": 212000,
+      "subscribers": 4220,
+      "views": 218475,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-23 16:22:56"
+      "last_checked": "2026-10-23 17:51:09"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,24 @@
   },
   "winning_topics": {
     "quran": [
+      "The Day of Reckoning",
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "Iron Coming From Stars",
+      "Pharaoh Drowning",
+      "والله",
+      "فريضة",
+      "الإسلام",
+      "تلاوة",
+      "کلام",
+      "عليه",
+      "وقلبك",
+      "سمعك",
+      "القارئ",
+      "please😭👋",
+      "flow",
+      "guys",
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
@@ -44,25 +62,7 @@
       "Mountain Roots",
       "Two Seas Never Mixing",
       "الحجاب",
-      "مبكية",
-      "خاشعة",
-      "بی‌پایان",
-      "آرامش",
-      "تؤجر",
-      "اكتب",
-      "العَالَمين\"",
-      "\"الحمدُللهِ",
-      "born",
-      "al-dosari",
-      "المyasser",
-      "The Day of Reckoning",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "الايه",
-      "وتنشر"
+      "مبكية"
     ],
     "ai": [
       "نیشانەی",
@@ -143,7 +143,9 @@
       "universe",
       "الأرض",
       "خاشعة",
-      "سيصيب"
+      "سيصيب",
+      "المقطع",
+      "موجودة"
     ],
     "ai": [
       "weeks",
@@ -174,31 +176,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
-      "stickman الحجاب survival",
-      "truth about الحجاب",
-      "الحجاب high velocity shorts",
-      "stickman مبكية survival",
-      "truth about مبكية",
-      "مبكية high velocity shorts",
-      "stickman خاشعة survival",
-      "truth about خاشعة",
-      "خاشعة high velocity shorts",
-      "stickman بی‌پایان survival",
-      "truth about بی‌پایان",
-      "بی‌پایان high velocity shorts",
-      "stickman آرامش survival",
-      "truth about آرامش",
-      "آرامش high velocity shorts",
-      "stickman تؤجر survival",
-      "truth about تؤجر",
-      "تؤجر high velocity shorts",
-      "stickman اكتب survival",
-      "truth about اكتب",
-      "اكتب high velocity shorts",
-      "stickman العَالَمين\" survival",
-      "truth about العَالَمين\"",
-      "العَالَمين\" high velocity shorts",
-      "stickman \"الحمدُللهِ survival"
+      "stickman والله survival",
+      "truth about والله",
+      "والله high velocity shorts",
+      "stickman فريضة survival",
+      "truth about فريضة",
+      "فريضة high velocity shorts",
+      "stickman الإسلام survival",
+      "truth about الإسلام",
+      "الإسلام high velocity shorts",
+      "stickman تلاوة survival",
+      "truth about تلاوة",
+      "تلاوة high velocity shorts",
+      "stickman کلام survival",
+      "truth about کلام",
+      "کلام high velocity shorts",
+      "stickman عليه survival",
+      "truth about عليه",
+      "عليه high velocity shorts",
+      "stickman وقلبك survival",
+      "truth about وقلبك",
+      "وقلبك high velocity shorts",
+      "stickman سمعك survival",
+      "truth about سمعك",
+      "سمعك high velocity shorts",
+      "stickman القارئ survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -413,16 +415,20 @@
     "SIEr9Drq9gU": {
       "timestamp": "2026-10-22 20:44:24",
       "old_title": "سيصيب امتي داء الامم (حديث) | القارئ إسلام صبحي #Shorts #Quran"
+    },
+    "S6dJX6DAsyE": {
+      "timestamp": "2026-10-23 17:51:09",
+      "old_title": "المقطع موجودة بقناة التليجرام الرابط بالبايو 🤍🌿 | الشيخ محمد اللحيدان #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4556,
-    "total_network_views": 217450,
-    "progress_to_million_subs_percent": 0.456,
+    "total_network_subscribers": 4616,
+    "total_network_views": 223925,
+    "progress_to_million_subs_percent": 0.462,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-23 16:22:58"
+    "last_hyper_sync": "2026-10-23 17:51:12"
   },
   "empire_channel_blueprints": {
     "quran": {
