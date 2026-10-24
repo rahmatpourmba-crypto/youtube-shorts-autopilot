@@ -73,32 +73,36 @@ RECITERS_CONFIG = {
 # 6-SLOT DAILY ROTATION: Exactly 3 Yasser Al-Dosari + 3 Other Elite Reciters
 def get_reciter_key_for_current_slot() -> str:
     """
-    Determines which reciter to target based on current Tehran Hour:
-    - 06:00 IRST (Slot 1): Yasser Al-Dosari (Fajr / Morning Peace)
-    - 10:00 IRST (Slot 2): Youssef Saghir (Mid-Morning Uplift)
-    - 14:00 IRST (Slot 3): Yasser Al-Dosari (Afternoon Focus)
-    - 18:00 IRST (Slot 4): Muhammad Al-Luhaidan / Islam Sobhi (Sunset / Maghrib)
-    - 22:00 IRST (Slot 5): Yasser Al-Dosari (Night Calm / Bedtime)
-    - 02:00 IRST (Slot 6): Abdul Rahman Mossad / Raad Al-Kurdi (Tahajjud / Global)
+    Determines which reciter to target based on current Tehran Time in Clustered Peaks:
+    - 07:30 IRST (Slot 1): Yasser Al-Dosari (Morning Peace)
+    - 15:00 IRST (Slot 2): Yasser Al-Dosari (Afternoon Wave 1)
+    - 16:20 IRST (Slot 3): Youssef Saghir (Afternoon Wave 2)
+    - 17:45 IRST (Slot 4): Abdul Rahman Mossad (Evening Commute)
+    - 19:15 IRST (Slot 5): Muhammad Al-Luhaidan (Maghrib Surge)
+    - 20:45 IRST (Slot 6): Yasser Al-Dosari (Night Peak Wave 1)
+    - 22:05 IRST (Slot 7): Muhammad Al-Luhaidan (Night Peak Wave 2)
+    - 23:25 IRST (Slot 8): Islam Sobhi (Bedtime Calm)
     """
     utc_now = datetime.datetime.now(datetime.timezone.utc)
     tehran_now = utc_now + datetime.timedelta(hours=3, minutes=30)
-    hour = tehran_now.hour
+    minute_of_day = tehran_now.hour * 60 + tehran_now.minute
 
-    if 5 <= hour < 12: # around 07:30
+    if minute_of_day < 700: # before 11:40 -> 07:30 Slot
         return "yasser"
-    elif 12 <= hour < 16: # around 15:00
+    elif 700 <= minute_of_day < 940: # around 15:00
         return "yasser"
-    elif 16 <= hour < 18: # around 16:30
+    elif 940 <= minute_of_day < 1020: # around 16:20
         return "youssef"
-    elif 18 <= hour < 21: # around 19:45
-        return "luhaidan"
-    elif 21 <= hour < 22: # around 21:00
-        return "yasser"
-    elif 22 <= hour < 24: # around 22:30
-        return "islam_sobhi"
-    else: # 0 <= hour < 5: around 02:00
+    elif 1020 <= minute_of_day < 1110: # around 17:45
         return "mossad"
+    elif 1110 <= minute_of_day < 1200: # around 19:15
+        return "luhaidan"
+    elif 1200 <= minute_of_day < 1285: # around 20:45
+        return "yasser"
+    elif 1285 <= minute_of_day < 1365: # around 22:05
+        return "luhaidan"
+    else: # 1365 <= minute_of_day (around 23:25 / night)
+        return "islam_sobhi" 
 
 def load_history():
     if HISTORY_FILE.exists():
@@ -119,16 +123,16 @@ def clean_arabic_title(caption: str, reciter_info: dict) -> str:
     """
     if not caption:
         return f"{reciter_info['default_title']} #Quran #Shorts"
-    
+
     # Remove excessive hashtags from title
     lines = [l.strip() for l in caption.splitlines() if l.strip()]
     first_line = lines[0] if lines else ""
     cleaned = re.sub(r'#\S+', '', first_line).strip()
     cleaned = re.sub(r'\s+', ' ', cleaned)
-    
+
     if len(cleaned) < 15:
         cleaned = reciter_info["default_title"]
-    
+
     full_title = f"{cleaned} | {reciter_info['name_ar']} #Shorts #Quran"
     return full_title[:100]
 
@@ -143,7 +147,7 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
     reciter = RECITERS_CONFIG[target_reciter_key]
     used_codes = set(load_history())
     cl = get_instagram_client("quran")
-    
+
     candidate_reels = []
     hashtags_to_search = reciter["tags"] + ["تلاوة_خاشعة", "قران_كريم"]
 
@@ -157,7 +161,7 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
         try:
             medias = cl.hashtag_medias_top(tag, amount=25)
             print(f"  -> Found {len(medias)} candidate top posts.")
-            
+
             for m in medias:
                 # Must be a video / reel
                 if m.media_type != 2:
@@ -181,12 +185,12 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
                 views = getattr(m, "view_count", 0) or 0
                 plays = getattr(m, "play_count", 0) or 0
                 likes = m.like_count or 0
-                
+
                 # Check metrics: views/plays > 100k, or likes > 4k (correlates to 100k+ plays)
                 effective_score = max(views, plays, likes * 25)
-                
+
                 print(f"  [Reel {m.code}] Plays: {plays:,} | Views: {views:,} | Likes: {likes:,} | Dur: {duration}s | Score: {effective_score:,}")
-                
+
                 if effective_score >= min_views or likes >= 4000:
                     candidate_reels.append({
                         "code": m.code,
