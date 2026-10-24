@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-24 21:16:00",
-  "total_audits_performed": 43,
+  "last_audit_timestamp": "2026-10-24 22:00:10",
+  "total_audits_performed": 44,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 4380,
+      "subscribers": 4390,
       "views": 244913,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-24 21:16:00"
+      "last_checked": "2026-10-24 22:00:10"
     },
     "ai": {
       "status": "healthy",
@@ -37,21 +37,6 @@
   },
   "winning_topics": {
     "quran": [
-      "The Day of Reckoning",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave",
-      "القارئ",
-      "please😭👋",
-      "flow",
-      "guys",
-      "العالم",
-      "ساعة",
-      "أكبر",
-      "القرآن",
-      "اجعل",
-      "اللهم",
-      "عليه",
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
@@ -60,7 +45,26 @@
       "Two Seas Never Mixing",
       "Iron Coming From Stars",
       "Pharaoh Drowning",
-      "العَالَمين\""
+      "born",
+      "al-dosari",
+      "المyasser",
+      "yasser",
+      "sheikh",
+      "posting",
+      "world",
+      "clock",
+      "largest",
+      "تؤجر",
+      "اكتب",
+      "تشربها",
+      "رشفة",
+      "تخيل",
+      "The Day of Reckoning",
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "القارئ",
+      "please😭👋"
     ],
     "ai": [
       "نیشانەی",
@@ -144,7 +148,9 @@
       "سيصيب",
       "المقطع",
       "موجودة",
-      "آرامش"
+      "آرامش",
+      "إِنَّ",
+      "اللَّهَ"
     ],
     "ai": [
       "weeks",
@@ -175,31 +181,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
-      "stickman القارئ survival",
-      "truth about القارئ",
-      "القارئ high velocity shorts",
-      "stickman please😭👋 survival",
-      "truth about please😭👋",
-      "please😭👋 high velocity shorts",
-      "stickman flow survival",
-      "truth about flow",
-      "flow high velocity shorts",
-      "stickman guys survival",
-      "truth about guys",
-      "guys high velocity shorts",
-      "stickman العالم survival",
-      "truth about العالم",
-      "العالم high velocity shorts",
-      "stickman ساعة survival",
-      "truth about ساعة",
-      "ساعة high velocity shorts",
-      "stickman أكبر survival",
-      "truth about أكبر",
-      "أكبر high velocity shorts",
-      "stickman القرآن survival",
-      "truth about القرآن",
-      "القرآن high velocity shorts",
-      "stickman اجعل survival"
+      "stickman born survival",
+      "truth about born",
+      "born high velocity shorts",
+      "stickman al-dosari survival",
+      "truth about al-dosari",
+      "al-dosari high velocity shorts",
+      "stickman المyasser survival",
+      "truth about المyasser",
+      "المyasser high velocity shorts",
+      "stickman yasser survival",
+      "truth about yasser",
+      "yasser high velocity shorts",
+      "stickman sheikh survival",
+      "truth about sheikh",
+      "sheikh high velocity shorts",
+      "stickman posting survival",
+      "truth about posting",
+      "posting high velocity shorts",
+      "stickman world survival",
+      "truth about world",
+      "world high velocity shorts",
+      "stickman clock survival",
+      "truth about clock",
+      "clock high velocity shorts",
+      "stickman largest survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -426,16 +432,20 @@
     "OfaysdiF53Y": {
       "timestamp": "2026-10-24 21:16:00",
       "old_title": "المقطع موجودة بقناة التليجرام الرابط بالبايو 🤍🌿 | الشيخ محمد اللحيدان #Shorts #Quran"
+    },
+    "PZM8gdRG81k": {
+      "timestamp": "2026-10-24 22:00:10",
+      "old_title": "إِنَّ اللَّهَ وَمَلائِكَتَهُ يُصَلّونَ عَلَى النَّبِيِّ يا أَيُّهَا الَّذينَ آمَنوا صَلّوا عَلَيهِ و"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4776,
+    "total_network_subscribers": 4786,
     "total_network_views": 250363,
-    "progress_to_million_subs_percent": 0.478,
+    "progress_to_million_subs_percent": 0.479,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-24 21:16:03"
+    "last_hyper_sync": "2026-10-24 22:00:12"
   },
   "empire_channel_blueprints": {
     "quran": {
