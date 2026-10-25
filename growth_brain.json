@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-25 21:37:01",
-  "total_audits_performed": 51,
+  "last_audit_timestamp": "2026-10-25 22:37:22",
+  "total_audits_performed": 52,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 4550,
       "views": 283856,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-25 21:37:01"
+      "last_checked": "2026-10-25 22:37:22"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,15 @@
   },
   "winning_topics": {
     "quran": [
+      "Mountain Roots",
+      "Two Seas Never Mixing",
+      "Iron Coming From Stars",
+      "Pharaoh Drowning",
+      "تؤجر",
+      "‎((سبحان",
+      "لَأَمَّارَةُۢ",
+      "ٱلنَّفۡسَ",
+      "إِنَّ",
       "The Gates of Jannah",
       "The Moment of Death",
       "The First Night in Grave",
@@ -51,19 +60,7 @@
       "sheikh",
       "وبارك",
       "وسلم",
-      "The Day of Reckoning",
-      "Mountain Roots",
-      "Two Seas Never Mixing",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "القرآن",
-      "اجعل",
-      "عليه",
-      "eldest",
-      "yaseer",
-      "اللهم",
-      "والحمد",
-      "الله"
+      "The Day of Reckoning"
     ],
     "ai": [
       "نیشانەی",
@@ -179,6 +176,21 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman تؤجر survival",
+      "truth about تؤجر",
+      "تؤجر high velocity shorts",
+      "stickman ‎((سبحان survival",
+      "truth about ‎((سبحان",
+      "‎((سبحان high velocity shorts",
+      "stickman لَأَمَّارَةُۢ survival",
+      "truth about لَأَمَّارَةُۢ",
+      "لَأَمَّارَةُۢ high velocity shorts",
+      "stickman ٱلنَّفۡسَ survival",
+      "truth about ٱلنَّفۡسَ",
+      "ٱلنَّفۡسَ high velocity shorts",
+      "stickman إِنَّ survival",
+      "truth about إِنَّ",
+      "إِنَّ high velocity shorts",
       "stickman اكتب survival",
       "truth about اكتب",
       "اكتب high velocity shorts",
@@ -188,22 +200,7 @@
       "stickman رشفة survival",
       "truth about رشفة",
       "رشفة high velocity shorts",
-      "stickman تخيل survival",
-      "truth about تخيل",
-      "تخيل high velocity shorts",
-      "stickman sheikh survival",
-      "truth about sheikh",
-      "sheikh high velocity shorts",
-      "stickman وبارك survival",
-      "truth about وبارك",
-      "وبارك high velocity shorts",
-      "stickman وسلم survival",
-      "truth about وسلم",
-      "وسلم high velocity shorts",
-      "stickman القرآن survival",
-      "truth about القرآن",
-      "القرآن high velocity shorts",
-      "stickman اجعل survival"
+      "stickman تخيل survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -442,6 +439,10 @@
     "FPJSLRQj7kQ": {
       "timestamp": "2026-10-25 19:35:40",
       "old_title": "⁨ أكبر ساعة في العالم ساعة (مكة) | الشيخ محمد اللحيدان #Shorts #Quran"
+    },
+    "bHR0U4s4DEg": {
+      "timestamp": "2026-10-25 22:37:22",
+      "old_title": "أكبر ساعة في العالم | ساعة مكة المكرمة 🕰️ | الشيخ ياسر الدوسري #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
@@ -451,7 +452,7 @@
     "total_network_views": 289306,
     "progress_to_million_subs_percent": 0.495,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-25 21:37:02"
+    "last_hyper_sync": "2026-10-25 22:37:25"
   },
   "empire_channel_blueprints": {
     "quran": {
