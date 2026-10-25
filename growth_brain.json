@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-25 18:34:11",
-  "total_audits_performed": 49,
+  "last_audit_timestamp": "2026-10-25 19:35:40",
+  "total_audits_performed": 50,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 4520,
+      "subscribers": 4530,
       "views": 283856,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-25 18:34:11"
+      "last_checked": "2026-10-25 19:35:40"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,23 @@
   },
   "winning_topics": {
     "quran": [
+      "The Day of Reckoning",
+      "Mountain Roots",
+      "Two Seas Never Mixing",
+      "Iron Coming From Stars",
+      "Pharaoh Drowning",
+      "القرآن",
+      "اجعل",
+      "عليه",
+      "eldest",
+      "yaseer",
+      "اللهم",
+      "والحمد",
+      "الله",
+      "‎((سبحان",
+      "لَأَمَّارَةُۢ",
+      "ٱلنَّفۡسَ",
+      "إِنَّ",
       "The Gates of Jannah",
       "The Moment of Death",
       "The First Night in Grave",
@@ -44,22 +61,7 @@
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
-      "Dajjal Island Mystery",
-      "Mountain Roots",
-      "Two Seas Never Mixing",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "العالم",
-      "ساعة",
-      "أكبر",
-      "اكتب",
-      "تشربها",
-      "رشفة",
-      "تخيل",
-      "sheikh",
-      "وبارك",
-      "وسلم",
-      "The Day of Reckoning"
+      "Dajjal Island Mystery"
     ],
     "ai": [
       "نیشانەی",
@@ -144,7 +146,6 @@
       "المقطع",
       "موجودة",
       "آرامش",
-      "إِنَّ",
       "اللَّهَ"
     ],
     "ai": [
@@ -176,31 +177,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
-      "stickman تؤجر survival",
-      "truth about تؤجر",
-      "تؤجر high velocity shorts",
-      "stickman العالم survival",
-      "truth about العالم",
-      "العالم high velocity shorts",
-      "stickman ساعة survival",
-      "truth about ساعة",
-      "ساعة high velocity shorts",
-      "stickman أكبر survival",
-      "truth about أكبر",
-      "أكبر high velocity shorts",
-      "stickman اكتب survival",
-      "truth about اكتب",
-      "اكتب high velocity shorts",
-      "stickman تشربها survival",
-      "truth about تشربها",
-      "تشربها high velocity shorts",
-      "stickman رشفة survival",
-      "truth about رشفة",
-      "رشفة high velocity shorts",
-      "stickman تخيل survival",
-      "truth about تخيل",
-      "تخيل high velocity shorts",
-      "stickman sheikh survival"
+      "stickman القرآن survival",
+      "truth about القرآن",
+      "القرآن high velocity shorts",
+      "stickman اجعل survival",
+      "truth about اجعل",
+      "اجعل high velocity shorts",
+      "stickman عليه survival",
+      "truth about عليه",
+      "عليه high velocity shorts",
+      "stickman eldest survival",
+      "truth about eldest",
+      "eldest high velocity shorts",
+      "stickman yaseer survival",
+      "truth about yaseer",
+      "yaseer high velocity shorts",
+      "stickman اللهم survival",
+      "truth about اللهم",
+      "اللهم high velocity shorts",
+      "stickman والحمد survival",
+      "truth about والحمد",
+      "والحمد high velocity shorts",
+      "stickman الله survival",
+      "truth about الله",
+      "الله high velocity shorts",
+      "stickman ‎((سبحان survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -435,16 +436,20 @@
     "V_227AGykVQ": {
       "timestamp": "2026-10-25 16:51:58",
       "old_title": "المقطع موجودة بقناة التليجرام الرابط بالبايو 🤍🌿 | الشيخ محمد اللحيدان #Shorts #Quran"
+    },
+    "FPJSLRQj7kQ": {
+      "timestamp": "2026-10-25 19:35:40",
+      "old_title": "⁨ أكبر ساعة في العالم ساعة (مكة) | الشيخ محمد اللحيدان #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4916,
+    "total_network_subscribers": 4926,
     "total_network_views": 289306,
-    "progress_to_million_subs_percent": 0.492,
+    "progress_to_million_subs_percent": 0.493,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-25 18:34:13"
+    "last_hyper_sync": "2026-10-25 19:35:42"
   },
   "empire_channel_blueprints": {
     "quran": {
