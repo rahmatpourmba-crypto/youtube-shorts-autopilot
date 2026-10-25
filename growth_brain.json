@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-25 17:39:56",
-  "total_audits_performed": 48,
+  "last_audit_timestamp": "2026-10-25 18:34:11",
+  "total_audits_performed": 49,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 4520,
       "views": 283856,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-25 17:39:56"
+      "last_checked": "2026-10-25 18:34:11"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,10 @@
   },
   "winning_topics": {
     "quran": [
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "تؤجر",
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
@@ -55,16 +59,7 @@
       "sheikh",
       "وبارك",
       "وسلم",
-      "The Day of Reckoning",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave",
-      "القرآن",
-      "اجعل",
-      "عليه",
-      "eldest",
-      "yaseer",
-      "اللهم"
+      "The Day of Reckoning"
     ],
     "ai": [
       "نیشانەی",
@@ -181,6 +176,9 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman تؤجر survival",
+      "truth about تؤجر",
+      "تؤجر high velocity shorts",
       "stickman العالم survival",
       "truth about العالم",
       "العالم high velocity shorts",
@@ -202,10 +200,7 @@
       "stickman تخيل survival",
       "truth about تخيل",
       "تخيل high velocity shorts",
-      "stickman sheikh survival",
-      "truth about sheikh",
-      "sheikh high velocity shorts",
-      "stickman وبارك survival"
+      "stickman sheikh survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -449,7 +444,7 @@
     "total_network_views": 289306,
     "progress_to_million_subs_percent": 0.492,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-25 17:39:58"
+    "last_hyper_sync": "2026-10-25 18:34:13"
   },
   "empire_channel_blueprints": {
     "quran": {
