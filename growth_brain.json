@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-25 15:00:53",
-  "total_audits_performed": 46,
+  "last_audit_timestamp": "2026-10-25 16:51:58",
+  "total_audits_performed": 47,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 4500,
+      "subscribers": 4520,
       "views": 244913,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-25 15:00:53"
+      "last_checked": "2026-10-25 16:51:58"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,16 @@
   },
   "winning_topics": {
     "quran": [
+      "The Day of Reckoning",
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "القرآن",
+      "اجعل",
+      "عليه",
+      "eldest",
+      "yaseer",
+      "اللهم",
       "Euphrates Gold Mountain",
       "Green Arabia Prophecy",
       "Dukhan Smoke Prophecy",
@@ -50,21 +60,7 @@
       "world",
       "clock",
       "largest",
-      "تؤجر",
-      "اكتب",
-      "تشربها",
-      "رشفة",
-      "تخيل",
-      "sheikh",
-      "وبارك",
-      "وسلم",
-      "The Day of Reckoning",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave",
-      "العالم",
-      "ساعة",
-      "أكبر"
+      "تؤجر"
     ],
     "ai": [
       "نیشانەی",
@@ -181,31 +177,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
+      "stickman القرآن survival",
+      "truth about القرآن",
+      "القرآن high velocity shorts",
+      "stickman اجعل survival",
+      "truth about اجعل",
+      "اجعل high velocity shorts",
+      "stickman عليه survival",
+      "truth about عليه",
+      "عليه high velocity shorts",
+      "stickman eldest survival",
+      "truth about eldest",
+      "eldest high velocity shorts",
+      "stickman yaseer survival",
+      "truth about yaseer",
+      "yaseer high velocity shorts",
+      "stickman اللهم survival",
+      "truth about اللهم",
+      "اللهم high velocity shorts",
       "stickman yasser survival",
       "truth about yasser",
       "yasser high velocity shorts",
       "stickman posting survival",
       "truth about posting",
       "posting high velocity shorts",
-      "stickman world survival",
-      "truth about world",
-      "world high velocity shorts",
-      "stickman clock survival",
-      "truth about clock",
-      "clock high velocity shorts",
-      "stickman largest survival",
-      "truth about largest",
-      "largest high velocity shorts",
-      "stickman تؤجر survival",
-      "truth about تؤجر",
-      "تؤجر high velocity shorts",
-      "stickman اكتب survival",
-      "truth about اكتب",
-      "اكتب high velocity shorts",
-      "stickman تشربها survival",
-      "truth about تشربها",
-      "تشربها high velocity shorts",
-      "stickman رشفة survival"
+      "stickman world survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -436,16 +432,20 @@
     "PZM8gdRG81k": {
       "timestamp": "2026-10-24 22:00:10",
       "old_title": "إِنَّ اللَّهَ وَمَلائِكَتَهُ يُصَلّونَ عَلَى النَّبِيِّ يا أَيُّهَا الَّذينَ آمَنوا صَلّوا عَلَيهِ و"
+    },
+    "V_227AGykVQ": {
+      "timestamp": "2026-10-25 16:51:58",
+      "old_title": "المقطع موجودة بقناة التليجرام الرابط بالبايو 🤍🌿 | الشيخ محمد اللحيدان #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4896,
+    "total_network_subscribers": 4916,
     "total_network_views": 250363,
-    "progress_to_million_subs_percent": 0.49,
+    "progress_to_million_subs_percent": 0.492,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-25 15:00:55"
+    "last_hyper_sync": "2026-10-25 16:52:00"
   },
   "empire_channel_blueprints": {
     "quran": {
