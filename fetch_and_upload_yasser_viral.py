@@ -3,6 +3,7 @@ import sys
 import json
 import time
 import re
+import random
 import datetime
 import urllib.request
 from pathlib import Path
@@ -297,24 +298,56 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
     print("=" * 65)
 
     title = clean_arabic_title(chosen["caption"], rec)
+
+    # 131/165 Mega-Engine Protocols:
+    # T029 (Semantic Triad) + T126/T131 (YPP Reused Content Immunity & Monetization Safe-Harbor)
     description = (
         f"{title}\n\n"
-        f"تلاوة خاشعة مباركة بصوت {rec['name_ar']} حفظه الله.\n\n"
-        f"اللهم اجعل القرآن الكريم ربيع قلوبنا ونور صدورنا وجلاء أحزاننا وذهاب همومنا.\n\n"
-        f"• الأصل من تلاوات منصات التواصل الأكثر انتشاراً وتأثيراً (High Viral Reach).\n\n"
-        f"#{rec['name_ar'].replace(' ', '_')} #القرآن_الكريم #تلاوة_خاشعة #قرآن #Shorts #Islam #Quran"
+        f"🌿 تلاوة عطرة خاشعة بصوت {rec['name_ar']} حفظه الله، تفيض بالسكينة والنور وتملأ القلب طمأنينة وسلاماً.\n\n"
+        f"📖 قال الله تعالى: ﴿الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾ [الرعد: 28]\n\n"
+        f"🤍 شارك المقطع مع من تحب ليكون صدقة جارية لك في ميزان حسناتك، واشترك في القناة لتصلك التلاوات اليومية الخاشعة.\n\n"
+        f"─── ⋆⋅☆⋅⋆ ───\n"
+        f"🛡️ YPP Transformation & Educational Archival Notice (T131):\n"
+        f"Non-commercial spiritual and educational curation of sacred Quranic recitations dedicated to global tranquility, reflection, and Islamic heritage under transformative fair practice guidelines.\n\n"
+        f"#{rec['name_ar'].replace(' ', '_')} #القرآن_الكريم #تلاوة_خاشعة #قرآن #راحة_نفسية #Shorts #Islam #Quran #ViralShorts"
     )
+    # T028 Two-Tower Neural Recommendation + T046 Tag Cloud Concentration
     tags = [
         rec["name_ar"],
         "القرآن الكريم",
         "تلاوة خاشعة",
         "قران",
-        rec["name_en"].lower(),
-        "quran",
-        "quran recitation",
-        "shorts",
-        "islam"
+        "راحة نفسية",
+        "ايات قرانية",
+        "تلاوات نادرة",
+        rec["name_en"],
+        "Quran",
+        "Quran recitation",
+        "Beautiful Quran recitation",
+        "Holy Quran",
+        "Peace",
+        "Islam",
+        "Shorts",
+        "Viral"
     ]
+
+    # T096 / T099 / T103 High-Velocity Pinned Comment to spike First-Hour Engagement
+    comments_pool = [
+        "🌿 صلوا على الحبيب المصطفى محمد ﷺ واكتب من أي بلد تسمع هذه التلاوة العطرة؟ 🤍✨",
+        "🤍 اكتب كلمة (سبحان الله وبحمده) لتكون لك صدقة جارية في ميزان حسناتك 🌿✨",
+        "✨ اللهم اجعل القرآن الكريم ربيع قلوبنا ونور صدورنا وجلاء أحزاننا.. اكتب دعاءك هنا 🕊️"
+    ]
+    pinned_comment = random.choice(comments_pool)
+
+    try:
+        from mega_prompt_youtube_engine import audit_monetization_safety_165
+        is_safe, violations = audit_monetization_safety_165(title, description, tags)
+        if not is_safe:
+            print(f"  [T121 Monetization Safety Warning] Issues detected: {violations}")
+        else:
+            print(f"  ✓ [T131 Monetization Shield Active] 100% Policy Compliant & Advertiser-Friendly.")
+    except Exception as e:
+        print(f"  [T131 Audit Note] {e}")
 
     return {
         "video": str(target_video_file),
@@ -322,6 +355,7 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
         "title": title,
         "description": description,
         "tags": tags,
+        "pinned_comment": pinned_comment,
         "reciter": rec["name_ar"]
     }
 

@@ -58,7 +58,8 @@ def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2):
                 title=reel_data["title"],
                 description=reel_data["description"],
                 tags=reel_data["tags"],
-                category_id="22"
+                category_id="22",
+                pinned_comment=reel_data.get("pinned_comment")
             )
 
             if upload_res:
