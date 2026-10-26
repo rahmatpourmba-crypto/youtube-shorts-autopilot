@@ -1,14 +1,14 @@
 {
-  "last_audit_timestamp": "2026-10-25 22:37:22",
-  "total_audits_performed": 52,
+  "last_audit_timestamp": "2026-10-26 09:43:31",
+  "total_audits_performed": 53,
   "monetization_health": {
     "quran": {
       "status": "healthy",
       "claims": 0,
-      "subscribers": 4550,
+      "subscribers": 4560,
       "views": 283856,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-25 22:37:22"
+      "last_checked": "2026-10-26 09:43:31"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,25 @@
   },
   "winning_topics": {
     "quran": [
+      "The Day of Reckoning",
+      "The Gates of Jannah",
+      "The Moment of Death",
+      "The First Night in Grave",
+      "Euphrates Gold Mountain",
+      "Green Arabia Prophecy",
+      "Dukhan Smoke Prophecy",
+      "Dajjal Island Mystery",
+      "eldest",
+      "yaseer",
+      "اللهم",
+      "والحمد",
+      "الله",
+      "world",
+      "clock",
+      "largest",
+      "العالم",
+      "ساعة",
+      "أكبر",
       "Mountain Roots",
       "Two Seas Never Mixing",
       "Iron Coming From Stars",
@@ -45,22 +64,7 @@
       "‎((سبحان",
       "لَأَمَّارَةُۢ",
       "ٱلنَّفۡسَ",
-      "إِنَّ",
-      "The Gates of Jannah",
-      "The Moment of Death",
-      "The First Night in Grave",
-      "Euphrates Gold Mountain",
-      "Green Arabia Prophecy",
-      "Dukhan Smoke Prophecy",
-      "Dajjal Island Mystery",
-      "اكتب",
-      "تشربها",
-      "رشفة",
-      "تخيل",
-      "sheikh",
-      "وبارك",
-      "وسلم",
-      "The Day of Reckoning"
+      "إِنَّ"
     ],
     "ai": [
       "نیشانەی",
@@ -145,7 +149,8 @@
       "المقطع",
       "موجودة",
       "آرامش",
-      "اللَّهَ"
+      "اللَّهَ",
+      "تلاوة"
     ],
     "ai": [
       "weeks",
@@ -176,31 +181,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
-      "stickman تؤجر survival",
-      "truth about تؤجر",
-      "تؤجر high velocity shorts",
-      "stickman ‎((سبحان survival",
-      "truth about ‎((سبحان",
-      "‎((سبحان high velocity shorts",
-      "stickman لَأَمَّارَةُۢ survival",
-      "truth about لَأَمَّارَةُۢ",
-      "لَأَمَّارَةُۢ high velocity shorts",
-      "stickman ٱلنَّفۡسَ survival",
-      "truth about ٱلنَّفۡسَ",
-      "ٱلنَّفۡسَ high velocity shorts",
-      "stickman إِنَّ survival",
-      "truth about إِنَّ",
-      "إِنَّ high velocity shorts",
-      "stickman اكتب survival",
-      "truth about اكتب",
-      "اكتب high velocity shorts",
-      "stickman تشربها survival",
-      "truth about تشربها",
-      "تشربها high velocity shorts",
-      "stickman رشفة survival",
-      "truth about رشفة",
-      "رشفة high velocity shorts",
-      "stickman تخيل survival"
+      "stickman eldest survival",
+      "truth about eldest",
+      "eldest high velocity shorts",
+      "stickman yaseer survival",
+      "truth about yaseer",
+      "yaseer high velocity shorts",
+      "stickman اللهم survival",
+      "truth about اللهم",
+      "اللهم high velocity shorts",
+      "stickman والحمد survival",
+      "truth about والحمد",
+      "والحمد high velocity shorts",
+      "stickman الله survival",
+      "truth about الله",
+      "الله high velocity shorts",
+      "stickman world survival",
+      "truth about world",
+      "world high velocity shorts",
+      "stickman clock survival",
+      "truth about clock",
+      "clock high velocity shorts",
+      "stickman largest survival",
+      "truth about largest",
+      "largest high velocity shorts",
+      "stickman العالم survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -443,16 +448,20 @@
     "bHR0U4s4DEg": {
       "timestamp": "2026-10-25 22:37:22",
       "old_title": "أكبر ساعة في العالم | ساعة مكة المكرمة 🕰️ | الشيخ ياسر الدوسري #Shorts #Quran"
+    },
+    "T11T_NxDeQw": {
+      "timestamp": "2026-10-26 09:43:31",
+      "old_title": "اللهم صلِّ وسل وبارك على سيدنا محمد🌺 | الشيخ ياسر الدوسري #Shorts #Quran"
     }
   },
   "last_competitor_ingestion": "2026-10-15 11:30:00",
   "monetization_income_target": "$1,000,000 / Multi-Channel Media Network",
   "empire_network_metrics": {
-    "total_network_subscribers": 4946,
+    "total_network_subscribers": 4956,
     "total_network_views": 289306,
-    "progress_to_million_subs_percent": 0.495,
+    "progress_to_million_subs_percent": 0.496,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-25 22:37:25"
+    "last_hyper_sync": "2026-10-26 09:43:33"
   },
   "empire_channel_blueprints": {
     "quran": {
