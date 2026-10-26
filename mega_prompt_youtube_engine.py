@@ -377,7 +377,7 @@ def generate_165_mega_title(niche: str, raw_title: str = None, run_count: int = 
     - High-velocity emojis and #Shorts anchor
     """
     config = NICHE_PROMPT_PATTERNS.get(niche, NICHE_PROMPT_PATTERNS["animals"])
-    
+
     clean_raw = ""
     if raw_title:
         # Strip preexisting hashtags and extraneous punctuation
@@ -385,31 +385,21 @@ def generate_165_mega_title(niche: str, raw_title: str = None, run_count: int = 
         clean_raw = re.sub(r"\s+", " ", clean_raw)
 
     if niche == "quran":
-        # Multi-lingual rotational title
-        lang_idx = run_count % 3
-        if lang_idx == 0:
-            hooks = config.get("title_hooks_arabic", config["title_hooks_arabic"])
-            hook = hooks[run_count % len(hooks)]
-            tag = "#shorts #quran"
-        elif lang_idx == 1:
-            hooks = config.get("title_hooks_persian", config["title_hooks_arabic"])
-            hook = hooks[run_count % len(hooks)]
-            tag = "#shorts #قرآن"
-        else:
-            hooks = config.get("title_hooks_english", config["title_hooks_arabic"])
-            hook = hooks[run_count % len(hooks)]
-            tag = "#shorts #holyquran"
-            
+        # 100% Authentic Arabic Title only for global Islamic algorithm reach
+        hooks = config.get("title_hooks_arabic", config["title_hooks_arabic"])
+        hook = hooks[run_count % len(hooks)]
+        tag = "#Shorts #Quran" 
+
         if clean_raw and len(clean_raw) > 5 and not any(k in clean_raw.lower() for k in ["http", "mp4", "www"]):
             title = f"{hook} | {clean_raw[:25]} {tag}"
         else:
             title = f"{hook} {tag}"
-            
+
     else:
         hooks = config.get("title_hooks", ["Mind-Blowing Truth! 😱"])
         hook = hooks[run_count % len(hooks)]
         niche_tag = f"#Shorts #{niche.capitalize()}"
-        
+
         if clean_raw and len(clean_raw) > 5 and not any(k in clean_raw.lower() for k in ["http", "mp4", "www"]):
             title = f"{hook} - {clean_raw[:30]} {niche_tag}"
         else:
@@ -434,12 +424,12 @@ def generate_165_algorithmic_tags(niche: str, winning_keywords: List[str] = None
     """
     config = NICHE_PROMPT_PATTERNS.get(niche, NICHE_PROMPT_PATTERNS["animals"])
     base_tags = list(config.get("two_tower_tags", ["Shorts", "Viral"]))
-    
+
     if winning_keywords:
         for kw in winning_keywords:
             if kw and len(kw) > 3 and kw not in base_tags and len(base_tags) < 18:
                 base_tags.append(kw)
-                
+
     return base_tags[:16]
 
 def generate_165_pinned_comment(niche: str, run_count: int = 1) -> str:
@@ -534,13 +524,13 @@ def audit_monetization_safety_165(title: str, description: str, tags: List[str])
     Strict Pre-Upload Policy Gate verifying 100% compliance with YouTube Advertiser-Friendly Guidelines.
     """
     violations = []
-    
+
     # Advertiser-Unfriendly Keyword Blacklist
     blacklist = [
-        "suicide", "murder", "terror", "blood", "gore", "weapon", "drugs", 
+        "suicide", "murder", "terror", "blood", "gore", "weapon", "drugs",
         "porn", "sex", "kill", "death penalty", "torture", "hack credit card"
     ]
-    
+
     full_text = f"{title} {description} {' '.join(tags)}".lower()
     for word in blacklist:
         if re.search(r"\b" + re.escape(word) + r"\b", full_text):

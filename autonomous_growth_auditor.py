@@ -110,6 +110,10 @@ def revitalize_stagnant_video(yt, video_id: str, old_title: str, niche: str) -> 
     Automatically updates the title and tags of a stagnant video with an alternative
     high-CTR Curiosity-Gap Neuro-Hook to trigger YouTube algorithm re-indexing!
     """
+    # CRITICAL INVARIANT: NEVER mutate Quran channel videos!
+    # Authentic Arabic titles & tags must be preserved to prevent destroying global reach.
+    if niche == "quran":
+        return False
     try:
         from mega_prompt_youtube_engine import generate_165_mega_title, generate_165_algorithmic_tags
         new_title = generate_165_mega_title(niche, raw_title=old_title)
