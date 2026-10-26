@@ -1,23 +1,10 @@
-name: 24/7 Quran Viral Shorts Heavy Clustered Peaks (8x Daily)
+name: 24/7 Quran Viral Shorts Heavy Clustered Peaks (Resilient Pulse)
 
 on:
   schedule:
-    # Slot 1: 07:30 IRST (04:00 UTC) - Morning Peace (Sheikh Yasser Al-Dosari)
-    - cron: '0 4 * * *'
-    # Slot 2: 15:00 IRST (11:30 UTC) - Afternoon Wave 1 (Sheikh Yasser Al-Dosari)
-    - cron: '30 11 * * *'
-    # Slot 3: 16:20 IRST (12:50 UTC) - Afternoon Wave 2 (Youssef Saghir)
-    - cron: '50 12 * * *'
-    # Slot 4: 17:45 IRST (14:15 UTC) - Evening Commute (Abdul Rahman Mossad)
-    - cron: '15 14 * * *'
-    # Slot 5: 19:15 IRST (15:45 UTC) - Maghrib Surge (Sheikh Muhammad Al-Luhaidan)
-    - cron: '45 15 * * *'
-    # Slot 6: 20:45 IRST (17:15 UTC) - Night Peak Wave 1 (Sheikh Yasser Al-Dosari)
-    - cron: '15 17 * * *'
-    # Slot 7: 22:05 IRST (18:35 UTC) - Night Peak Wave 2 (Sheikh Muhammad Al-Luhaidan)
-    - cron: '35 18 * * *'
-    # Slot 8: 23:25 IRST (19:55 UTC) - Bedtime Peace (Islam Sobhi)
-    - cron: '55 19 * * *'
+    # Resilient Pulse every 30 mins at odd minutes (:18 and :48)
+    # Bypasses GitHub top-of-hour congestion, queue drops, and delays
+    - cron: '18,48 * * * *'
   workflow_dispatch:
     inputs:
       target_channel:
@@ -28,6 +15,11 @@ on:
         options:
           - quran
           - auto
+      force:
+        description: 'Bypass cooling gate'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -56,7 +48,7 @@ jobs:
 
       - name: Execute Quran Viral Reel Dispatcher (>100k views, <50s)
         run: |
-          python dispatch_cycle.py --channel=quran
+          python dispatch_cycle.py --channel=quran ${{ inputs.force && '--force' || '' }}
 
       - name: Commit and Push Updated State (Keepalive Heartbeat Activity)
         if: always()
@@ -64,5 +56,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add state.json growth_brain.json used_trends_history.json used_viral_reels.json
-          git commit -m "Auto-keepalive heartbeat and viral reels state update [skip ci]" || echo "No changes to state"
+          git commit -m "chore(autopilot): update viral reels state and keepalive heartbeat" || echo "No changes to state"
           git push

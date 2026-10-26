@@ -136,10 +136,34 @@ def main():
     daily_uploads = state.setdefault("daily_uploads", {})
 
     try:
-        if target_channel == "quran":
-            upload_res = run_quran_channel(run_dir, run_count)
-            if upload_res:
-                daily_uploads["quran_short"] = today_date
+        import time as _t
+        force_upload = any(arg == "--force" for arg in sys.argv)
+        last_upload_epoch = state.get("last_quran_upload_epoch", 0)
+        current_epoch = _t.time()
+        elapsed_mins = (current_epoch - last_upload_epoch) / 60.0
+        tehran_h = tehran_now.hour
+
+        # Active prime broadcast windows in Tehran: 07:00 to 23:59
+        is_active_window = 7 <= tehran_h <= 23
+        cooling_satisfied = elapsed_mins >= 65.0
+
+        if target_channel in ["quran", None, "auto"]:
+            if force_upload:
+                print(f"[Pacing Gate] Force flag active! Executing upload immediately...")
+                upload_res = run_quran_channel(run_dir, run_count)
+                if upload_res:
+                    state["last_quran_upload_epoch"] = current_epoch
+                    daily_uploads["quran_short"] = today_date
+            elif not is_active_window:
+                print(f"[Pacing Gate] Tehran time {tehran_now.strftime('%H:%M')} is outside active hours (07:00 - 23:59). Sleep standby.")
+            elif not cooling_satisfied:
+                print(f"[Pacing Gate] Cooling window active: {elapsed_mins:.1f} mins since last upload (min 65 mins required). Standby.")
+            else:
+                print(f"[Pacing Gate] Active window & cooling satisfied ({elapsed_mins:.1f} mins elapsed). Triggering upload...")
+                upload_res = run_quran_channel(run_dir, run_count)
+                if upload_res:
+                    state["last_quran_upload_epoch"] = current_epoch
+                    daily_uploads["quran_short"] = today_date
         elif target_channel == "cryptolab":
             run_cryptolab_channel(run_dir, run_count)
         elif target_channel == "animals":
@@ -155,12 +179,6 @@ def main():
             run_animals_channel(run_dir, run_count)
             run_ai_channel(run_dir, run_count)
             daily_uploads["us_eu"] = today_date
-        else:
-            # AUTOMATED SCHEDULE ROUTING & CATCH-UP:
-            # 100% Focused on Quran Shorts
-            upload_res = run_quran_channel(run_dir, run_count)
-            if upload_res:
-                daily_uploads["quran_short"] = today_date
     except Exception as e:
         print(f"\n[CRASH PREVENTED & RECOVERED] General dispatch exception caught: {e}")
         import traceback
