@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+import subprocess
 from pathlib import Path
 from instagrapi import Client
 
@@ -27,6 +28,27 @@ ACCOUNTS = {
         "display": "@cryp.tolab1"
     }
 }
+
+def extract_thumbnail_from_video(video_path: Path) -> Path:
+    """
+    Extracts high-res authentic frame using FFmpeg as cover thumbnail.
+    """
+    thumb_path = video_path.with_suffix(".jpg")
+    try:
+        cmd = [
+            "ffmpeg", "-y",
+            "-ss", "00:00:01.500",
+            "-i", str(video_path),
+            "-vframes", "1",
+            "-q:v", "2",
+            str(thumb_path)
+        ]
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+        if thumb_path.exists() and thumb_path.stat().st_size > 1000:
+            return thumb_path
+    except Exception:
+        pass
+    return None
 
 def get_instagram_client(niche: str = "quran") -> Client:
     """
@@ -58,10 +80,6 @@ def get_instagram_client(niche: str = "quran") -> Client:
     return cl
 
 def build_bilingual_quran_caption(base_title: str) -> str:
-    """
-    Builds a high-retention, high-engagement Persian & Kurdish (Sorani) bilingual caption
-    optimized for Instagram Explore & Reels algorithms.
-    """
     caption = (
         "🌿 تلاوت خاشعانه و آرامش‌بخش قرآن کریم 🕊️\n"
         "ئارامی دڵ و ڕووح بە دەنگی قورئانی پیرۆز ✨\n\n"
@@ -78,13 +96,20 @@ def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", 
     """
     Uploads a vertical 9:16 video as an Instagram Reel.
     """
-    print("\n🛑 [GLOBAL KILLSWITCH ACTIVE] User requested: STOP ALL UPLOADS EVERYWHERE. Skipping Instagram upload.")
-    return None
-
+    acc = ACCOUNTS.get(niche, ACCOUNTS["quran"])
+    target_video = Path(video_path)
+    if not target_video.exists():
+        print(f"  [Instagram Error] Video file not found: {video_path}")
+        return None
 
     try:
         print(f"  [Instagram-{niche.upper()}] Connecting to Instagram as {acc['display']}...")
         cl = get_instagram_client(niche=niche)
+
+        # Automatic thumbnail extraction via FFmpeg if missing
+        if not thumbnail_path or not Path(thumbnail_path).exists():
+            extracted_thumb = extract_thumbnail_from_video(target_video)
+            thumbnail_path = str(extracted_thumb) if extracted_thumb else None
 
         print(f"  [Instagram-{niche.upper()}] Uploading Reel ({target_video.name})...")
         thumb = Path(thumbnail_path) if thumbnail_path and Path(thumbnail_path).exists() else None
@@ -99,6 +124,9 @@ def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", 
         reel_code = media.code
         reel_url = f"https://www.instagram.com/reel/{reel_code}/"
         print(f"  [Instagram Success] Reel published to {acc['display']}! URL: {reel_url}")
+
+        # Update saved session
+        cl.dump_settings(acc["session_file"])
 
         if initial_comment:
             try:

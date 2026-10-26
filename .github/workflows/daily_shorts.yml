@@ -1,4 +1,4 @@
-name: 24/7 Quran Viral Shorts Heavy Clustered Peaks (Resilient Pulse)
+name: 24/7 Autonomous Viral Multi-Channel Pulse (Quran & AI Unveiled)
 
 on:
   schedule:
@@ -10,11 +10,12 @@ on:
       target_channel:
         description: 'Target Channel to execute'
         required: false
-        default: 'quran'
+        default: 'auto'
         type: choice
         options:
-          - quran
           - auto
+          - quran
+          - ai
       force:
         description: 'Bypass cooling gate'
         required: false
@@ -46,15 +47,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Execute Quran Viral Reel Dispatcher (>100k views, <50s)
+      - name: Execute Autonomous Multi-Channel Dispatcher
+        env:
+          IG_PASSWORD_CRYPTOLAB: ${{ secrets.IG_PASSWORD_CRYPTOLAB || '2899813366' }}
+          IG_PASSWORD_QURAN: ${{ secrets.IG_PASSWORD_QURAN || '2899813366' }}
         run: |
-          python dispatch_cycle.py --channel=quran ${{ inputs.force && '--force' || '' }}
+          python dispatch_cycle.py --channel=${{ inputs.target_channel || 'auto' }} ${{ inputs.force && '--force' || '' }}
 
-      - name: Commit and Push Updated State (Keepalive Heartbeat Activity)
+      - name: Commit and Push Updated State (Keepalive Heartbeat Activity - NO skip-ci)
         if: always()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add state.json growth_brain.json used_trends_history.json used_viral_reels.json
-          git commit -m "chore(autopilot): update viral reels state and keepalive heartbeat" || echo "No changes to state"
+          git add state.json growth_brain.json used_trends_history.json used_viral_reels.json used_ai_viral_reels.json ig_session_cryptolab.json token_ai.pickle
+          git commit -m "chore(autopilot): update multi-channel state and keepalive heartbeat" || echo "No changes to state"
           git push
