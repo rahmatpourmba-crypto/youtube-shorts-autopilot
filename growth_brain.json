@@ -1,6 +1,6 @@
 {
-  "last_audit_timestamp": "2026-10-26 18:38:47",
-  "total_audits_performed": 55,
+  "last_audit_timestamp": "2026-10-26 20:36:37",
+  "total_audits_performed": 56,
   "monetization_health": {
     "quran": {
       "status": "healthy",
@@ -8,7 +8,7 @@
       "subscribers": 4630,
       "views": 328707,
       "sub_progress_percent": 100.0,
-      "last_checked": "2026-10-26 18:38:47"
+      "last_checked": "2026-10-26 20:36:37"
     },
     "ai": {
       "status": "healthy",
@@ -37,6 +37,18 @@
   },
   "winning_topics": {
     "quran": [
+      "Mountain Roots",
+      "Two Seas Never Mixing",
+      "Iron Coming From Stars",
+      "Pharaoh Drowning",
+      "eldest",
+      "yaseer",
+      "اللهم",
+      "والحمد",
+      "الله",
+      "world",
+      "خاشعة",
+      "تلاوة",
       "The Day of Reckoning",
       "The Gates of Jannah",
       "The Moment of Death",
@@ -48,23 +60,7 @@
       "‎((سبحان",
       "لَأَمَّارَةُۢ",
       "ٱلنَّفۡسَ",
-      "إِنَّ",
-      "clock",
-      "largest",
-      "العالم",
-      "ساعة",
-      "أكبر",
-      "القارئ",
-      "وقلبك",
-      "سمعك",
-      "Mountain Roots",
-      "Two Seas Never Mixing",
-      "Iron Coming From Stars",
-      "Pharaoh Drowning",
-      "sheikh",
-      "وبارك",
-      "وسلم",
-      "مبكية"
+      "إِنَّ"
     ],
     "ai": [
       "نیشانەی",
@@ -180,31 +176,31 @@
   "performance_history": {},
   "viral_spinoffs": {
     "quran": [
-      "stickman ‎((سبحان survival",
-      "truth about ‎((سبحان",
-      "‎((سبحان high velocity shorts",
-      "stickman لَأَمَّارَةُۢ survival",
-      "truth about لَأَمَّارَةُۢ",
-      "لَأَمَّارَةُۢ high velocity shorts",
-      "stickman ٱلنَّفۡسَ survival",
-      "truth about ٱلنَّفۡسَ",
-      "ٱلنَّفۡسَ high velocity shorts",
-      "stickman إِنَّ survival",
-      "truth about إِنَّ",
-      "إِنَّ high velocity shorts",
-      "stickman clock survival",
-      "truth about clock",
-      "clock high velocity shorts",
-      "stickman largest survival",
-      "truth about largest",
-      "largest high velocity shorts",
-      "stickman العالم survival",
-      "truth about العالم",
-      "العالم high velocity shorts",
-      "stickman ساعة survival",
-      "truth about ساعة",
-      "ساعة high velocity shorts",
-      "stickman أكبر survival"
+      "stickman eldest survival",
+      "truth about eldest",
+      "eldest high velocity shorts",
+      "stickman yaseer survival",
+      "truth about yaseer",
+      "yaseer high velocity shorts",
+      "stickman اللهم survival",
+      "truth about اللهم",
+      "اللهم high velocity shorts",
+      "stickman والحمد survival",
+      "truth about والحمد",
+      "والحمد high velocity shorts",
+      "stickman الله survival",
+      "truth about الله",
+      "الله high velocity shorts",
+      "stickman world survival",
+      "truth about world",
+      "world high velocity shorts",
+      "stickman خاشعة survival",
+      "truth about خاشعة",
+      "خاشعة high velocity shorts",
+      "stickman تلاوة survival",
+      "truth about تلاوة",
+      "تلاوة high velocity shorts",
+      "stickman ‎((سبحان survival"
     ],
     "ai": [
       "stickman نیشانەی survival",
@@ -460,7 +456,7 @@
     "total_network_views": 334157,
     "progress_to_million_subs_percent": 0.503,
     "seven_layer_shield_status": "ACTIVE_ENFORCED",
-    "last_hyper_sync": "2026-10-26 18:38:48"
+    "last_hyper_sync": "2026-10-26 20:36:40"
   },
   "empire_channel_blueprints": {
     "quran": {
