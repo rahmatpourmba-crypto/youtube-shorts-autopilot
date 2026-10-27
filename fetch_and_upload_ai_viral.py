@@ -285,7 +285,7 @@ def find_and_download_viral_ai_reel(min_views: int = 100000, max_duration: float
         "comment_hook": comment_hook
     }
 
-def publish_twin_ai_video(force: bool = False, max_retries: int = 3):
+def publish_twin_ai_video(force: bool = False, max_retries: int = 3, publish_instagram: bool = False):
     """
     Simultaneous Dual Upload: YouTube Shorts (AI Unveiled) + Instagram Reels (@cryp.tolab1)
     """
@@ -321,19 +321,22 @@ def publish_twin_ai_video(force: bool = False, max_retries: int = 3):
             except Exception as e:
                 print(f"[YouTube-AI Upload Error] {e}")
 
-            # 2. Upload to Instagram Reels (@cryp.tolab1)
-            try:
-                print(f"\n[Instagram-Reels] Uploading to @cryp.tolab1...")
-                ig_caption = build_instagram_bilingual_caption(data["title"])
-                ig_res = publish_instagram_reel(
-                    video_path=str(video_file),
-                    caption=ig_caption,
-                    niche="cryptolab",
-                    thumbnail_path=str(thumb_file) if thumb_file else None
-                )
-                results["instagram"] = ig_res
-            except Exception as e:
-                print(f"[Instagram-Reels Upload Error] {e}")
+            # 2. Instagram Decoupled (Bypassed by default)
+            if publish_instagram:
+                try:
+                    print(f"\n[Instagram-Reels] Uploading to @cryp.tolab1...")
+                    ig_caption = build_instagram_bilingual_caption(data["title"])
+                    ig_res = publish_instagram_reel(
+                        video_path=str(video_file),
+                        caption=ig_caption,
+                        niche="cryptolab",
+                        thumbnail_path=str(thumb_file) if thumb_file else None
+                    )
+                    results["instagram"] = ig_res
+                except Exception as e:
+                    print(f"[Instagram-Reels Upload Error] {e}")
+            else:
+                print("[Instagram Status] Decoupled: Reserved for dedicated Persian sponsorship pipeline.")
 
             if results.get("youtube") or results.get("instagram"):
                 history = load_history()

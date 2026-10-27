@@ -88,7 +88,7 @@ def run_ai_channel(run_dir: Path, run_count: int, force: bool = False):
     Fully implements Protocol 131, Two-Tower Recommendation Tags, Pinned Comment Hook
     """
     try:
-        print(f"\n[DISPATCH - CHANNEL 2 AI / COSMOS] Run #{run_count}: Dual Upload (YouTube Shorts + Instagram Reels)...")
+        print(f"\n[DISPATCH - CHANNEL 2 AI / COSMOS] Run #{run_count}: YouTube Shorts (Mega Machines) [Instagram Decoupled]...")
         from fetch_and_upload_ai_viral import publish_twin_ai_video
         res = publish_twin_ai_video(force=force)
         return res
