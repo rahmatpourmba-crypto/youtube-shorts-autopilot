@@ -19,7 +19,7 @@
         "csrftoken": "yhtrAReJhEcSq96P0EaI0TrYaLpgh0zl",
         "ds_user_id": "57841244777",
         "sessionid": "57841244777%3A3DrqqHxe4pooSf%3A25%3AAYkckf7HiEbHtg82g0PYFPcJCNEf15ZY6rROQX8sKg",
-        "rur": "LLA%2C17841457983310155%2C1792867978%3A01ff8cc44e3fe28a5c46cf00ba2624354d4005d14d280cdfb5bf1774ebcace2881fe8b52"
+        "rur": "KND%2C17841457983310155%2C1794269290%3A01fff74248deb3408755ba109bee831033a2d8366cd85543405b8a4fdb93c46e5968a1e0"
     },
     "last_login": 1791658392.0307455,
     "device_settings": {
@@ -55,6 +55,8 @@
         504
     ],
     "public_transport": "requests",
+    "public_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15",
+    "public_graphql_user_agent": "Instagram 273.0.0.16.70 (iPhone15,2; iOS 17_5_1; en_US; en-US; scale=3.00; 1290x2796; 470085518)",
     "private_transport": "curl",
     "public_transport_impersonate": "chrome136",
     "tls_verify": true,
