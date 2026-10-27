@@ -33,8 +33,13 @@ CHANNELS = {
         "email": "workonlin63@gmail.com",
         "token_file": BASE_DIR / "token_ai.pickle"
     },
+    "cars": {
+        "name": "AutoUnveiled | تاپ کارز",
+        "email": "rahmatpour63@gmail.com",
+        "token_file": BASE_DIR / "token_polygon.pickle"
+    },
     "polygon": {
-        "name": "PolyMint Channel",
+        "name": "AutoUnveiled | تاپ کارز",
         "email": "rahmatpour63@gmail.com",
         "token_file": BASE_DIR / "token_polygon.pickle"
     },
@@ -93,7 +98,7 @@ def add_pinned_engagement_comment(youtube, video_id: str, comment_text: str):
                 }
             }
         ).execute()
-        print("  [Auto-Comment] High-engagement comment posted successfully!")
+        print("  [Auto-Comment] High-engagement comment posted successfully!", flush=True)
         return response
     except Exception as e:
         print(f"  [Auto-Comment Warning] Could not post initial comment: {e}")
@@ -104,6 +109,10 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
     Uploads a short video directly to YouTube, sets custom thumbnail, and leaves pinned engagement hook.
     If publish_at (ISO 8601 string e.g. '2026-10-12T13:12:00Z') is provided, sets scheduled private publish.
     """
+    # EXCLUSIVE SECURITY LOCK FOR QURAN MASTER SESSION
+    if channel_key == "quran":
+        print("  [BLOCKED] Uploads to YouTube channel 'quran' (نور القرآن) are strictly DISABLED per user directive.", flush=True)
+        return None
     try:
         youtube = get_authenticated_service(channel_key)
     except Exception as e:
@@ -139,12 +148,12 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
     )
 
     response = None
-    print(f"  [Uploading] Uploading {video_path} to {CHANNELS[channel_key]['name']}...")
+    print(f"  [Uploading] Uploading {video_path} to {CHANNELS[channel_key]['name']}...", flush=True)
     try:
         while response is None:
             status, response = request.next_chunk()
             if status:
-                print(f"  [Progress] Uploaded {int(status.progress() * 100)}%")
+                print(f"  [Progress] Uploaded {int(status.progress() * 100)}%", flush=True)
     except Exception as e:
         print(f"  [Upload Limit / Quota Notice] YouTube upload limit reached for {channel_key}: {e}")
         return None
@@ -154,7 +163,7 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
 
     video_id = response.get("id")
     short_url = f"https://youtube.com/shorts/{video_id}"
-    print(f"  [Success] Published! URL: {short_url}")
+    print(f"  [Success] Published! URL: {short_url}", flush=True)
 
     if thumbnail_path and Path(thumbnail_path).exists() and video_id:
         try:
