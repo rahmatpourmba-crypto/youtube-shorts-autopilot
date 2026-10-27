@@ -220,6 +220,23 @@ def audit_and_optimize_all_channels():
                 likes = int(v_stat.get("likeCount", 0))
                 comments = int(v_stat.get("commentCount", 0))
                 
+                # Auto-Unlock Comments: Purge Made for Kids misclassification
+                if v_status.get("madeForKids") or v_status.get("selfDeclaredMadeForKids"):
+                    try:
+                        yt.videos().update(
+                            part="status",
+                            body={
+                                "id": vid_id,
+                                "status": {
+                                    "privacyStatus": v_status.get("privacyStatus", "public"),
+                                    "selfDeclaredMadeForKids": False
+                                }
+                            }
+                        ).execute()
+                        print(f"  [🔓 Auto-Unlock Comments] Unlocked comments for '{title[:35]}'")
+                    except Exception as unlock_err:
+                        pass
+
                 # Check Monetization & Policy Health (Protocol T121 to T140)
                 rejection = v_status.get("rejectionReason")
                 privacy = v_status.get("privacyStatus", "")
