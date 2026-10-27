@@ -34,19 +34,54 @@ RECITERS_CONFIG = {
         "keywords": ["دوسري", "الدوسري", "yasser", "yasseraldossary"],
         "default_title": "تلاوة خاشعة مبكية | الشيخ ياسر الدوسري 🕊️✨"
     },
-    "youssef": {
-        "name_ar": "القارئ يوسف صقير",
-        "name_en": "Youssef Saghir",
-        "tags": ["يوسف_صقير", "يوسف_الصقير", "تلاوات_يوسف_صقير"],
-        "keywords": ["يوسف صقير", "صقير", "الصقير", "youssef"],
-        "default_title": "تلاوة تأسر القلوب بصوت القارئ يوسف صقير 🕊️✨"
+    "maher": {
+        "name_ar": "الشيخ ماهر المعيقلي",
+        "name_en": "Sheikh Maher Al-Muaiqly",
+        "tags": ["ماهر_المعيقلي", "الشيخ_ماهر_المعيقلي", "تلاوات_ماهر_المعيقلي"],
+        "keywords": ["معيقلي", "المعيقلي", "maher", "almuaiqly"],
+        "default_title": "تلاوة تأسر القلوب من الحرم المكي | ماهر المعيقلي 🕊️✨"
     },
-    "luhaidan": {
-        "name_ar": "الشيخ محمد اللحيدان",
-        "name_en": "Muhammad Al-Luhaidan",
-        "tags": ["محمد_اللحيدان", "الشيخ_محمد_اللحيدان", "تلاوات_محمد_اللحيدان"],
-        "keywords": ["لحيدان", "اللحيدان", "luhaidan"],
-        "default_title": "تلاوة خاشعة تهز القلوب | الشيخ محمد اللحيدان 🕊️✨"
+    "alafasy": {
+        "name_ar": "الشيخ مشاري راشد العفاسي",
+        "name_en": "Sheikh Mishary Alafasy",
+        "tags": ["مشاري_العفاسي", "مشاري_راشد_العفاسي", "العفاسي"],
+        "keywords": ["عفاسي", "العفاسي", "mishary", "alafasy"],
+        "default_title": "تلاوة عذبة تريح القلب والروح | مشاري العفاسي 🕊️✨"
+    },
+    "sudais": {
+        "name_ar": "الشيخ عبدالرحمن السديس",
+        "name_en": "Sheikh Abdul Rahman Al-Sudais",
+        "tags": ["عبدالرحمن_السديس", "السديس", "تلاوات_السديس"],
+        "keywords": ["سديس", "السديس", "sudais"],
+        "default_title": "تلاوة خاشعة تهز القلوب من رحاب المسجد الحرام | السديس 🕊️✨"
+    },
+    "shuraim": {
+        "name_ar": "الشيخ سعود الشريم",
+        "name_en": "Sheikh Saud Al-Shuraim",
+        "tags": ["سعود_الشريم", "الشريم", "تلاوات_الشريم"],
+        "keywords": ["شريم", "الشريم", "shuraim"],
+        "default_title": "تلاوة حجازية نادرة تبكي العيون | سعود الشريم 🕊️✨"
+    },
+    "baleelah": {
+        "name_ar": "الشيخ بندر بليلة",
+        "name_en": "Sheikh Bandar Baleelah",
+        "tags": ["بندر_بليلة", "الشيخ_بندر_بليلة"],
+        "keywords": ["بليلة", "بندر بليلة", "baleelah"],
+        "default_title": "تلاوة بديعة من الحرم المكي | الشيخ بندر بليلة 🕊️✨"
+    },
+    "balushi": {
+        "name_ar": "القارئ هزاع البلوشي",
+        "name_en": "Hazza Al-Balushi",
+        "tags": ["هزاع_البلوشي", "تلاوات_هزاع_البلوشي"],
+        "keywords": ["بلوشي", "البلوشي", "hazza"],
+        "default_title": "صوت ملائكي يدخل القلب دون استئذان | هزاع البلوشي 🕊️✨"
+    },
+    "salimi": {
+        "name_ar": "الشيخ منصور السالمي",
+        "name_en": "Sheikh Mansour Al-Salimi",
+        "tags": ["منصور_السالمي", "تلاوات_منصور_السالمي"],
+        "keywords": ["سالمي", "السالمي", "salimi"],
+        "default_title": "تلاوة مؤثرة جدا تدمع لها العين | منصور السالمي 🕊️✨"
     },
     "islam_sobhi": {
         "name_ar": "القارئ إسلام صبحي",
@@ -71,39 +106,49 @@ RECITERS_CONFIG = {
     }
 }
 
+# Negative filter to completely eliminate sectarian / grave / shrine / telegram bio spam
+NEGATIVE_FILTER_KEYWORDS = [
+    "تلجرام", "تليجرام", "telegram", "بايو", "بالبايو", "في البايو", "bio",
+    "تابعني", "تابعنا", "اشترك بقناة", "رابط", "link in bio", "واتساب", "whatsapp",
+    "قبر", "قبور", "ضريح", "اضرحة", "مزار", "مرقد", "مراقد", "عتبة", "عتبات",
+    "كربلاء", "نجف", "لطمية", "لطميات", "حسينية", "عاشوراء", "شيعة", "رافضة",
+    "زيارة", "ماتم", "حسينيات", "مشهد", "سامراء"
+]
+
 # 6-SLOT DAILY ROTATION: Exactly 3 Yasser Al-Dosari + 3 Other Elite Reciters
 def get_reciter_key_for_current_slot() -> str:
     """
     Determines which reciter to target based on current Tehran Time in Clustered Peaks:
-    - 07:30 IRST (Slot 1): Yasser Al-Dosari (Morning Peace)
-    - 15:00 IRST (Slot 2): Yasser Al-Dosari (Afternoon Wave 1)
-    - 16:20 IRST (Slot 3): Youssef Saghir (Afternoon Wave 2)
-    - 17:45 IRST (Slot 4): Abdul Rahman Mossad (Evening Commute)
-    - 19:15 IRST (Slot 5): Muhammad Al-Luhaidan (Maghrib Surge)
-    - 20:45 IRST (Slot 6): Yasser Al-Dosari (Night Peak Wave 1)
-    - 22:05 IRST (Slot 7): Muhammad Al-Luhaidan (Night Peak Wave 2)
-    - 23:25 IRST (Slot 8): Islam Sobhi (Bedtime Calm)
+    Rotating through top Sunni elite imams and reciters with highest viral velocity.
     """
     utc_now = datetime.datetime.now(datetime.timezone.utc)
     tehran_now = utc_now + datetime.timedelta(hours=3, minutes=30)
     minute_of_day = tehran_now.hour * 60 + tehran_now.minute
 
-    if minute_of_day < 700: # before 11:40 -> 07:30 Slot
-        return "yasser"
-    elif 700 <= minute_of_day < 940: # around 15:00
-        return "yasser"
-    elif 940 <= minute_of_day < 1020: # around 16:20
-        return "youssef"
-    elif 1020 <= minute_of_day < 1110: # around 17:45
-        return "mossad"
-    elif 1110 <= minute_of_day < 1200: # around 19:15
-        return "luhaidan"
-    elif 1200 <= minute_of_day < 1285: # around 20:45
-        return "yasser"
-    elif 1285 <= minute_of_day < 1365: # around 22:05
-        return "luhaidan"
-    else: # 1365 <= minute_of_day (around 23:25 / night)
-        return "islam_sobhi" 
+    # Morning awakening (07:30 - 11:30): Sheikh Yasser Al-Dosari / Maher Al-Muaiqly
+    if minute_of_day < 700:
+        return random.choice(["yasser", "maher"])
+    # Afternoon wave 1 (11:30 - 15:40): Sheikh Mishary Alafasy / Yasser Al-Dosari
+    elif 700 <= minute_of_day < 940:
+        return random.choice(["alafasy", "yasser"])
+    # Afternoon wave 2 (15:40 - 17:00): Hazza Al-Balushi / Maher Al-Muaiqly
+    elif 940 <= minute_of_day < 1020:
+        return random.choice(["balushi", "maher"])
+    # Evening commute (17:00 - 18:30): Abdul Rahman Mossad / Mansour Al-Salimi
+    elif 1020 <= minute_of_day < 1110:
+        return random.choice(["mossad", "salimi"])
+    # Maghrib surge (18:30 - 20:00): Abdul Rahman Al-Sudais / Saud Al-Shuraim
+    elif 1110 <= minute_of_day < 1200:
+        return random.choice(["sudais", "shuraim"])
+    # Night peak wave 1 (20:00 - 21:30): Sheikh Yasser Al-Dosari / Bandar Baleelah
+    elif 1200 <= minute_of_day < 1285:
+        return random.choice(["yasser", "baleelah"])
+    # Night peak wave 2 (21:30 - 22:45): Raad Al-Kurdi / Maher Al-Muaiqly
+    elif 1285 <= minute_of_day < 1365:
+        return random.choice(["raad", "maher"])
+    # Bedtime calm (22:45 - 23:59): Islam Sobhi / Mishary Alafasy
+    else:
+        return random.choice(["islam_sobhi", "alafasy"]) 
 
 def load_history():
     if HISTORY_FILE.exists():
@@ -121,21 +166,32 @@ def save_history(history):
 def clean_arabic_title(caption: str, reciter_info: dict) -> str:
     """
     Extracts a clean, high-CTR YouTube Short title from the original Instagram caption.
+    Guarantees zero spam (no telegram, no bio, no sectarian terms).
     """
     if not caption:
         return f"{reciter_info['default_title']} #Quran #Shorts"
 
-    # Remove excessive hashtags from title
     lines = [l.strip() for l in caption.splitlines() if l.strip()]
-    first_line = lines[0] if lines else ""
-    cleaned = re.sub(r'#\S+', '', first_line).strip()
-    cleaned = re.sub(r'\s+', ' ', cleaned)
+    first_line = ""
+    for line in lines:
+        cleaned_line = re.sub(r'#\S+', '', line).strip()
+        cleaned_line = re.sub(r'\s+', ' ', cleaned_line)
+        if any(sp in cleaned_line.lower() for sp in NEGATIVE_FILTER_KEYWORDS):
+            continue
+        if len(cleaned_line) >= 12:
+            first_line = cleaned_line
+            break
 
-    if len(cleaned) < 15:
-        cleaned = reciter_info["default_title"]
+    if not first_line or len(first_line) < 12:
+        first_line = reciter_info["default_title"]
 
-    full_title = f"{cleaned} | {reciter_info['name_ar']} #Shorts #Quran"
-    return full_title[:100]
+    # Guarantee reciter name is present
+    if reciter_info["name_ar"] not in first_line:
+        full_title = f"{first_line} | {reciter_info['name_ar']} 🕊️✨ #Shorts #Quran"
+    else:
+        full_title = f"{first_line} 🕊️✨ #Shorts #Quran"
+
+    return full_title[:95]
 
 def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 49.9, target_reciter_key: str = None):
     """
@@ -171,6 +227,9 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
                     continue
 
                 caption = m.caption_text or ""
+                if any(bad_kw in caption.lower() for bad_kw in NEGATIVE_FILTER_KEYWORDS):
+                    print(f"  [Skipped] Reel {m.code} contains filtered keyword (sectarian/spam/telegram).")
+                    continue
                 # Ensure it matches reciter's identity
                 matched_kw = any(kw.lower() in caption.lower() for kw in reciter["keywords"])
                 if not matched_kw:
@@ -222,6 +281,9 @@ def find_and_download_viral_reel(min_views: int = 100000, max_duration: float = 
                 top_m = cl.hashtag_medias_top(tag, amount=15)
                 for m in top_m:
                     if m.media_type == 2 and m.code not in used_codes:
+                        caption_fb = m.caption_text or ""
+                        if any(bad_kw in caption_fb.lower() for bad_kw in NEGATIVE_FILTER_KEYWORDS):
+                            continue
                         dur = getattr(m, "video_duration", 0)
                         if dur and dur >= max_duration:
                             continue
