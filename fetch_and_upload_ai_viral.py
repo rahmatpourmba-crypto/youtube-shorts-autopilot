@@ -22,30 +22,30 @@ from instagram_publisher import get_instagram_client, publish_instagram_reel
 from youtube_uploader import upload_short, CHANNELS
 
 VIRAL_TAGS = [
-    "jameswebb",
-    "jameswebbtelescope",
-    "deepspace",
-    "astrophotography",
-    "cosmos",
-    "blackhole",
-    "astronomy",
-    "universe",
-    "nasa",
-    "futuretech"
+    "heavyequipment",
+    "heavymachinery",
+    "megaengineering",
+    "megamachines",
+    "excavator",
+    "constructionequipment",
+    "satisfyingmachines",
+    "miningequipment",
+    "hydraulicpress",
+    "industrialmachines"
 ]
 
 TWO_TOWER_TAGS = [
-    "Shorts", "Space", "Cosmos", "JamesWebb", "Astronomy",
-    "Universe", "NASA", "Astrophysics", "BlackHole", "Galaxy",
-    "Science", "JWST", "SpaceExploration", "Viral", "Trending"
+    "Shorts", "HeavyMachinery", "MegaEngineering", "HeavyEquipment", "Construction",
+    "Mining", "Satisfying", "Machines", "Industrial", "Engineering",
+    "Excavator", "FutureTech", "Technology", "Viral", "Trending"
 ]
 
 PINNED_ENGAGEMENT_HOOKS = [
-    "🔭 If you could travel faster than light to any planet in the universe, where would you go? Drop your answer below! 👇✨",
-    "🌌 What terrifies you more: That we are completely alone in the infinite universe, or that we are NOT? Drop your vote! 👇👽",
-    "🪐 Every single dot in this telescope capture is an entire galaxy with billions of planets. What are your honest thoughts? 🤍👇",
-    "⚡ Do you believe there is another civilization looking back at our galaxy right now? Yes or No? 👇🔭",
-    "🚀 React with 🌌 if this deep space view gave you chills, or 🪐 if you love astronomy!"
+    "🚜 Would you dare to operate this 400-ton monster machine? Yes or No? Drop your answer below! 👇⚡",
+    "⚙️ Rate the sheer power of this engineering feat from 1 to 10! 👇🔥",
+    "🏗️ Did you know this machine generates over 4,000 horsepower? What's your dream machine to drive? 👇🚜",
+    "💥 React with 🚜 if you love heavy equipment, or ⚙️ if you appreciate mega engineering!",
+    "🌊 What's more terrifying: Operating this machine on a cliff edge or on an offshore oil rig? Drop below! 👇"
 ]
 
 def load_history():
@@ -89,17 +89,17 @@ def build_protocol_131_description(title: str, creator_handle: str = "Respective
     to guarantee 100% Monetization approval and immunity against Reused Content.
     """
     description = (
-        f"🌌 {title}\n\n"
-        f"🔭 Educational & Scientific Synopsis:\n"
-        f"Captured by deep space observatories and cutting-edge telescopes, this footage reveals "
-        f"astonishing cosmic phenomena, gravitational structures, and planetary dynamics.\n\n"
-        f"💬 What are your thoughts on this cosmic discovery? Share below!\n"
-        f"✨ Subscribe to @AIUnveiledFutureTech for daily journeys across the frontiers of space and future technology.\n\n"
+        f"⚙️ {title}\n\n"
+        f"🚜 Engineering & Technical Breakdown:\n"
+        f"Witness the pinnacle of modern mechanical engineering, heavy machinery, and industrial mega-projects. "
+        f"These engineering wonders harness thousands of metric horsepower and advanced hydraulic pressures to achieve the impossible.\n\n"
+        f"💬 Would you dare to operate this machine? Share your thoughts below!\n"
+        f"✨ Subscribe to @AIUnveiledFutureTech for daily journeys across heavy engineering and futuristic machinery!\n\n"
         f"─── ⋆⋅☆⋅⋆ ───\n"
         f"⚖️ Copyright & Fair Use Archival Notice:\n"
         f"This video is curated and transformed for educational, research, and scientific commentary purposes "
         f"under the Fair Use doctrine (Section 107 of the US Copyright Act of 1976).\n"
-        f"• Attribution: Visuals curated from public scientific archives and original creators ({creator_handle}).\n"
+        f"• Attribution: Visuals curated from public engineering archives and original creators ({creator_handle}).\n"
         f"• All rights remain with respective original copyright holders.\n"
         f"• For inquiries, credit attribution, or removal requests, please contact: workonlin63@gmail.com\n\n"
         f"─── ⋆⋅☆⋅⋆ ───\n"
@@ -112,7 +112,15 @@ def build_instagram_bilingual_caption(title: str) -> str:
     Bilingual Instagram Explore Reel caption for @cryp.tolab1.
     """
     caption = (
-        f"🌌 {title}\n\n"
+        f"⚙️ {title}\n\n"
+        f"🚜 Witness the raw power of modern heavy machinery and mega engineering projects.\n"
+        f"✨ غول‌های صنعت و ابرپروژه‌های مهندسی شگفت‌انگیز جهان.\n\n"
+        f"💬 Would you dare to operate this monster machine? Drop your thoughts below! 👇\n\n"
+        f"⚡ Follow @cryp.tolab1 for daily discoveries in heavy machines, future engineering & technology.\n\n"
+        f"──────────────────\n"
+        f"#{' #'.join(TWO_TOWER_TAGS)} #Explore #Reels #Viral"
+    )
+    return caption
         f"🔭 Deep space mysteries captured by modern astrophysics & space telescopes.\n"
         f"✨ شگفتی‌های بی‌پایان کیهان و ژرفای اعجاب‌انگیز تلسکوپ‌های فضایی.\n\n"
         f"💬 What do you think lies beyond the observable universe? Drop your thoughts below! 👇\n\n"
@@ -257,9 +265,9 @@ def find_and_download_viral_ai_reel(min_views: int = 100000, max_duration: float
     cleaned = re.sub(r'#\S+', '', raw_title).strip()
     cleaned = re.sub(r'\s+', ' ', cleaned)
     if len(cleaned) < 15 or len(cleaned) > 85:
-        cleaned = "Unbelievable View of Deep Space Captured by Telescopes"
+        cleaned = "Insane Mega Machinery & Extreme Engineering in Action"
 
-    title = f"🌌 {cleaned} #Shorts #Cosmos #Space"
+    title = f"⚙️ {cleaned} #Shorts #Engineering #Machines"
     if len(title) > 75:
         title = title[:72].rstrip() + ".."
 
