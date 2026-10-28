@@ -8,15 +8,15 @@
     "es",
     "de"
   ],
-  "last_run_timestamp": "2026-10-28_000617",
-  "run_count": 73,
+  "last_run_timestamp": "2026-10-28_055518",
+  "run_count": 74,
   "slot_index": 5,
   "daily_uploads": {
-    "quran_short": "2026-10-27",
+    "quran_short": "2026-10-28",
     "quran_longform": "2026-10-17",
     "us_eu": "2026-10-18",
     "ai_short": "2026-10-27"
   },
-  "last_quran_upload_epoch": 1793117044.8556736,
+  "last_quran_upload_epoch": 1793166918.2262733,
   "last_ai_upload_epoch": 1793078383.1799247
 }
