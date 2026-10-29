@@ -37,6 +37,24 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Restore Credentials from Secure GitHub Secrets
+        env:
+          CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
+          TOKEN_QURAN_B64: ${{ secrets.TOKEN_QURAN_BASE64 }}
+          TOKEN_AI_B64: ${{ secrets.TOKEN_AI_BASE64 }}
+          TOKEN_POLYGON_B64: ${{ secrets.TOKEN_POLYGON_BASE64 }}
+          TOKEN_ANIMALS_B64: ${{ secrets.TOKEN_ANIMALS_BASE64 }}
+          IG_SESSION_QURAN_B64: ${{ secrets.IG_SESSION_QURAN_BASE64 }}
+          IG_SESSION_CRYPTOLAB_B64: ${{ secrets.IG_SESSION_CRYPTOLAB_BASE64 }}
+        run: |
+          if [ -n "$CLIENT_SECRETS_JSON" ]; then echo "$CLIENT_SECRETS_JSON" > client_secrets.json; fi
+          if [ -n "$TOKEN_QURAN_B64" ]; then echo "$TOKEN_QURAN_B64" | base64 -d > token_quran.pickle; fi
+          if [ -n "$TOKEN_AI_B64" ]; then echo "$TOKEN_AI_B64" | base64 -d > token_ai.pickle; fi
+          if [ -n "$TOKEN_POLYGON_B64" ]; then echo "$TOKEN_POLYGON_B64" | base64 -d > token_polygon.pickle; fi
+          if [ -n "$TOKEN_ANIMALS_B64" ]; then echo "$TOKEN_ANIMALS_B64" | base64 -d > token_animals.pickle; fi
+          if [ -n "$IG_SESSION_QURAN_B64" ]; then echo "$IG_SESSION_QURAN_B64" | base64 -d > ig_session_quran.json; fi
+          if [ -n "$IG_SESSION_CRYPTOLAB_B64" ]; then echo "$IG_SESSION_CRYPTOLAB_B64" | base64 -d > ig_session_cryptolab.json; fi
+
       - name: Install System FFmpeg and Node.js
         run: |
           sudo apt-get update
@@ -49,8 +67,8 @@ jobs:
 
       - name: Execute Autonomous Multi-Channel Dispatcher
         env:
-          IG_PASSWORD_CRYPTOLAB: ${{ secrets.IG_PASSWORD_CRYPTOLAB || '2899813366' }}
-          IG_PASSWORD_QURAN: ${{ secrets.IG_PASSWORD_QURAN || '2899813366' }}
+          IG_PASSWORD_CRYPTOLAB: ${{ secrets.IG_PASSWORD_CRYPTOLAB }}
+          IG_PASSWORD_QURAN: ${{ secrets.IG_PASSWORD_QURAN }}
         run: |
           python dispatch_cycle.py --channel=${{ inputs.target_channel || 'auto' }} ${{ inputs.force && '--force' || '' }}
 
@@ -59,6 +77,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add state.json growth_brain.json used_trends_history.json used_viral_reels.json used_ai_viral_reels.json ig_session_cryptolab.json token_ai.pickle
+          git add state.json growth_brain.json used_trends_history.json used_viral_reels.json used_ai_viral_reels.json
           git commit -m "chore(autopilot): update multi-channel state and keepalive heartbeat" || echo "No changes to state"
           git push

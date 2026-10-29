@@ -17,13 +17,19 @@ BASE_DIR = Path(__file__).resolve().parent
 ACCOUNTS = {
     "quran": {
         "username": "abdol_basit_rahmatpour",
-        "password": os.environ.get("IG_PASSWORD_QURAN", "2899813366"),
+        "password": os.environ.get("IG_PASSWORD_QURAN", ""),
         "session_file": BASE_DIR / "ig_session_quran.json",
         "display": "@abdol_basit_rahmatpour"
     },
     "cryptolab": {
         "username": "cryp.tolab1",
-        "password": os.environ.get("IG_PASSWORD_CRYPTOLAB", "2899813366"),
+        "password": os.environ.get("IG_PASSWORD_CRYPTOLAB", ""),
+        "session_file": BASE_DIR / "ig_session_cryptolab.json",
+        "display": "@cryp.tolab1"
+    },
+    "cars": {
+        "username": "cryp.tolab1",
+        "password": os.environ.get("IG_PASSWORD_CRYPTOLAB", ""),
         "session_file": BASE_DIR / "ig_session_cryptolab.json",
         "display": "@cryp.tolab1"
     }

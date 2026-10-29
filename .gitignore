@@ -19,3 +19,9 @@ stickman_demo/
 !assets/**
 
 
+
+# Security: Credentials and private tokens (Stored securely in GitHub Secrets)
+client_secrets.json
+token_*.pickle
+ig_session_*.json
+upload_secrets.py
