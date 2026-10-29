@@ -141,8 +141,12 @@ def main():
     force_upload = any(arg == "--force" for arg in sys.argv)
     current_epoch = time.time()
 
-    # Active Tehran broadcast window: 07:00 to 23:59
-    is_active_window = 7 <= tehran_hour <= 23
+    # Dedicated Middle East Prime Peak Window for Quran: 18:00 to 23:30 (6:00 PM to 11:30 PM)
+    # Aligns perfectly with Maghrib, Isha, evening family time & bedtime listening surges
+    mecca_now = utc_now + datetime.timedelta(hours=3)
+    mecca_min = mecca_now.hour * 60 + mecca_now.minute
+    tehran_min = tehran_now.hour * 60 + tehran_now.minute
+    is_quran_peak_window = (18 * 60 <= mecca_min <= 23 * 60 + 30) or (18 * 60 <= tehran_min <= 23 * 60 + 30)
 
     # 1. CHANNEL 1: QURAN
     if target_channel in ["quran", "auto", "all"]:
@@ -150,14 +154,16 @@ def main():
         elapsed_q_mins = (current_epoch - last_q_epoch) / 60.0
         q_cooling_satisfied = elapsed_q_mins >= 65.0
 
-        if force_upload or (is_active_window and q_cooling_satisfied):
-            print(f"\n[Pacing Gate - Quran] Ready! ({elapsed_q_mins:.1f} mins elapsed). Triggering upload...")
+        if force_upload or (is_quran_peak_window and q_cooling_satisfied):
+            print(f"\n[Pacing Gate - Quran] Ready in Middle East Peak Window (18:00 - 23:30)! ({elapsed_q_mins:.1f} mins elapsed). Triggering upload...")
             upload_res = run_quran_channel(run_dir, run_count)
             if upload_res:
                 state["last_quran_upload_epoch"] = current_epoch
                 daily_uploads["quran_short"] = today_date
+        elif not is_quran_peak_window:
+            print(f"[Pacing Gate - Quran] Standby. Outside Middle East Peak Window (18:00 - 23:30). Mecca Time: {mecca_now.strftime('%H:%M')} | Tehran: {tehran_now.strftime('%H:%M')}.")
         else:
-            print(f"[Pacing Gate - Quran] Standby ({elapsed_q_mins:.1f} mins elapsed, 65 mins required).")
+            print(f"[Pacing Gate - Quran] Standby in Peak Window ({elapsed_q_mins:.1f} mins elapsed, 65 mins cooling required).")
 
     # 2. CHANNEL 2: AI UNVEILED | FUTURE TECH (YouTube + Instagram Reels)
     if target_channel in ["ai", "auto", "all"]:
