@@ -471,3 +471,41 @@ def get_optimized_metadata(niche: str, raw_title: str = None):
             "badge_text": config["luxury_badge"],
             "engagement_comment": config.get("engagement_comment")
         }
+
+# ==============================================================================
+# VIRAL ENGLISH METADATA (AI / Cosmos / Mega Machines channel)
+# ==============================================================================
+AI_TITLE_HOOKS = [
+    "You Won't Believe This Machine 🤯",
+    "This Looks Like the Future 🚀",
+    "Engineering Level: Insane ⚙️",
+    "Most Satisfying Tech You'll See Today 😮",
+    "How Is This Even Possible? 🤖",
+    "Mind-Blowing Engineering 🔥",
+]
+AI_BASE_HASHTAGS = ["#AI", "#tech", "#shorts", "#technology", "#engineering", "#future", "#viral", "#science"]
+_AI_TOPIC_HASHTAGS = [
+    (("robot", "robotics", "humanoid"), "#robotics"),
+    (("ai", "artificial", "chatgpt", "neural"), "#artificialintelligence"),
+    (("space", "nasa", "galaxy", "planet", "rocket", "webb", "cosmos", "mars"), "#space"),
+    (("excavator", "crane", "truck", "mining", "machine", "machinery", "hydraulic"), "#machines"),
+]
+
+def build_viral_ai_metadata(caption: str, views: int = 0, rng=None):
+    """Viral English title/description/tags. Title <= 100 chars, trimmed at word boundaries."""
+    rng = rng or random
+    words = set(re.findall(r"[a-z]+", (caption or "").lower()))
+    lines = [re.sub(r"\s+", " ", re.sub(r"[#@]\S+", "", l)).strip() for l in (caption or "").splitlines()]
+    lines = [l for l in lines if re.search(r"[A-Za-z]", l) and len(l) >= 12]
+    hook = rng.choice(AI_TITLE_HOOKS)
+    body = f"{hook} | {lines[0]}" if lines else hook
+    topic = [h for kws, h in _AI_TOPIC_HASHTAGS if words & set(kws)]
+    title = build_title_with_suffix(body, "#AI #tech #shorts")
+    seen, hashtags = set(), []
+    for h in AI_BASE_HASHTAGS + topic:
+        if h.lower() not in seen:
+            seen.add(h.lower()); hashtags.append(h)
+    tags = ["AI", "tech", "technology", "engineering", "future tech", "mega machines", "heavy machinery",
+            "satisfying", "science", "space", "robotics", "innovation", "shorts", "viral"]
+    description = f"{title}\n\n🔥 Follow for daily mind-blowing AI, tech & engineering shorts!\n\n" + " ".join(hashtags)
+    return {"title": title, "description": description, "tags": tags, "hashtags": hashtags}

@@ -103,7 +103,7 @@ def build_protocol_131_description(title: str, creator_handle: str = "Respective
         f"• All rights remain with respective original copyright holders.\n"
         f"• For inquiries, credit attribution, or removal requests, please contact: workonlin63@gmail.com\n\n"
         f"─── ⋆⋅☆⋅⋆ ───\n"
-        f"#{' #'.join(TWO_TOWER_TAGS)}"
+        f"#AI #tech #shorts #technology #engineering #future #viral #science"
     )
     return description
 
@@ -122,170 +122,161 @@ def build_instagram_bilingual_caption(title: str) -> str:
     )
     return caption
 
-def find_and_download_viral_ai_reel(min_views: int = 100000, max_duration: float = 49.9):
-    """
-    Finds top viral reels (>100k views, <50s duration) with 100% clean/moral standards.
-    """
-    used_codes = set(load_history())
-    cl = get_instagram_client("cryptolab")
+# =====================================================================
+# Owner policy (AI / Cosmos / Mega Machines channel), mirrors Quran PR #3:
+#   viral Instagram reels, duration < 45s, REAL views >= 1,000,000
+#   (fallback >= 500k only if nothing qualifies; logged as [Fallback]).
+#   No likes-based score: only view_count / play_count are trusted.
+# =====================================================================
+MAX_DURATION_SEC = 45.0
+MIN_VIEWS = 1_000_000
+FALLBACK_MIN_VIEWS = 500_000
 
-    candidate_reels = []
-    print("\n" + "=" * 65)
-    print("=== SEARCHING VIRAL REELS: AI UNVEILED | FUTURE TECH ===")
-    print(f"Target Metric: > {min_views:,} views | Duration < 50s | Protocol 131 Ready")
-    print("=" * 65)
+# Extra AI / cosmos hashtags searched after the machine tags
+EXTRA_TAGS = ["artificialintelligence", "robotics", "futuretech", "space", "jameswebb", "deepspace"]
 
-    for tag in VIRAL_TAGS:
-        print(f"\n[Instagram Query] Searching top viral reels in #{tag}...")
-        try:
-            medias = cl.hashtag_medias_top(tag, amount=20)
-            for m in medias:
-                if m.media_type != 2:
-                    continue
-                if m.code in used_codes:
-                    continue
+# Whole-word / phrase matched (see caption_is_blocked). The old raw-substring check
+# dropped legit tech reels: "model" hit "AI model" / "3D model" / "remodel", "song" hit
+# "Samsong"-style brand typos, "dance" hit "guidance"/"abundance", "girl" hit "girlder".
+# "model" is narrowed to fashion phrases so "AI model" / "scale model" pass.
+PROHIBITED_KEYWORDS = ["fashion model", "female model", "fashion", "girl", "girls", "dance", "dancing",
+                       "song", "tiktok", "makeup", "outfit", "bikini"]
 
-                duration = getattr(m, "video_duration", 0)
-                if duration and duration >= max_duration:
-                    continue
+# Shared halal/moral blacklist still applies (whole-word), except a few words that are
+# ordinary engineering/tech vocabulary for this channel and caused false positives:
+# "AI model", "rock drilling/crusher", "steel bar", "trans(mission)", "beat the record",
+# "pop(s) up", "stake" (survey stakes). Quran channel's filter is untouched.
+AI_TECH_SAFE_TERMS = {"model", "rock", "bar", "beat", "pop", "stake", "trans"}
 
-                caption = m.caption_text or ""
-                caption_lower = caption.lower()
-                prohibited_words = ["model", "fashion", "girl", "dance", "song", "tiktok", "makeup", "outfit", "bikini"]
-                if any(pw in caption_lower for pw in prohibited_words):
-                    continue
+def _tokens(text: str):
+    return re.findall(r"[\w\u0600-\u06FF]+", (text or "").lower().replace("#", " ").replace("_", " "))
 
-                views = getattr(m, "view_count", 0) or 0
-                plays = getattr(m, "play_count", 0) or 0
-                likes = m.like_count or 0
-                effective_score = max(views, plays, likes * 25)
+def caption_is_blocked(caption: str):
+    """Return matched keyword if blocked, else None. Whole-word / phrase match (no substrings)."""
+    joined = " " + " ".join(_tokens(caption)) + " "
+    for kw in PROHIBITED_KEYWORDS:
+        k = " " + " ".join(_tokens(kw)) + " "
+        if k.strip() and k in joined:
+            return kw
+    try:
+        from halal_content_filter import FORBIDDEN_KEYWORDS
+    except ImportError:
+        FORBIDDEN_KEYWORDS = []
+    low = (caption or "").lower()
+    for word in FORBIDDEN_KEYWORDS:
+        if word.lower() in AI_TECH_SAFE_TERMS:
+            continue
+        if re.search(r"\b" + re.escape(word.lower()) + r"\b", low):
+            return f"halal:{word}"
+    return None
 
-                if effective_score >= min_views or likes >= 2500:
-                    user_handle = getattr(getattr(m, "user", None), "username", "Original Creator")
-                    candidate_reels.append({
-                        "code": m.code,
-                        "pk": m.pk,
-                        "video_url": str(m.video_url),
-                        "caption": caption,
-                        "creator": f"@{user_handle}",
-                        "plays": plays,
-                        "views": views,
-                        "likes": likes,
-                        "duration": duration,
-                        "score": effective_score
-                    })
-                    print(f"  🔥 CANDIDATE: Reel {m.code} | Score: {effective_score:,} | Dur: {duration}s")
+def media_views(m) -> int:
+    """Real views only (view_count / play_count). Likes are NOT converted to views."""
+    return int(max(getattr(m, "view_count", 0) or 0, getattr(m, "play_count", 0) or 0))
 
-            if len(candidate_reels) >= 10:
-                break
-        except Exception as e:
-            print(f"  [Instagram Notice] Query note on #{tag}: {e}")
-            time.sleep(2)
+def evaluate_media(m, used_codes, max_duration=MAX_DURATION_SEC, log=print):
+    if getattr(m, "media_type", None) != 2 or m.code in used_codes:
+        return None
+    caption = getattr(m, "caption_text", "") or ""
+    blocked = caption_is_blocked(caption)
+    if blocked:
+        log(f"  [Skipped] Reel {m.code} filtered keyword: '{blocked}'")
+        return None
+    dur = float(getattr(m, "video_duration", 0) or 0)
+    if not dur or dur >= max_duration:
+        return None
+    user_handle = getattr(getattr(m, "user", None), "username", None) or "Original Creator"
+    return {"code": m.code, "pk": getattr(m, "pk", None), "video_url": str(getattr(m, "video_url", "")),
+            "caption": caption, "creator": f"@{user_handle}", "views": media_views(m),
+            "likes": getattr(m, "like_count", 0) or 0, "duration": dur}
 
-    candidate_reels.sort(key=lambda x: x["score"], reverse=True)
+def rank_candidates(cands, min_views=MIN_VIEWS, fallback_min=FALLBACK_MIN_VIEWS, log=print):
+    uniq = {}
+    for c in cands:
+        uniq.setdefault(c["code"], c)
+    cands = list(uniq.values())
+    for threshold, label in ((min_views, "primary"), (fallback_min, "FALLBACK")):
+        pool = [c for c in cands if c["views"] >= threshold]
+        if pool:
+            if label == "FALLBACK":
+                log(f"  [Fallback] No reel >= {min_views:,} views; using best >= {fallback_min:,}.")
+            return sorted(pool, key=lambda c: c["views"], reverse=True)
+    return []
 
-    # Relax threshold if needed (Self-Healing)
-    if not candidate_reels:
-        print("  [Self-Healing] Relaxing search threshold to > 25,000 views...")
-        for tag in ["jameswebb", "deepspace"]:
+def search_candidates(cl, used_codes, max_duration=MAX_DURATION_SEC, amount=30):
+    cands = []
+    for tag in VIRAL_TAGS + EXTRA_TAGS:
+        print(f"\n[Instagram Query] #{tag}")
+        for fetch in ("hashtag_medias_top", "hashtag_medias_reels_v1"):
+            fn = getattr(cl, fetch, None)
+            if not fn:
+                continue
             try:
-                medias = cl.hashtag_medias_top(tag, amount=15)
-                for m in medias:
-                    if m.media_type == 2 and m.code not in used_codes:
-                        dur = getattr(m, "video_duration", 0)
-                        if dur and dur < max_duration:
-                            candidate_reels.append({
-                                "code": m.code,
-                                "pk": m.pk,
-                                "video_url": str(m.video_url),
-                                "caption": m.caption_text or "",
-                                "creator": "@DeepSpaceArchives",
-                                "plays": getattr(m, "play_count", 0),
-                                "views": getattr(m, "view_count", 0),
-                                "likes": m.like_count or 0,
-                                "duration": dur,
-                                "score": m.like_count or 0
-                            })
-            except Exception:
-                pass
-        candidate_reels.sort(key=lambda x: x["score"], reverse=True)
+                medias = fn(tag, amount=amount)
+            except Exception as e:
+                print(f"  [Instagram Notice] {fetch}(#{tag}): {e}")
+                time.sleep(2)
+                continue
+            for m in medias:
+                c = evaluate_media(m, used_codes, max_duration)
+                if c:
+                    cands.append(c)
+        if sum(1 for c in cands if c["views"] >= MIN_VIEWS) >= 5:
+            break
+    return cands
 
-    if not candidate_reels:
-        print("[Error] No viral candidate reels available.")
-        return None
-
-    # Self-Healing Failover Download Loop
-    chosen = None
-    target_video_file = None
-    for idx, cand in enumerate(candidate_reels):
-        code = cand["code"]
-        video_url = cand["video_url"]
-        temp_file = OUTPUT_DIR / f"ai_{code}.mp4"
-
-        print(f"  [{idx+1}/{len(candidate_reels)}] Downloading Reel {code} from CDN...")
+def download_reel(cand):
+    temp_file = OUTPUT_DIR / f"ai_{cand['code']}.mp4"
+    try:
+        req = urllib.request.Request(cand["video_url"], headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=35) as resp, open(temp_file, 'wb') as f_out:
+            f_out.write(resp.read())
+        if temp_file.exists() and temp_file.stat().st_size > 50000:
+            return temp_file
+    except Exception as e:
+        print(f"  [Failover] Download failed for {cand['code']}: {e}")
+    if temp_file.exists():
         try:
-            req = urllib.request.Request(
-                video_url,
-                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-            )
-            with urllib.request.urlopen(req, timeout=35) as resp, open(temp_file, 'wb') as f_out:
-                f_out.write(resp.read())
+            temp_file.unlink()
+        except Exception:
+            pass
+    return None
 
-            if temp_file.exists() and temp_file.stat().st_size > 50000:
-                chosen = cand
-                target_video_file = temp_file
-                print(f"  ✓ Video Downloaded: {target_video_file.name} ({target_video_file.stat().st_size // 1024} KB)")
-                break
-            else:
-                if temp_file.exists():
-                    temp_file.unlink()
-        except Exception as e:
-            print(f"  [Failover] Download failed for {code}: {e}. Trying next...")
-            if temp_file.exists():
-                try:
-                    temp_file.unlink()
-                except Exception:
-                    pass
-
-    if not chosen or not target_video_file:
+def find_and_download_viral_ai_reel(min_views: int = MIN_VIEWS, max_duration: float = MAX_DURATION_SEC, client=None):
+    used_codes = set(load_history())
+    if client is None:
+        client = get_instagram_client("cryptolab")
+    print("=" * 65)
+    print(f"=== VIRAL AI/TECH SEARCH | views >= {min_views:,} | < {max_duration:.0f}s ===")
+    cands = search_candidates(client, used_codes, max_duration)
+    ranked = rank_candidates(cands, min_views, min(FALLBACK_MIN_VIEWS, min_views))
+    if not ranked:
+        print("[Error] No reel matched policy (<45s, >=500k real views).")
         return None
+    from metadata_optimizer import build_viral_ai_metadata
+    for cand in ranked[:6]:
+        f = download_reel(cand)
+        if f:
+            meta = build_viral_ai_metadata(cand["caption"], views=cand["views"])
+            description = build_protocol_131_description(meta["title"], creator_handle=cand["creator"])
+            import random
+            print(f"★ SELECTED {cand['code']} | {cand['views']:,} views | {cand['duration']}s")
+            print(f"  Title: {meta['title']}")
+            return {"code": cand["code"], "video": f, "title": meta["title"], "description": description,
+                    "caption": cand["caption"], "tags": meta["tags"], "views": cand["views"],
+                    "comment_hook": random.choice(PINNED_ENGAGEMENT_HOOKS)}
+    print("[Error] Could not download any ranked candidate.")
+    return None
 
-    # Clean title
-    raw = chosen["caption"]
-    first_line = [l.strip() for l in raw.splitlines() if l.strip()]
-    raw_title = first_line[0] if first_line else "Mind-Blowing Deep Space Discovery"
-    cleaned = re.sub(r'#\S+', '', raw_title).strip()
-    cleaned = re.sub(r'\s+', ' ', cleaned)
-    if len(cleaned) < 15 or len(cleaned) > 85:
-        cleaned = "Insane Mega Machinery & Extreme Engineering in Action"
-
-    title = f"⚙️ {cleaned} #Shorts #Engineering #Machines"
-    if len(title) > 75:
-        title = title[:72].rstrip() + ".."
-
-    description = build_protocol_131_description(title, creator_handle=chosen.get("creator", "Original Creators"))
-    import random
-    comment_hook = random.choice(PINNED_ENGAGEMENT_HOOKS)
-
-    return {
-        "code": chosen["code"],
-        "video": target_video_file,
-        "title": title,
-        "description": description,
-        "caption": chosen["caption"],
-        "tags": TWO_TOWER_TAGS,
-        "comment_hook": comment_hook
-    }
-
-def publish_twin_ai_video(force: bool = False, max_retries: int = 3, publish_instagram: bool = False):
+def publish_twin_ai_video(force: bool = False, max_retries: int = 2, publish_instagram: bool = False):
     """
     Simultaneous Dual Upload: YouTube Shorts (AI Unveiled) + Instagram Reels (@cryp.tolab1)
     """
     for attempt in range(1, max_retries + 1):
         print(f"\n[AI PIPELINE] Dual Dispatch Attempt {attempt}/{max_retries}...")
         try:
-            min_v = 100000 if attempt == 1 else (40000 if attempt == 2 else 15000)
-            data = find_and_download_viral_ai_reel(min_views=min_v)
+            # Same policy on every attempt (no threshold decay below the 500k fallback)
+            data = find_and_download_viral_ai_reel()
             if not data:
                 if attempt < max_retries:
                     time.sleep(10)
