@@ -1,0 +1,47 @@
+{
+  "_source": "Arabic text: Uthmani script (Tanzil project text, free to redistribute unmodified). English: meaning-based rendering after M. M. Pickthall (1930, public domain). Persian: plain meaning-based rendering. Translations of meaning are approximations; please have them reviewed before scaling up.",
+  "clips": {
+    "yasser_ibrahim_014035.mp3": {
+      "surah_ar": "سورة إبراهيم", "surah_en": "Surah Ibrahim", "ref": "14:35",
+      "arabic": "وَإِذْ قَالَ إِبْرَاهِيمُ رَبِّ اجْعَلْ هَٰذَا الْبَلَدَ آمِنًا وَاجْنُبْنِي وَبَنِيَّ أَن نَّعْبُدَ الْأَصْنَامَ",
+      "en": "And when Abraham said: My Lord! Make this territory safe, and preserve me and my sons from serving idols.",
+      "fa": "و هنگامی که ابراهیم گفت: پروردگارا، این شهر را امن گردان و من و فرزندانم را از پرستش بت‌ها دور بدار."
+    },
+    "yasser_kahf_018010.mp3": {
+      "surah_ar": "سورة الكهف", "surah_en": "Surah Al-Kahf", "ref": "18:10",
+      "arabic": "إِذْ أَوَى الْفِتْيَةُ إِلَى الْكَهْفِ فَقَالُوا رَبَّنَا آتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا",
+      "en": "When the young men fled for refuge to the Cave and said: Our Lord! Give us mercy from Your presence, and shape for us right conduct in our plight.",
+      "fa": "آنگاه که آن جوانان به غار پناه بردند و گفتند: پروردگارا، از نزد خود به ما رحمتی عطا کن و کار ما را برایمان به راه درست بیارای."
+    },
+    "yasser_maryam_019001.mp3": {
+      "surah_ar": "سورة مريم", "surah_en": "Surah Maryam", "ref": "19:1",
+      "arabic": "كهيعص",
+      "en": "Kaf. Ha. Ya. Ain. Sad.",
+      "fa": "کاف، ها، یا، عین، صاد."
+    },
+    "yasser_mulk_067001.mp3": {
+      "surah_ar": "سورة الملك", "surah_en": "Surah Al-Mulk", "ref": "67:1",
+      "arabic": "تَبَارَكَ الَّذِي بِيَدِهِ الْمُلْكُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+      "en": "Blessed is He in whose hand is the Sovereignty, and He is Able to do all things.",
+      "fa": "پربرکت و بزرگ است آن که فرمانروایی به دست اوست و او بر هر چیزی تواناست."
+    },
+    "yasser_rahman_055001.mp3": {
+      "surah_ar": "سورة الرحمن", "surah_en": "Surah Ar-Rahman", "ref": "55:1",
+      "arabic": "الرَّحْمَٰنُ",
+      "en": "The Beneficent.",
+      "fa": "خدای رحمان."
+    },
+    "yasser_taha_020001.mp3": {
+      "surah_ar": "سورة طه", "surah_en": "Surah Ta-Ha", "ref": "20:1",
+      "arabic": "طه",
+      "en": "Ta. Ha.",
+      "fa": "طا، ها."
+    },
+    "yasser_yusuf_012004.mp3": {
+      "surah_ar": "سورة يوسف", "surah_en": "Surah Yusuf", "ref": "12:4",
+      "arabic": "إِذْ قَالَ يُوسُفُ لِأَبِيهِ يَا أَبَتِ إِنِّي رَأَيْتُ أَحَدَ عَشَرَ كَوْكَبًا وَالشَّمْسَ وَالْقَمَرَ رَأَيْتُهُمْ لِي سَاجِدِينَ",
+      "en": "When Joseph said to his father: O my father! I saw in a dream eleven planets and the sun and the moon; I saw them prostrating themselves to me.",
+      "fa": "آنگاه که یوسف به پدرش گفت: ای پدر، من در خواب یازده ستاره و خورشید و ماه را دیدم؛ دیدم که برایم سجده می‌کنند."
+    }
+  }
+}

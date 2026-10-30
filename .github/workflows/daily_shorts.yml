@@ -69,6 +69,8 @@ jobs:
         env:
           IG_PASSWORD_CRYPTOLAB: ${{ secrets.IG_PASSWORD_CRYPTOLAB }}
           IG_PASSWORD_QURAN: ${{ secrets.IG_PASSWORD_QURAN }}
+          # Original generated Shorts are the default. Set to 'true' ONLY to re-enable the legacy reel re-upload path.
+          ENABLE_REEL_REUPLOAD: 'false'
         run: |
           python dispatch_cycle.py --channel=${{ inputs.target_channel || 'auto' }} ${{ inputs.force && '--force' || '' }}
 

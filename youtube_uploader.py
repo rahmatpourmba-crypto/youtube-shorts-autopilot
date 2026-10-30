@@ -104,7 +104,7 @@ def add_pinned_engagement_comment(youtube, video_id: str, comment_text: str):
         print(f"  [Auto-Comment Warning] Could not post initial comment: {e}")
         return None
 
-def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None, pinned_comment: str = None, publish_at: str = None):
+def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None, pinned_comment: str = None, publish_at: str = None, contains_synthetic_media: bool = None):
     """
     Uploads a short video directly to YouTube, sets custom thumbnail, and leaves pinned engagement hook.
     If publish_at (ISO 8601 string e.g. '2026-10-12T13:12:00Z') is provided, sets scheduled private publish.
@@ -127,7 +127,10 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
 
     status_obj = {
         "privacyStatus": "private" if publish_at else "public",
-        "selfDeclaredMadeForKids": False
+        "selfDeclaredMadeForKids": False,
+        # Altered/synthetic content disclosure (YouTube Data API v3 status.containsSyntheticMedia).
+        # Original AI-channel Shorts use synthetic (TTS) narration and generated visuals.
+        "containsSyntheticMedia": bool(contains_synthetic_media if contains_synthetic_media is not None else channel_key == "ai")
     }
     if publish_at:
         status_obj["publishAt"] = publish_at

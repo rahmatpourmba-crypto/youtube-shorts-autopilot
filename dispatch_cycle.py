@@ -32,8 +32,80 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
+# ---------------------------------------------------------------------------
+# CONTENT MODE
+# Default: ORIGINAL generated Shorts (monetization-safe, no third-party footage).
+# The legacy Instagram reel re-upload path is kept for reference but DISABLED by
+# default because unmodified re-uploads risk "reused content" rejection and
+# copyright strikes. Opt in only by setting ENABLE_REEL_REUPLOAD=true.
+# ---------------------------------------------------------------------------
+ENABLE_REEL_REUPLOAD = os.environ.get("ENABLE_REEL_REUPLOAD", "false").strip().lower() in ("1", "true", "yes")
+
+
+def _upload_original(channel_key: str, niche: str, result: dict, raw_title: str, extra_desc: str,
+                     category_id: str, tags_extra: list):
+    from youtube_uploader import upload_short
+    from metadata_optimizer import get_optimized_metadata
+    meta = get_optimized_metadata(niche, raw_title=raw_title)
+    description = f"{extra_desc}\n\n{meta['description']}".strip()
+    tags = list(dict.fromkeys([t.lstrip('#') for t in (tags_extra or []) + list(meta.get('tags', []))]))[:30]
+    return upload_short(
+        channel_key=channel_key,
+        video_path=result["video"],
+        title=meta["title"],
+        description=description[:4900],
+        tags=tags,
+        category_id=category_id,
+        thumbnail_path=result.get("thumbnail"),
+        pinned_comment=result.get("pinned_comment") or meta.get("engagement_comment"),
+    )
+
+
+def run_quran_original(run_dir: Path, run_count: int):
+    """ORIGINAL Quran Short: owned recitation clip + animated ayah text + FA/EN translation."""
+    try:
+        print(f"\n[DISPATCH - QURAN ORIGINAL] Rendering original ayah Short (run #{run_count})...")
+        from original_shorts import render_quran_original
+        res = render_quran_original(run_dir / "quran_original", run_count=run_count)
+        up = _upload_original("quran", "quran", res, res["raw_title"], res["description_extra"], "22",
+                              ["quran", "quranrecitation", "shorts"])
+        if up:
+            print(f"  ✓ Published Original Quran Short: https://youtube.com/shorts/{(up.get('video_id') or up.get('id', ''))}")
+        return up
+    except Exception as e:
+        print(f"  [Quran Original Error] {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
+def run_ai_original(run_dir: Path, run_count: int):
+    """ORIGINAL faceless AI Short: script + TTS + kinetic captions + generated motion background."""
+    try:
+        print(f"\n[DISPATCH - AI ORIGINAL] Rendering original faceless AI Short (run #{run_count})...")
+        from original_shorts import render_ai_original
+        res = render_ai_original(run_dir / "ai_original", run_count=run_count)
+        extra = f"{res['hook']}\n\n{res['script']}"
+        up = _upload_original("ai", "ai", res, res["title"], extra, "28", res.get("tags", []))
+        if up:
+            print(f"  ✓ Published Original AI Short: https://youtube.com/shorts/{(up.get('video_id') or up.get('id', ''))}")
+        return up
+    except Exception as e:
+        print(f"  [AI Original Error] {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
 def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2):
+    if not ENABLE_REEL_REUPLOAD:
+        return run_quran_original(run_dir, run_count)
+    return run_quran_reel_reupload(run_dir, run_count, max_retries)
+
+
+def run_quran_reel_reupload(run_dir: Path, run_count: int, max_retries: int = 2):
     """
+    LEGACY (disabled by default; requires ENABLE_REEL_REUPLOAD=true).
     VIRAL QURAN CHANNEL PIPELINE (Sheikh Yasser Al-Dosari & Elite Reciters >100k Views from Instagram)
     Direct Unmodified Re-Upload to YouTube Quran Channel with Self-Healing Auto-Recovery
     """
@@ -85,7 +157,14 @@ def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2):
     return None
 
 def run_ai_channel(run_dir: Path, run_count: int, force: bool = False):
+    if not ENABLE_REEL_REUPLOAD:
+        return run_ai_original(run_dir, run_count)
+    return run_ai_reel_reupload(run_dir, run_count, force)
+
+
+def run_ai_reel_reupload(run_dir: Path, run_count: int, force: bool = False):
     """
+    LEGACY (disabled by default; requires ENABLE_REEL_REUPLOAD=true).
     CHANNEL 2: AI UNVEILED | FUTURE TECH (YouTube Shorts + Instagram Reels @cryp.tolab1)
     Fully implements Protocol 131, Two-Tower Recommendation Tags, Pinned Comment Hook
     """
@@ -123,6 +202,7 @@ def main():
     print("Channels Active:")
     print("  1. Quran Channel: Middle East / Islamic prime peak")
     print("  2. Channel 2 (AI Unveiled / Cosmos): USA & Europe prime peak")
+    print(f"Content mode: {'LEGACY REEL RE-UPLOAD' if ENABLE_REEL_REUPLOAD else 'ORIGINAL GENERATED SHORTS'}")
     print("=" * 65)
 
     run_dir = OUTPUT_BASE / today_str
