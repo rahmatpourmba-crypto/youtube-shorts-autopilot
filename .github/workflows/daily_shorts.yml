@@ -5,9 +5,11 @@ on:
     # Resilient Pulse every 30 mins at odd minutes (:18 and :48)
     # Bypasses GitHub top-of-hour congestion, queue drops, and delays
     - cron: '18,48 * * * *'
-    # Quran prime window 18:00-24:00 Baghdad (15:00-21:00 UTC): extra pulses so the
-    # union is every 15 min (:03 :18 :33 :48); state.json gate enforces 8/day @45 min.
-    - cron: '3,33 15-20 * * *'
+    # Upload window 16:00-03:30 Baghdad (13:00-00:30 UTC): extra pulses so the union is
+    # every 15 min (:03 :18 :33 :48); dispatch_cycle gates enforce 8+8/day, >=90 min per
+    # channel, >=45 min across channels.
+    - cron: '3,33 13-23 * * *'
+    - cron: '3,33 0 * * *'
   workflow_dispatch:
     inputs:
       target_channel:
