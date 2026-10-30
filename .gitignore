@@ -25,3 +25,7 @@ client_secrets.json
 token_*.pickle
 ig_session_*.json
 upload_secrets.py
+
+# Bundled authoritative Quran text/translations (Tanzil)
+!data/
+!data/**
