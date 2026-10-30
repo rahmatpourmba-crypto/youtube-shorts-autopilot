@@ -239,6 +239,8 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
     if target_reciter_key not in RECITERS_CONFIG:
         target_reciter_key = get_reciter_key_for_slot(slot_index) if slot_index is not None else get_reciter_key_for_current_slot()
     rec = RECITERS_CONFIG[target_reciter_key]
+    import dedupe_guard
+    dedupe_guard.sync_latest()
     used_codes = set(load_history())
     if client is None:
         from instagram_publisher import get_instagram_client
@@ -250,15 +252,17 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
     if not ranked:
         print("[Error] No reel matched policy (<45s, >=500k views, priority reciter).")
         return None
+    import dedupe_guard
     for cand in ranked[:6]:
-        f = download_reel(cand)
+        f, dd = dedupe_guard.acquire_candidate("quran", cand, HISTORY_FILE, download_reel)
         if f:
             meta = build_reel_metadata(cand)
             print(f"★ SELECTED {cand['code']} | {cand['reciter_key']} | {cand['views']:,} views | {cand['duration']}s")
             print(f"  Title: {meta['title']}")
             return {"video": str(f), "code": cand["code"], "title": meta["title"],
                     "description": meta["description"], "tags": meta["tags"],
-                    "reciter": RECITERS_CONFIG[cand["reciter_key"]]["name_ar"], "views": cand["views"]}
+                    "reciter": RECITERS_CONFIG[cand["reciter_key"]]["name_ar"], "views": cand["views"],
+                    "dedupe": dd}
     print("[Error] Could not download any ranked candidate.")
     return None
 
@@ -269,11 +273,13 @@ def main():
         print("[Abort] Could not fetch eligible viral reel.")
         sys.exit(1)
     upload_res = upload_short(channel_key="quran", video_path=reel_data["video"], title=reel_data["title"],
-                              description=reel_data["description"], tags=reel_data["tags"], category_id="22")
-    if upload_res:
-        history = load_history()
-        history.append(reel_data["code"])
-        save_history(history)
+                              description=reel_data["description"], tags=reel_data["tags"], category_id="22",
+                              source_code=reel_data["code"])
+    if upload_res and not upload_res.get("duplicate"):
+        import dedupe_guard
+        dd = reel_data.get("dedupe") or {}
+        dedupe_guard.record_and_push("quran", reel_data["code"], upload_res.get("video_id"), reel_data["title"],
+                                     dd.get("fp"), dd.get("sha256"), dd.get("phash"))
         print(f"URL: https://youtube.com/shorts/{upload_res.get('video_id') or upload_res.get('id', '')}")
 
 if __name__ == "__main__":

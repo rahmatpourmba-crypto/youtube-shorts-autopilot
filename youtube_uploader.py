@@ -104,7 +104,7 @@ def add_pinned_engagement_comment(youtube, video_id: str, comment_text: str):
         print(f"  [Auto-Comment Warning] Could not post initial comment: {e}")
         return None
 
-def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None, pinned_comment: str = None, publish_at: str = None):
+def upload_short(channel_key: str, video_path: str, title: str, description: str, tags: list, category_id: str = "22", thumbnail_path: str = None, pinned_comment: str = None, publish_at: str = None, source_code: str = None):
     """
     Uploads a short video directly to YouTube, sets custom thumbnail, and leaves pinned engagement hook.
     If publish_at (ISO 8601 string e.g. '2026-10-12T13:12:00Z') is provided, sets scheduled private publish.
@@ -124,6 +124,19 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
     except Exception as e:
         print(f"  [Upload Error] Authorization needed or failed for {channel_key}: {e}")
         return None
+
+    # DUPLICATE GUARD: hidden source marker + channel uploads-playlist check (1 quota unit/page)
+    if source_code:
+        import dedupe_guard
+        description = dedupe_guard.add_marker(description, source_code)
+        try:
+            dup = dedupe_guard.youtube_has_duplicate(youtube, source_code, title)
+        except Exception as e:
+            print(f"  [Dedupe] uploads-playlist check failed ({e}); refusing to upload (fail closed)")
+            return None
+        if dup:
+            print(f"  [Dedupe] {source_code} / same title already on channel as {dup} -> skip upload", flush=True)
+            return {"duplicate": True, "video_id": dup, "id": dup}
 
     status_obj = {
         "privacyStatus": "private" if publish_at else "public",

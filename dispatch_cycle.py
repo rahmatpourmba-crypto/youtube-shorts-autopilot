@@ -145,12 +145,17 @@ def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2, slot_
                 title=reel_data["title"],
                 description=reel_data["description"],
                 tags=reel_data["tags"],
-                category_id="22"
+                category_id="22",
+                source_code=reel_data["code"]
             )
+            if upload_res and upload_res.get("duplicate"):
+                print(f"  [Dedupe] {reel_data['code']} already on channel ({upload_res.get('video_id')}); picking another reel")
+                continue
             if upload_res:
-                history = load_history()
-                history.append(reel_data["code"])
-                save_history(history)
+                import dedupe_guard
+                dd = reel_data.get("dedupe") or {}
+                dedupe_guard.record_and_push("quran", reel_data["code"], upload_res.get("video_id"),
+                                             reel_data["title"], dd.get("fp"), dd.get("sha256"), dd.get("phash"))
                 print(f"  ✓ Published: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
                 return upload_res
             print(f"  [Warning] Upload attempt {attempt} did not return video ID.")
@@ -188,6 +193,46 @@ def run_animals_channel(run_dir: Path, run_count: int):
     print("\n[DISPATCH - ANIMALS] Standby.")
     return None
 
+def run_pass(state, target_channel, force_upload, run_dir, run_count, daily_uploads, today_date, utc_now):
+    uploaded = 0
+    # 1. CHANNEL 1: QURAN — 8/day, 18:00-24:00 Baghdad, slot every 45 min
+    if target_channel in ["quran", "auto", "all"]:
+        ok, slot_idx, reason = quran_gate(state, utc_now)
+        if ok or force_upload:
+            print(f"\n[Pacing Gate - Quran] GO: {reason}{' (forced)' if force_upload and not ok else ''}")
+            upload_res = run_quran_channel(run_dir, run_count, slot_index=slot_idx)
+            if upload_res:
+                record_quran_upload(state, datetime.datetime.now(datetime.timezone.utc)); uploaded += 1
+                daily_uploads["quran_short"] = today_date
+        else:
+            print(f"[Pacing Gate - Quran] Standby: {reason}")
+
+    # 2. CHANNEL 2: AI UNVEILED | FUTURE TECH (YouTube + Instagram Reels)
+    if target_channel in ["ai", "auto", "all"]:
+        ok_ai, ai_slot, ai_reason = ai_gate(state, utc_now)
+        if ok_ai or force_upload:
+            print(f"\n[Pacing Gate - AI Channel 2] GO: {ai_reason}{' (forced)' if force_upload and not ok_ai else ''}")
+            upload_ai_res = run_ai_channel(run_dir, run_count, force=force_upload)
+            if upload_ai_res:
+                record_ai_upload(state, datetime.datetime.now(datetime.timezone.utc)); uploaded += 1
+                daily_uploads["ai_short"] = today_date
+        else:
+            print(f"[Pacing Gate - AI Channel 2] Standby: {ai_reason}")
+
+    return uploaded
+
+
+def next_open_in_minutes(state, target_channel, utc_now, horizon_min):
+    """Minutes until any channel gate opens (catch-up of due slots, honoring min gaps)."""
+    for m in range(1, int(horizon_min) + 1):
+        t = utc_now + datetime.timedelta(minutes=m)
+        if target_channel in ["quran", "auto", "all"] and quran_gate(state, t)[0]:
+            return m
+        if target_channel in ["ai", "auto", "all"] and ai_gate(state, t)[0]:
+            return m
+    return None
+
+
 def main():
     state = load_state()
     today_str = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S")
@@ -221,29 +266,28 @@ def main():
     force_upload = any(arg == "--force" for arg in sys.argv)
     current_epoch = time.time()
 
-    # 1. CHANNEL 1: QURAN — 8/day, 18:00-24:00 Baghdad, slot every 45 min
-    if target_channel in ["quran", "auto", "all"]:
-        ok, slot_idx, reason = quran_gate(state, utc_now)
-        if ok or force_upload:
-            print(f"\n[Pacing Gate - Quran] GO: {reason}{' (forced)' if force_upload and not ok else ''}")
-            upload_res = run_quran_channel(run_dir, run_count, slot_index=slot_idx)
-            if upload_res:
-                record_quran_upload(state, datetime.datetime.now(datetime.timezone.utc))
-                daily_uploads["quran_short"] = today_date
-        else:
-            print(f"[Pacing Gate - Quran] Standby: {reason}")
+    run_pass(state, target_channel, force_upload, run_dir, run_count, daily_uploads, today_date, utc_now)
 
-    # 2. CHANNEL 2: AI UNVEILED | FUTURE TECH (YouTube + Instagram Reels)
-    if target_channel in ["ai", "auto", "all"]:
-        ok_ai, ai_slot, ai_reason = ai_gate(state, utc_now)
-        if ok_ai or force_upload:
-            print(f"\n[Pacing Gate - AI Channel 2] GO: {ai_reason}{' (forced)' if force_upload and not ok_ai else ''}")
-            upload_ai_res = run_ai_channel(run_dir, run_count, force=force_upload)
-            if upload_ai_res:
-                record_ai_upload(state, datetime.datetime.now(datetime.timezone.utc))
-                daily_uploads["ai_short"] = today_date
-        else:
-            print(f"[Pacing Gate - AI Channel 2] Standby: {ai_reason}")
+    # CATCH-UP: GitHub cron is best-effort (runs are often dropped). If more slots are due
+    # (only blocked by the min gap), keep this single run alive and publish them, spaced.
+    catchup_budget = 0.0
+    for arg in sys.argv[1:]:
+        if arg.startswith("--catchup-minutes="):
+            catchup_budget = float(arg.split("=", 1)[1] or 0)
+    deadline = time.time() + catchup_budget * 60
+    while catchup_budget > 0 and not force_upload:
+        remaining = (deadline - time.time()) / 60.0
+        wait = next_open_in_minutes(state, target_channel, datetime.datetime.now(datetime.timezone.utc),
+                                    min(remaining, 46))
+        if wait is None:
+            break
+        save_state(state)
+        print(f"\n[Catch-up] next due slot opens in {wait} min; waiting inside this run...")
+        time.sleep(wait * 60 + 5)
+        utc_now = datetime.datetime.now(datetime.timezone.utc)
+        if not run_pass(state, target_channel, False, run_dir, run_count, daily_uploads, today_date, utc_now):
+            print("[Catch-up] pass published nothing; stopping catch-up to avoid a retry loop")
+            break
 
     # Persist state
     state["last_run_timestamp"] = today_str
