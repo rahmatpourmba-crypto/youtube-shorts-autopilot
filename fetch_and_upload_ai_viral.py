@@ -121,14 +121,6 @@ def build_instagram_bilingual_caption(title: str) -> str:
         f"#{' #'.join(TWO_TOWER_TAGS)} #Explore #Reels #Viral"
     )
     return caption
-        f"🔭 Deep space mysteries captured by modern astrophysics & space telescopes.\n"
-        f"✨ شگفتی‌های بی‌پایان کیهان و ژرفای اعجاب‌انگیز تلسکوپ‌های فضایی.\n\n"
-        f"💬 What do you think lies beyond the observable universe? Drop your thoughts below! 👇\n\n"
-        f"🛰️ Follow @cryp.tolab1 for daily discoveries in deep cosmos, AI & futuristic science.\n\n"
-        f"──────────────────\n"
-        f"#{' #'.join(TWO_TOWER_TAGS)} #Explore #Reels #Viral"
-    )
-    return caption
 
 def find_and_download_viral_ai_reel(min_views: int = 100000, max_duration: float = 49.9):
     """
