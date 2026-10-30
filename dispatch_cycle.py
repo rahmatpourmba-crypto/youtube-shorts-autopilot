@@ -69,6 +69,60 @@ def record_quran_upload(state: dict, utc_now: datetime.datetime):
     state["quran_daily_count"] = state.get("quran_daily_count", 0) + 1
     state["last_quran_upload_epoch"] = utc_now.timestamp()
 
+# ---------------------------------------------------------------------------
+# AI CHANNEL SCHEDULE (owner policy): exactly 8 uploads/day, English global audience.
+# Slots are on the existing ':18' cron pulses and never inside the Quran window
+# (15:00-21:00 UTC = 18:00-24:00 Baghdad).
+#   EU evening / US morning : 12:18 13:18 14:18 UTC
+#   EU late / US prime time : 21:18 22:18 23:18 00:18 01:18 UTC
+# The "AI day" runs 06:00 UTC -> 06:00 UTC next day so the post-midnight slots
+# count toward the same day. Separate counter: ai_daily_date / ai_daily_count.
+# ---------------------------------------------------------------------------
+AI_DAILY_TARGET = 8
+AI_DAY_START_UTC_MIN = 6 * 60
+AI_SLOTS_UTC_MIN = [12*60+18, 13*60+18, 14*60+18, 21*60+18, 22*60+18, 23*60+18, 0*60+18, 1*60+18]
+AI_MIN_GAP_MIN = 25
+AI_LATEST_CATCHUP_UTC_MIN = 2 * 60 + 30   # no catch-up uploads after 02:30 UTC
+QURAN_WINDOW_UTC = (15 * 60, 21 * 60)
+
+def _ai_rel(minute_utc: int) -> int:
+    """Minutes since start of the AI day (06:00 UTC)."""
+    return (minute_utc - AI_DAY_START_UTC_MIN) % (24 * 60)
+
+AI_SLOTS_REL = [_ai_rel(m) for m in AI_SLOTS_UTC_MIN]
+
+def ai_day_key(utc_now: datetime.datetime) -> str:
+    return (utc_now - datetime.timedelta(minutes=AI_DAY_START_UTC_MIN)).strftime("%Y-%m-%d")
+
+def ai_gate(state: dict, utc_now: datetime.datetime):
+    """Return (should_upload, slot_index, reason). Pure: easy to test."""
+    day = ai_day_key(utc_now)
+    minute = utc_now.hour * 60 + utc_now.minute
+    rel = _ai_rel(minute)
+    count = state.get("ai_daily_count", 0) if state.get("ai_daily_date") == day else 0
+    if count >= AI_DAILY_TARGET:
+        return False, count, f"daily target reached ({count}/{AI_DAILY_TARGET})"
+    if QURAN_WINDOW_UTC[0] <= minute < QURAN_WINDOW_UTC[1]:
+        return False, count, f"inside Quran window 15:00-21:00 UTC (now {utc_now.strftime('%H:%M')} UTC)"
+    if rel > _ai_rel(AI_LATEST_CATCHUP_UTC_MIN):
+        return False, count, f"outside AI windows (now {utc_now.strftime('%H:%M')} UTC)"
+    due = AI_SLOTS_REL[count]
+    due_utc = AI_SLOTS_UTC_MIN[count]
+    if rel < due:
+        return False, count, f"next AI slot #{count+1} at {due_utc//60:02d}:{due_utc%60:02d} UTC"
+    gap = (utc_now.timestamp() - state.get("last_ai_upload_epoch", 0)) / 60.0
+    if gap < AI_MIN_GAP_MIN:
+        return False, count, f"min gap {AI_MIN_GAP_MIN} min not met ({gap:.0f} min)"
+    return True, count, f"AI slot #{count+1} due ({due_utc//60:02d}:{due_utc%60:02d} UTC), now {utc_now.strftime('%H:%M')} UTC"
+
+def record_ai_upload(state: dict, utc_now: datetime.datetime):
+    day = ai_day_key(utc_now)
+    if state.get("ai_daily_date") != day:
+        state["ai_daily_date"] = day
+        state["ai_daily_count"] = 0
+    state["ai_daily_count"] = state.get("ai_daily_count", 0) + 1
+    state["last_ai_upload_epoch"] = utc_now.timestamp()
+
 def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2, slot_index: int = 0):
     """Viral Instagram Quran reels (<45s, >=1M views; logged fallback >=500k) -> YouTube Quran channel."""
     for attempt in range(1, max_retries + 1):
@@ -181,18 +235,15 @@ def main():
 
     # 2. CHANNEL 2: AI UNVEILED | FUTURE TECH (YouTube + Instagram Reels)
     if target_channel in ["ai", "auto", "all"]:
-        last_ai_epoch = state.get("last_ai_upload_epoch", 0)
-        elapsed_ai_mins = (current_epoch - last_ai_epoch) / 60.0
-        ai_cooling_satisfied = elapsed_ai_mins >= 65.0
-
-        if force_upload or ai_cooling_satisfied:
-            print(f"\n[Pacing Gate - AI Channel 2] Ready! ({elapsed_ai_mins:.1f} mins elapsed). Triggering upload...")
+        ok_ai, ai_slot, ai_reason = ai_gate(state, utc_now)
+        if ok_ai or force_upload:
+            print(f"\n[Pacing Gate - AI Channel 2] GO: {ai_reason}{' (forced)' if force_upload and not ok_ai else ''}")
             upload_ai_res = run_ai_channel(run_dir, run_count, force=force_upload)
             if upload_ai_res:
-                state["last_ai_upload_epoch"] = current_epoch
+                record_ai_upload(state, datetime.datetime.now(datetime.timezone.utc))
                 daily_uploads["ai_short"] = today_date
         else:
-            print(f"[Pacing Gate - AI Channel 2] Standby ({elapsed_ai_mins:.1f} mins elapsed, 65 mins required).")
+            print(f"[Pacing Gate - AI Channel 2] Standby: {ai_reason}")
 
     # Persist state
     state["last_run_timestamp"] = today_str
