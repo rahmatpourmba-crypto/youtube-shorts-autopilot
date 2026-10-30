@@ -243,6 +243,8 @@ def download_reel(cand):
     return None
 
 def find_and_download_viral_ai_reel(min_views: int = MIN_VIEWS, max_duration: float = MAX_DURATION_SEC, client=None):
+    import dedupe_guard
+    dedupe_guard.sync_latest()
     used_codes = set(load_history())
     if client is None:
         client = get_instagram_client("cryptolab")
@@ -255,7 +257,7 @@ def find_and_download_viral_ai_reel(min_views: int = MIN_VIEWS, max_duration: fl
         return None
     from metadata_optimizer import build_viral_ai_metadata
     for cand in ranked[:6]:
-        f = download_reel(cand)
+        f, dd = dedupe_guard.acquire_candidate("ai", cand, HISTORY_FILE, download_reel)
         if f:
             meta = build_viral_ai_metadata(cand["caption"], views=cand["views"])
             description = build_protocol_131_description(meta["title"], creator_handle=cand["creator"])
@@ -264,7 +266,7 @@ def find_and_download_viral_ai_reel(min_views: int = MIN_VIEWS, max_duration: fl
             print(f"  Title: {meta['title']}")
             return {"code": cand["code"], "video": f, "title": meta["title"], "description": description,
                     "caption": cand["caption"], "tags": meta["tags"], "views": cand["views"],
-                    "comment_hook": random.choice(PINNED_ENGAGEMENT_HOOKS)}
+                    "comment_hook": random.choice(PINNED_ENGAGEMENT_HOOKS), "dedupe": dd}
     print("[Error] Could not download any ranked candidate.")
     return None
 
@@ -298,8 +300,12 @@ def publish_twin_ai_video(force: bool = False, max_retries: int = 2, publish_ins
                     tags=data["tags"],
                     category_id="28",
                     thumbnail_path=str(thumb_file) if thumb_file else None,
-                    pinned_comment=data["comment_hook"]
+                    pinned_comment=data["comment_hook"],
+                    source_code=data["code"]
                 )
+                if yt_res and yt_res.get("duplicate"):
+                    print(f"[YouTube-AI] {data['code']} already on channel ({yt_res.get('video_id')}) -> not re-uploaded")
+                    yt_res = None
                 results["youtube"] = yt_res
             except Exception as e:
                 print(f"[YouTube-AI Upload Error] {e}")
@@ -322,9 +328,11 @@ def publish_twin_ai_video(force: bool = False, max_retries: int = 2, publish_ins
                 print("[Instagram Status] Decoupled: Reserved for dedicated Persian sponsorship pipeline.")
 
             if results.get("youtube") or results.get("instagram"):
-                history = load_history()
-                history.append(data["code"])
-                save_history(history)
+                import dedupe_guard
+                dd = data.get("dedupe") or {}
+                vid = (results.get("youtube") or {}).get("video_id")
+                dedupe_guard.record_and_push("ai", data["code"], vid, data["title"],
+                                             dd.get("fp"), dd.get("sha256"), dd.get("phash"))
                 print(f"  ✓ Dual Publishing Succeeded! Code: {data['code']}")
                 return results
 

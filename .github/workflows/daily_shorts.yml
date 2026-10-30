@@ -35,9 +35,25 @@ permissions:
 jobs:
   run-shorts-pipeline:
     runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      DEDUPE_GIT: '1'
     steps:
-      - name: Checkout Repository
+      # IMPORTANT: a queued run's GITHUB_SHA is frozen when it is *triggered*. Without ref: main a
+      # run that waited in the concurrency queue checks out stale state (root cause of the
+      # 2026-10-30 duplicate). Always take the tip of main, then pull again right before dispatch.
+      - name: Checkout Repository (latest main, not the trigger SHA)
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Sync latest state
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          git log -1 --format='state @ %h %ci'
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -77,13 +93,12 @@ jobs:
           IG_PASSWORD_CRYPTOLAB: ${{ secrets.IG_PASSWORD_CRYPTOLAB }}
           IG_PASSWORD_QURAN: ${{ secrets.IG_PASSWORD_QURAN }}
         run: |
-          python dispatch_cycle.py --channel=${{ inputs.target_channel || 'auto' }} ${{ inputs.force && '--force' || '' }}
+          python dispatch_cycle.py --channel=${{ inputs.target_channel || 'auto' }} ${{ inputs.force && '--force' || '' }} ${{ github.event_name == 'schedule' && '--catchup-minutes=100' || '' }}
 
       - name: Commit and Push Updated State (Keepalive Heartbeat Activity - NO skip-ci)
         if: always()
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add claims upload_registry.json 2>/dev/null || true
           git add state.json growth_brain.json used_trends_history.json used_viral_reels.json used_ai_viral_reels.json
           git commit -m "chore(autopilot): update multi-channel state and keepalive heartbeat" || echo "No changes to state"
           for i in 1 2 3 4 5; do
