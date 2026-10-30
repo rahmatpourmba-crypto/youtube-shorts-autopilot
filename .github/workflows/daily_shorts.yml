@@ -59,6 +59,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
 
       - name: Restore Credentials from Secure GitHub Secrets
         env:
@@ -78,10 +79,18 @@ jobs:
           if [ -n "$IG_SESSION_QURAN_B64" ]; then echo "$IG_SESSION_QURAN_B64" | base64 -d > ig_session_quran.json; fi
           if [ -n "$IG_SESSION_CRYPTOLAB_B64" ]; then echo "$IG_SESSION_CRYPTOLAB_B64" | base64 -d > ig_session_cryptolab.json; fi
 
-      - name: Install System FFmpeg and Node.js
+      - name: Install System FFmpeg (with libass) and Node.js
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg nodejs
+          sudo apt-get install -y ffmpeg nodejs libass9 fontconfig
+          ffmpeg -hide_banner -filters | grep -E ' (subtitles|ass) ' || echo "WARNING: ffmpeg lacks libass"
+
+      # Whisper model for Quran ayah detection (quran_branding.py); cached across runs
+      - name: Cache faster-whisper model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/faster-whisper
+          key: faster-whisper-small-v1
 
       - name: Install Python Dependencies
         run: |

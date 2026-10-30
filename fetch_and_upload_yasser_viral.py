@@ -256,13 +256,21 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
     for cand in ranked[:6]:
         f, dd = dedupe_guard.acquire_candidate("quran", cand, HISTORY_FILE, download_reel)
         if f:
+            # Owner policy: never upload a reel unmodified. Dedupe hashes (dd) were computed on the
+            # *source* download above; now add ayah subtitles (only if confidently matched) + branding.
+            try:
+                from quran_branding import brand_reel
+                f, ayah_match = brand_reel(f, cand.get("caption", ""), RECITERS_CONFIG[cand["reciter_key"]]["name_ar"])
+            except Exception as e:
+                print(f"  [Branding] FAILED for {cand['code']} ({e}); not uploading it unmodified, trying next")
+                continue
             meta = build_reel_metadata(cand)
             print(f"★ SELECTED {cand['code']} | {cand['reciter_key']} | {cand['views']:,} views | {cand['duration']}s")
             print(f"  Title: {meta['title']}")
             return {"video": str(f), "code": cand["code"], "title": meta["title"],
                     "description": meta["description"], "tags": meta["tags"],
                     "reciter": RECITERS_CONFIG[cand["reciter_key"]]["name_ar"], "views": cand["views"],
-                    "dedupe": dd}
+                    "dedupe": dd, "ayahs": ayah_match}
     print("[Error] Could not download any ranked candidate.")
     return None
 
