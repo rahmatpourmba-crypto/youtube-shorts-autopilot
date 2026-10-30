@@ -32,30 +32,59 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
-def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2):
-    """
-    VIRAL QURAN CHANNEL PIPELINE (Sheikh Yasser Al-Dosari & Elite Reciters >100k Views from Instagram)
-    Direct Unmodified Re-Upload to YouTube Quran Channel with Self-Healing Auto-Recovery
-    """
+# ---------------------------------------------------------------------------
+# QURAN SCHEDULE (owner policy): exactly 8 uploads/day, 18:00-24:00 Baghdad (UTC+3)
+# ---------------------------------------------------------------------------
+BAGHDAD_OFFSET = datetime.timedelta(hours=3)
+QURAN_DAILY_TARGET = 8
+QURAN_WINDOW_START_MIN = 18 * 60          # 18:00 Baghdad = 15:00 UTC
+QURAN_WINDOW_END_MIN = 24 * 60            # 24:00 Baghdad = 21:00 UTC
+QURAN_SLOT_SPACING_MIN = 45
+QURAN_MIN_GAP_MIN = 25                    # catch-up uploads never closer than this
+QURAN_SLOTS_MIN = [QURAN_WINDOW_START_MIN + i * QURAN_SLOT_SPACING_MIN for i in range(QURAN_DAILY_TARGET)]
+
+def quran_gate(state: dict, utc_now: datetime.datetime):
+    """Return (should_upload, slot_index, reason). Pure: easy to test."""
+    bag = utc_now + BAGHDAD_OFFSET
+    day = bag.strftime("%Y-%m-%d")
+    minute = bag.hour * 60 + bag.minute
+    count = state.get("quran_daily_count", 0) if state.get("quran_daily_date") == day else 0
+    if count >= QURAN_DAILY_TARGET:
+        return False, count, f"daily target reached ({count}/{QURAN_DAILY_TARGET})"
+    if not (QURAN_WINDOW_START_MIN <= minute < QURAN_WINDOW_END_MIN):
+        return False, count, f"outside 18:00-24:00 Baghdad window (now {bag.strftime('%H:%M')})"
+    due = QURAN_SLOTS_MIN[count]
+    if minute < due:
+        return False, count, f"next slot #{count+1} at {due//60:02d}:{due%60:02d} Baghdad"
+    gap = (utc_now.timestamp() - state.get("last_quran_upload_epoch", 0)) / 60.0
+    if gap < QURAN_MIN_GAP_MIN:
+        return False, count, f"min gap {QURAN_MIN_GAP_MIN} min not met ({gap:.0f} min)"
+    return True, count, f"slot #{count+1} due ({due//60:02d}:{due%60:02d} Baghdad), now {bag.strftime('%H:%M')}"
+
+def record_quran_upload(state: dict, utc_now: datetime.datetime):
+    day = (utc_now + BAGHDAD_OFFSET).strftime("%Y-%m-%d")
+    if state.get("quran_daily_date") != day:
+        state["quran_daily_date"] = day
+        state["quran_daily_count"] = 0
+    state["quran_daily_count"] = state.get("quran_daily_count", 0) + 1
+    state["last_quran_upload_epoch"] = utc_now.timestamp()
+
+def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2, slot_index: int = 0):
+    """Viral Instagram Quran reels (<45s, >=1M views; logged fallback >=500k) -> YouTube Quran channel."""
     for attempt in range(1, max_retries + 1):
         try:
-            print(f"\n[DISPATCH - QURAN VIRAL REELS] Attempt {attempt}/{max_retries}: Elite Quran Reciters (>100k Views, <50s)...")
-            from fetch_and_upload_yasser_viral import find_and_download_viral_reel
+            print(f"\n[DISPATCH - QURAN VIRAL REELS] Attempt {attempt}/{max_retries} (slot #{slot_index+1})")
+            from fetch_and_upload_yasser_viral import find_and_download_viral_reel, load_history, save_history
             from youtube_uploader import upload_short, CHANNELS
-            
-            reel_data = find_and_download_viral_reel(min_views=100000, max_duration=49.9)
-            if not reel_data:
-                print("  [Self-Healing] High threshold search returned no reels. Relaxing threshold to >20,000 views...")
-                reel_data = find_and_download_viral_reel(min_views=20000, max_duration=49.9)
 
+            reel_data = find_and_download_viral_reel(slot_index=slot_index)
             if not reel_data:
-                print(f"  [Error] No viral reel available on attempt {attempt}.")
+                print(f"  [Error] No eligible viral reel on attempt {attempt}.")
                 if attempt < max_retries:
                     time.sleep(10)
                     continue
                 return None
 
-            print(f"\n[QURAN] Uploading Unmodified Viral Short to {CHANNELS['quran']['name']}...")
             upload_res = upload_short(
                 channel_key="quran",
                 video_path=reel_data["video"],
@@ -64,18 +93,15 @@ def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2):
                 tags=reel_data["tags"],
                 category_id="22"
             )
-
             if upload_res:
-                from fetch_and_upload_yasser_viral import load_history, save_history
                 history = load_history()
                 history.append(reel_data["code"])
                 save_history(history)
-                print(f"  ✓ Published Viral Quran Short: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
+                print(f"  ✓ Published: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
                 return upload_res
-            else:
-                print(f"  [Warning] Upload attempt {attempt} did not return video ID.")
-                if attempt < max_retries:
-                    time.sleep(15)
+            print(f"  [Warning] Upload attempt {attempt} did not return video ID.")
+            if attempt < max_retries:
+                time.sleep(15)
         except Exception as e:
             print(f"  [Self-Healing Recovery] Exception in run_quran_channel (attempt {attempt}): {e}")
             import traceback
@@ -141,29 +167,17 @@ def main():
     force_upload = any(arg == "--force" for arg in sys.argv)
     current_epoch = time.time()
 
-    # Dedicated Middle East Prime Peak Window for Quran: 18:00 to 23:30 (6:00 PM to 11:30 PM)
-    # Aligns perfectly with Maghrib, Isha, evening family time & bedtime listening surges
-    mecca_now = utc_now + datetime.timedelta(hours=3)
-    mecca_min = mecca_now.hour * 60 + mecca_now.minute
-    tehran_min = tehran_now.hour * 60 + tehran_now.minute
-    is_quran_peak_window = (18 * 60 <= mecca_min <= 23 * 60 + 30) or (18 * 60 <= tehran_min <= 23 * 60 + 30)
-
-    # 1. CHANNEL 1: QURAN
+    # 1. CHANNEL 1: QURAN — 8/day, 18:00-24:00 Baghdad, slot every 45 min
     if target_channel in ["quran", "auto", "all"]:
-        last_q_epoch = state.get("last_quran_upload_epoch", 0)
-        elapsed_q_mins = (current_epoch - last_q_epoch) / 60.0
-        q_cooling_satisfied = elapsed_q_mins >= 65.0
-
-        if force_upload or (is_quran_peak_window and q_cooling_satisfied):
-            print(f"\n[Pacing Gate - Quran] Ready in Middle East Peak Window (18:00 - 23:30)! ({elapsed_q_mins:.1f} mins elapsed). Triggering upload...")
-            upload_res = run_quran_channel(run_dir, run_count)
+        ok, slot_idx, reason = quran_gate(state, utc_now)
+        if ok or force_upload:
+            print(f"\n[Pacing Gate - Quran] GO: {reason}{' (forced)' if force_upload and not ok else ''}")
+            upload_res = run_quran_channel(run_dir, run_count, slot_index=slot_idx)
             if upload_res:
-                state["last_quran_upload_epoch"] = current_epoch
+                record_quran_upload(state, datetime.datetime.now(datetime.timezone.utc))
                 daily_uploads["quran_short"] = today_date
-        elif not is_quran_peak_window:
-            print(f"[Pacing Gate - Quran] Standby. Outside Middle East Peak Window (18:00 - 23:30). Mecca Time: {mecca_now.strftime('%H:%M')} | Tehran: {tehran_now.strftime('%H:%M')}.")
         else:
-            print(f"[Pacing Gate - Quran] Standby in Peak Window ({elapsed_q_mins:.1f} mins elapsed, 65 mins cooling required).")
+            print(f"[Pacing Gate - Quran] Standby: {reason}")
 
     # 2. CHANNEL 2: AI UNVEILED | FUTURE TECH (YouTube + Instagram Reels)
     if target_channel in ["ai", "auto", "all"]:
