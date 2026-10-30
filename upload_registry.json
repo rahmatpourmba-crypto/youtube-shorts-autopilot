@@ -48,6 +48,24 @@
       "video_id": "YSSbWRfT_vw",
       "title": null,
       "note": "backfilled: lost state push run 41080091811"
+    },
+    {
+      "code": "DYjuziYzhCj",
+      "video_id": "FpGajTQH5hA",
+      "title": "Most Satisfying Tech You'll See Today 😮 | As heavy snowfall and freezing #AI #tech #shorts",
+      "fp": "fp_6d712d857f958539",
+      "sha256": "c6345aea8478a92a457c1bfc66b10010bde1ea6778a0e021c8a09c1932800cc7",
+      "phash": [
+        "ffff1f07211f0704",
+        "ffff1f07001f0704",
+        "ffff1f3f00070004",
+        "ff7f1f0706030408",
+        "ffff1f07020f0100",
+        "ff7f1f07000f0300",
+        "ff7f1f0700070304",
+        "ff7f1f0700200104"
+      ],
+      "ts": 1793382508
     }
   ]
 }
