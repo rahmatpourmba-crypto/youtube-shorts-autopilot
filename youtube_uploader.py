@@ -135,7 +135,7 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
 
     body = {
         "snippet": {
-            "title": title[:100],
+            "title": __import__("metadata_optimizer").smart_truncate(title, 100),
             "description": description,
             "tags": tags,
             "categoryId": category_id,

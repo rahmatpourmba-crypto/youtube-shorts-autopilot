@@ -266,6 +266,115 @@ def generate_luxury_thumbnail(frame_image_path: str, output_path: str, niche: st
     img.save(output_path, "JPEG", quality=98)
     return output_path
 
+
+# ==============================================================================
+# SAFE TITLE TRUNCATION (fixes titles cut mid-word like "Sura #Shor..")
+# ==============================================================================
+YT_TITLE_MAX = 100
+
+def smart_truncate(text: str, limit: int = YT_TITLE_MAX) -> str:
+    """Trim to <= limit chars at a word boundary; never leaves a broken #hashtag."""
+    text = re.sub(r"\s+", " ", (text or "")).strip()
+    if len(text) <= limit:
+        return text
+    cut = text[:limit + 1]
+    if " " in cut:
+        cut = cut[:cut.rfind(" ")]
+    else:
+        cut = cut[:limit]
+    cut = cut.rstrip(" |-–—:،,")
+    # drop a dangling partial hashtag or lone '#'
+    parts = cut.split(" ")
+    while parts and parts[-1].startswith("#") and parts[-1] not in text.split(" "):
+        parts.pop()
+    return " ".join(parts).rstrip(" |-–—:،,")[:limit]
+
+def build_title_with_suffix(body: str, suffix: str, limit: int = YT_TITLE_MAX) -> str:
+    """Keep the suffix (e.g. '#shorts #قرآن') intact; shorten only the body at word boundaries."""
+    suffix = suffix.strip()
+    room = limit - len(suffix) - 1
+    body = smart_truncate(body, max(room, 10))
+    return smart_truncate(f"{body} {suffix}".strip(), limit)
+
+# 114 surah names for detection in captions (Arabic, without "ال" variants handled below)
+SURAH_NAMES = [
+    "الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس",
+    "هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج",
+    "المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة",
+    "الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان",
+    "الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن",
+    "الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق",
+    "التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان",
+    "المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق",
+    "الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر",
+    "البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون",
+    "الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس",
+]
+
+def _norm_ar(t: str) -> str:
+    t = re.sub(r"[\u064B-\u0652\u0670]", "", t or "")  # strip tashkeel
+    return t.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا").replace("ة", "ه").replace("_", " ")
+
+def detect_surah(caption: str):
+    """Return surah name if caption says 'سورة X' / '#سورة_X'. Short/ambiguous names need the 'سورة' prefix."""
+    norm = _norm_ar(caption)
+    for name in sorted(SURAH_NAMES, key=len, reverse=True):
+        n = _norm_ar(name)
+        if re.search(r"سوره\s*" + re.escape(n) + r"(?![\w])", norm):
+            return name
+    return None
+
+QURAN_GEO_HASHTAGS = ["#العراق", "#مصر", "#الجزائر"]
+QURAN_BASE_HASHTAGS = ["#قرآن", "#تلاوة", "#القرآن_الكريم", "#تلاوة_خاشعة", "#راحة_نفسية", "#quran", "#shorts"]
+QURAN_TITLE_HOOKS = [
+    "تلاوة تقشعر لها الأبدان 😢",
+    "صوت يهز القلوب 🤍",
+    "أجمل تلاوة ستسمعها اليوم 🕊️",
+    "تلاوة أبكت الملايين 💔",
+    "لا تفوتك هذه التلاوة ✨",
+    "استمع بقلبك 🎧",
+]
+
+def build_viral_quran_metadata(caption: str, reciter_ar: str, reciter_tag: str, reciter_en: str = "", views: int = 0, rng=None):
+    """Viral Arabic title/description/tags for a Quran reel. Title <= 100 chars, never cut mid-word."""
+    rng = rng or random
+    surah = detect_surah(caption or "")
+    hook = rng.choice(QURAN_TITLE_HOOKS)
+    body = f"{hook} | {reciter_ar}"
+    if surah:
+        body = f"{hook} | سورة {surah} | {reciter_ar}"
+    title = build_title_with_suffix(body, f"#{reciter_tag} #قرآن #shorts")
+
+    hashtags = [f"#{reciter_tag}"] + QURAN_BASE_HASHTAGS[:5]
+    if surah:
+        hashtags.insert(1, "#سورة_" + surah.replace(" ", "_"))
+    hashtags += QURAN_GEO_HASHTAGS + ["#quran", "#shorts"]
+    seen, uniq = set(), []
+    for h in hashtags:
+        if h not in seen:
+            seen.add(h); uniq.append(h)
+    surah_line = f"📖 سورة {surah}\n" if surah else ""
+    description = (
+        f"{title}\n\n"
+        f"🎙️ بصوت {reciter_ar}\n{surah_line}\n"
+        "🌿 تلاوة خاشعة تريح القلب وتسكن الروح.\n"
+        "🤍 اكتب من أي بلد تسمع: 🇮🇶 العراق | 🇪🇬 مصر | 🇩🇿 الجزائر\n"
+        "📌 شارك المقطع ليكون صدقة جارية لك، واشترك لتصلك تلاوة جديدة كل مساء.\n\n"
+        + " ".join(uniq)
+    )
+    tags = [reciter_ar, reciter_tag.replace("_", " "), reciter_en, "قرآن", "تلاوة", "تلاوة خاشعة",
+            "القرآن الكريم", "راحة نفسية", "تلاوات العراق", "تلاوات مصر", "الجزائر", "Quran", "Quran recitation", "Shorts"]
+    if surah:
+        tags.insert(2, f"سورة {surah}")
+    tags = [t for t in tags if t]
+    # YouTube tag budget ~500 chars
+    out, total = [], 0
+    for t in tags:
+        if total + len(t) + 1 > 480:
+            break
+        out.append(t); total += len(t) + 1
+    return {"title": title, "description": description, "tags": out, "surah": surah, "hashtags": uniq}
+
 # ==============================================================================
 # 21 MEGA-PROMPT NEURO-HOOK & HIGH-CTR TITLE GENERATOR
 # ==============================================================================
@@ -293,7 +402,7 @@ def apply_mega_prompt_ctr_engineering(raw_title: str, niche: str) -> str:
             "The Untold Mystery of"
         ]
         hook = random.choice(power_hooks)
-        engineered = f"{hook} {clean[:45]} ⚠️⚡ #Shorts #Islam"
+        engineered = build_title_with_suffix(f"{hook} {clean}", "⚠️⚡ #Shorts #Islam")
 
     elif niche == "quran":
         peace_hooks = [
@@ -302,7 +411,7 @@ def apply_mega_prompt_ctr_engineering(raw_title: str, niche: str) -> str:
             "سورة تفيض بالطمأنينة والنور 🌿"
         ]
         hook = random.choice(peace_hooks)
-        engineered = f"{hook} {clean[:35]} ✨ #Shorts #Quran"
+        engineered = build_title_with_suffix(f"{hook} {clean}", "✨ #Shorts #Quran")
 
     elif niche == "ai":
         tech_hooks = [
@@ -311,7 +420,7 @@ def apply_mega_prompt_ctr_engineering(raw_title: str, niche: str) -> str:
             "Top Insane AI Tools in 2026! 🚀"
         ]
         hook = random.choice(tech_hooks)
-        engineered = f"{hook} {clean[:38]} #Shorts #AI"
+        engineered = build_title_with_suffix(f"{hook} {clean}", "#Shorts #AI")
 
     elif niche == "animals":
         wild_hooks = [
@@ -320,12 +429,12 @@ def apply_mega_prompt_ctr_engineering(raw_title: str, niche: str) -> str:
             "Nature Moments That Shocked Millions! 🐾👑"
         ]
         hook = random.choice(wild_hooks)
-        engineered = f"{hook} {clean[:38]} #Shorts #Wildlife"
+        engineered = build_title_with_suffix(f"{hook} {clean}", "#Shorts #Wildlife")
 
     else:
-        engineered = f"{clean[:50]} ✨ #Shorts #Viral"
+        engineered = build_title_with_suffix(clean, "✨ #Shorts #Viral")
 
-    return engineered[:85]
+    return smart_truncate(engineered, YT_TITLE_MAX)
 
 def get_optimized_metadata(niche: str, raw_title: str = None):
     """
@@ -338,7 +447,7 @@ def get_optimized_metadata(niche: str, raw_title: str = None):
             generate_165_algorithmic_tags,
             generate_165_pinned_comment
         )
-        title = generate_165_mega_title(niche, raw_title=raw_title)
+        title = smart_truncate(generate_165_mega_title(niche, raw_title=raw_title), YT_TITLE_MAX)
         desc = generate_165_mega_description(niche)
         tags = generate_165_algorithmic_tags(niche)
         comment = generate_165_pinned_comment(niche)

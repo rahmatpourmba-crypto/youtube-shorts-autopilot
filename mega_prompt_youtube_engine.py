@@ -391,7 +391,8 @@ def generate_165_mega_title(niche: str, raw_title: str = None, run_count: int = 
         tag = "#Shorts #Quran" 
 
         if clean_raw and len(clean_raw) > 5 and not any(k in clean_raw.lower() for k in ["http", "mp4", "www"]):
-            title = f"{hook} | {clean_raw[:25]} {tag}"
+            from metadata_optimizer import build_title_with_suffix
+            title = build_title_with_suffix(f"{hook} | {clean_raw}", tag)
         else:
             title = f"{hook} {tag}"
 
@@ -401,14 +402,15 @@ def generate_165_mega_title(niche: str, raw_title: str = None, run_count: int = 
         niche_tag = f"#Shorts #{niche.capitalize()}"
 
         if clean_raw and len(clean_raw) > 5 and not any(k in clean_raw.lower() for k in ["http", "mp4", "www"]):
-            title = f"{hook} - {clean_raw[:30]} {niche_tag}"
+            from metadata_optimizer import build_title_with_suffix
+            title = build_title_with_suffix(f"{hook} - {clean_raw}", niche_tag)
         else:
             title = f"{hook} {niche_tag}"
 
     # Enforce strict length constraint (T035: under 70 characters for mobile display)
-    if len(title) > 75:
-        title = title[:72].rstrip() + ".."
-    return title
+    # Old logic cut titles mid-word ("Sura #Shor.."). Trim at word boundaries, <=100 chars.
+    from metadata_optimizer import smart_truncate
+    return smart_truncate(title, 100)
 
 def generate_165_mega_description(niche: str, channel_key: str = None) -> str:
     """
