@@ -132,8 +132,14 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
         try:
             dup = dedupe_guard.youtube_has_duplicate(youtube, source_code, title)
         except Exception as e:
-            print(f"  [Dedupe] uploads-playlist check failed ({e}); refusing to upload (fail closed)")
-            return None
+            if "insufficient" in str(e).lower() or "403" in str(e):
+                # Token lacks read scope (re-auth with reauth_channel.py). Git claim lock and media
+                # hash still guard duplicates, so continue rather than halting the channel.
+                print(f"  [Dedupe] WARNING: uploads-playlist check unavailable (token scope): {e}")
+                dup = None
+            else:
+                print(f"  [Dedupe] uploads-playlist check failed ({e}); refusing to upload (fail closed)")
+                return None
         if dup:
             print(f"  [Dedupe] {source_code} / same title already on channel as {dup} -> skip upload", flush=True)
             return {"duplicate": True, "video_id": dup, "id": dup}
