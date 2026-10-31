@@ -33,29 +33,35 @@ def save_state(state):
         json.dump(state, f, indent=2)
 
 # ---------------------------------------------------------------------------
-# SCHEDULE (owner policy, 2026-10-30): 8 Quran + 8 AI uploads/day.
-#  * Each channel: >= 90 min between its own uploads (catch-up included).
-#  * Across channels: any two uploads >= 45 min apart (no collisions).
-#  * Day starts 16:00 Baghdad (13:00 UTC). The "schedule day" runs 13:00 UTC ->
+# SCHEDULE (owner policy, 2026-11-01):
+#  * Quran: 5 uploads/day, 17:00 -> ~23:00 Tehran, every 89 min.
+#  * AI:    8 uploads/day, unchanged (16:45 Baghdad, every 90 min).
+#  * Day starts 13:00 UTC (16:30 Tehran). The "schedule day" runs 13:00 UTC ->
 #    13:00 UTC next day, so after-midnight slots count toward the same day.
-#  Quran slots (Baghdad): 16:00 17:30 19:00 20:30 22:00 23:30 01:00 02:30
+#  Quran slots (Tehran): 17:00 18:29 19:58 21:27 22:56   (= 13:30 .. 19:26 UTC)
 #  AI slots    (Baghdad): 16:45 18:15 19:45 21:15 22:45 00:15 01:45 03:15
+#  The two channels run on different YouTube accounts, so the cross-channel gap only
+#  needs to keep the two pipelines from hitting the API at the same instant.
 # ---------------------------------------------------------------------------
 BAGHDAD_OFFSET = datetime.timedelta(hours=3)
-DAY_START_UTC_MIN = 13 * 60                 # 13:00 UTC = 16:00 Baghdad
+DAY_START_UTC_MIN = 13 * 60                 # 13:00 UTC = 16:00 Baghdad = 16:30 Tehran
 SLOT_SPACING_MIN = 90
 CHANNEL_MIN_GAP_MIN = 90                    # same-channel minimum gap (also for catch-up)
-CROSS_CHANNEL_GAP_MIN = 45                  # any upload vs. the other channel's last upload
+CROSS_CHANNEL_GAP_MIN = 10                  # any upload vs. the other channel's last upload
 LATEST_UPLOAD_REL_MIN = 18 * 60             # drift tail: no uploads after 07:00 UTC (10:00 Baghdad)
 
-QURAN_DAILY_TARGET = 8
+QURAN_DAILY_TARGET = 5
 AI_DAILY_TARGET = 8
-QURAN_SLOTS_REL = [i * SLOT_SPACING_MIN for i in range(QURAN_DAILY_TARGET)]          # 13:00 .. 23:30 UTC
+QURAN_SLOT_START_REL = 30                   # 13:30 UTC = 17:00 Tehran
+QURAN_SLOT_SPACING_MIN = 89
+# Slots are 89 min apart, so a strict 90-min gate would deadlock the 2nd..5th upload.
+# The slot table already enforces the cadence; this only guards against bursts.
+QURAN_MIN_GAP_MIN = 85
+QURAN_SLOTS_REL = [QURAN_SLOT_START_REL + i * QURAN_SLOT_SPACING_MIN for i in range(QURAN_DAILY_TARGET)]
 AI_SLOTS_REL = [45 + i * SLOT_SPACING_MIN for i in range(AI_DAILY_TARGET)]           # 13:45 .. 00:15 UTC
 QURAN_SLOTS_UTC_MIN = [(DAY_START_UTC_MIN + r) % 1440 for r in QURAN_SLOTS_REL]
 AI_SLOTS_UTC_MIN = [(DAY_START_UTC_MIN + r) % 1440 for r in AI_SLOTS_REL]
 # Backwards-compatible names
-QURAN_MIN_GAP_MIN = CHANNEL_MIN_GAP_MIN
 AI_MIN_GAP_MIN = CHANNEL_MIN_GAP_MIN
 
 def schedule_day_key(utc_now: datetime.datetime) -> str:
@@ -68,7 +74,7 @@ def _fmt(utc_min: int) -> str:
     b = (utc_min + 180) % 1440
     return f"{b//60:02d}:{b%60:02d} Baghdad"
 
-def _gate(state, utc_now, prefix, other_prefix, slots_rel, slots_utc, target, label):
+def _gate(state, utc_now, prefix, other_prefix, slots_rel, slots_utc, target, label, min_gap):
     day = schedule_day_key(utc_now)
     rel = _rel(utc_now)
     count = state.get(f"{prefix}_daily_count", 0) if state.get(f"{prefix}_daily_date") == day else 0
@@ -81,8 +87,8 @@ def _gate(state, utc_now, prefix, other_prefix, slots_rel, slots_utc, target, la
         return False, count, f"next {label} slot #{count+1} at {_fmt(slots_utc[count])}"
     ts = utc_now.timestamp()
     gap = (ts - state.get(f"last_{prefix}_upload_epoch", 0)) / 60.0
-    if gap < CHANNEL_MIN_GAP_MIN:
-        return False, count, f"min gap {CHANNEL_MIN_GAP_MIN} min not met ({gap:.0f} min)"
+    if gap < min_gap:
+        return False, count, f"min gap {min_gap} min not met ({gap:.0f} min)"
     xgap = (ts - state.get(f"last_{other_prefix}_upload_epoch", 0)) / 60.0
     if xgap < CROSS_CHANNEL_GAP_MIN:
         return False, count, f"cross-channel gap {CROSS_CHANNEL_GAP_MIN} min not met ({xgap:.0f} min since {other_prefix})"
@@ -98,11 +104,13 @@ def _record(state, utc_now, prefix):
 
 def quran_gate(state: dict, utc_now: datetime.datetime):
     """Return (should_upload, slot_index, reason). Pure: easy to test."""
-    return _gate(state, utc_now, "quran", "ai", QURAN_SLOTS_REL, QURAN_SLOTS_UTC_MIN, QURAN_DAILY_TARGET, "Quran")
+    return _gate(state, utc_now, "quran", "ai", QURAN_SLOTS_REL, QURAN_SLOTS_UTC_MIN,
+                 QURAN_DAILY_TARGET, "Quran", QURAN_MIN_GAP_MIN)
 
 def ai_gate(state: dict, utc_now: datetime.datetime):
     """Return (should_upload, slot_index, reason). Pure: easy to test."""
-    return _gate(state, utc_now, "ai", "quran", AI_SLOTS_REL, AI_SLOTS_UTC_MIN, AI_DAILY_TARGET, "AI")
+    return _gate(state, utc_now, "ai", "quran", AI_SLOTS_REL, AI_SLOTS_UTC_MIN,
+                 AI_DAILY_TARGET, "AI", CHANNEL_MIN_GAP_MIN)
 
 def ai_day_key(utc_now: datetime.datetime) -> str:
     return schedule_day_key(utc_now)
