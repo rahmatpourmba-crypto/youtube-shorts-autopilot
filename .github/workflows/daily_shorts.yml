@@ -1,4 +1,4 @@
-name: 24/7 Autonomous Viral Multi-Channel Pulse (Quran & AI Unveiled)
+﻿name: 24/7 Autonomous Viral Multi-Channel Pulse (Quran & AI Unveiled)
 
 on:
   schedule:
@@ -6,8 +6,8 @@ on:
     # Bypasses GitHub top-of-hour congestion, queue drops, and delays
     - cron: '18,48 * * * *'
     # Upload window 16:00-03:30 Baghdad (13:00-00:30 UTC): extra pulses so the union is
-    # every 15 min (:03 :18 :33 :48); dispatch_cycle gates enforce 8+8/day, >=90 min per
-    # channel, >=45 min across channels.
+    # every 15 min (:03 :18 :33 :48); dispatch_cycle gates enforce 5 Quran + 8 AI/day, >=89 min per
+    # Quran slot, >=90 min per AI slot.
     - cron: '3,33 13-23 * * *'
     - cron: '3,33 0 * * *'
   workflow_dispatch:
