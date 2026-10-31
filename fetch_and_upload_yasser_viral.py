@@ -262,7 +262,8 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
                 from quran_branding import brand_reel
                 f, ayah_match = brand_reel(f, cand.get("caption", ""), RECITERS_CONFIG[cand["reciter_key"]]["name_ar"])
             except Exception as e:
-                print(f"  [Branding] FAILED for {cand['code']} ({e}); not uploading it unmodified, trying next")
+                print(f"  [Branding] FAILED for {cand['code']} ({e}); not uploading it unmodified, releasing claim")
+                dedupe_guard.release_claim("quran", dd.get("claim_keys") or [cand["code"]], HISTORY_FILE)
                 continue
             meta = build_reel_metadata(cand)
             print(f"★ SELECTED {cand['code']} | {cand['reciter_key']} | {cand['views']:,} views | {cand['duration']}s")

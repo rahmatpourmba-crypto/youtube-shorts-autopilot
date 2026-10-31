@@ -229,6 +229,42 @@ def claim(channel, keys, history_file=None, run_id=None, max_tries=6):
     return ok
 
 
+def release_claim(channel, keys, history_file=None, max_tries=3):
+    """Give a claim back after a *non-content* failure (download error, branding error, upload
+    error/quota). Without this a single transient failure blacklisted the reel forever, which
+    is how used_viral_reels.json reached 59 codes while only a handful were ever published.
+    Claims are kept when the content itself was rejected (visually identical media).
+    """
+    keys = [k for k in keys if k]
+    if not keys:
+        return False
+    paths = _claim_paths(channel, keys)
+
+    def mutate():
+        removed = []
+        for p in paths:
+            f = _base() / p
+            if f.exists():
+                f.unlink()
+                removed.append(p)
+        if history_file is not None:
+            try:
+                hist = json.loads(Path(history_file).read_text(encoding="utf-8"))
+            except Exception:
+                hist = []
+            if keys[0] in hist:
+                hist = [h for h in hist if h != keys[0]]
+                Path(history_file).write_text(json.dumps(hist, ensure_ascii=False, indent=2),
+                                              encoding="utf-8")
+                removed.append(_rel(history_file))
+        return removed or None
+
+    ok = commit_and_push(mutate, f"chore(release): {channel} {keys[0]}", max_tries)
+    if ok:
+        print(f"  [Dedupe] Released {channel}:{keys[0]} (retryable)")
+    return ok
+
+
 def record_and_push(channel, code, video_id, title, fp=None, sha=None, ph=None):
     def mutate():
         record_upload(channel, code, video_id, title, fp, sha, ph)
@@ -246,8 +282,15 @@ def add_marker(description, code):
     return description if m in (description or "") else f"{description or ''}\n\n{m}"
 
 
-def youtube_has_duplicate(youtube, code, title, max_items=100):
-    """Scan the channel's uploads playlist (1 quota unit/page). Returns video_id or None."""
+def youtube_has_duplicate(youtube, code, title, max_items=100, match_title=False):
+    """Scan the channel's uploads playlist (1 quota unit/page). Returns video_id or None.
+
+    Identity is decided ONLY by the hidden 'ref:ig/<code>' marker (plus the bare code) that
+    every upload carries. Titles are generated from a small template pool, so two *different*
+    reels routinely share a title; matching on the title therefore blocked almost every new
+    upload and silently burned the reel (see run 41155681798: 3 reels rejected as
+    "same title already on channel"). Title matching is opt-in only (match_title=True).
+    """
     ch = youtube.channels().list(part="contentDetails", mine=True).execute()
     uploads = ch["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
     token, seen, t_norm = None, 0, (title or "").strip().casefold()
@@ -259,7 +302,7 @@ def youtube_has_duplicate(youtube, code, title, max_items=100):
             vid = sn.get("resourceId", {}).get("videoId")
             if marker(code) in (sn.get("description") or "") or code in (sn.get("description") or ""):
                 return vid
-            if t_norm and (sn.get("title") or "").strip().casefold() == t_norm:
+            if match_title and t_norm and (sn.get("title") or "").strip().casefold() == t_norm:
                 return vid
             seen += 1
         token = resp.get("nextPageToken")
@@ -268,18 +311,25 @@ def youtube_has_duplicate(youtube, code, title, max_items=100):
     return None
 
 
-def acquire_candidate(channel, cand, history_file, download_fn):
+def acquire_candidate(channel, cand, history_file, download_fn, release_on_failure=True):
     """Claim -> download -> media-dedupe. Returns (path, info) or (None, None).
-    A claimed-but-rejected reel stays claimed (never retried) - safe default."""
+
+    The claim is released when the failure is transient (download / branding / upload), so the
+    reel can be retried later. It is KEPT when the media itself is a duplicate - re-trying that
+    would loop forever.
+    """
     code = cand["code"]
     fp = caption_fingerprint(cand.get("caption", ""), cand.get("duration", 0))
-    if not claim(channel, [code, fp], history_file=history_file):
+    keys = [code, fp]
+    if not claim(channel, keys, history_file=history_file):
         return None, None
     path = download_fn(cand)
     if not path:
+        if release_on_failure:
+            release_claim(channel, keys, history_file=history_file)
         return None, None
     reason, sha, ph = media_is_duplicate(channel, path, code)
     if reason:
         print(f"  [Dedupe] {code} rejected: {reason}")
         return None, None
-    return path, {"fp": fp, "sha256": sha, "phash": ph}
+    return path, {"fp": fp, "sha256": sha, "phash": ph, "claim_keys": keys}
