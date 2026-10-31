@@ -335,14 +335,39 @@ QURAN_TITLE_HOOKS = [
     "استمع بقلبك 🎧",
 ]
 
+_TITLE_SNIPPET_STOPWORDS = {
+    "بصوت", "الشيخ", "القارئ", "للشيخ", "تلاوة", "تلاوه", "مقطع", "من", "في", "على", "عن",
+    "مع", "هذه", "هذا", "التي", "الذي", "رحمه", "الله", "تعالى", "كاملة", "كامل",
+}
+
+
+def _title_snippet(caption: str, reciter_ar: str = "", max_words: int = 4) -> str:
+    """Short human-readable phrase from the reel caption (hashtags/@/links/diacritics stripped).
+
+    Titles used to be `hook | reciter` only, drawn from 6 templates, so distinct reels produced
+    byte-identical titles. This snippet makes titles unique per reel (and better for search).
+    """
+    t = re.sub(r"https?://\S+|@\w+|#\S+", " ", caption or "")
+    t = re.sub(r"[\u064B-\u0652\u0670\u0640]", "", t)
+    t = re.sub(r"[^\w\u0600-\u06FF\s]+", " ", t)
+    rec_words = set(re.sub(r"[^\w\u0600-\u06FF\s]+", " ", reciter_ar or "").split())
+    words = [w for w in t.split()
+             if len(w) > 1 and w not in rec_words and w not in _TITLE_SNIPPET_STOPWORDS]
+    return " ".join(words[:max_words]).strip()
+
+
 def build_viral_quran_metadata(caption: str, reciter_ar: str, reciter_tag: str, reciter_en: str = "", views: int = 0, rng=None):
     """Viral Arabic title/description/tags for a Quran reel. Title <= 100 chars, never cut mid-word."""
     rng = rng or random
     surah = detect_surah(caption or "")
     hook = rng.choice(QURAN_TITLE_HOOKS)
-    body = f"{hook} | {reciter_ar}"
+    snippet = _title_snippet(caption or "", reciter_ar)
     if surah:
         body = f"{hook} | سورة {surah} | {reciter_ar}"
+    elif snippet:
+        body = f"{hook} | {snippet} | {reciter_ar}"
+    else:
+        body = f"{hook} | {reciter_ar}"
     title = build_title_with_suffix(body, f"#{reciter_tag} #قرآن #shorts")
 
     hashtags = [f"#{reciter_tag}"] + QURAN_BASE_HASHTAGS[:5]

@@ -288,6 +288,7 @@ def publish_twin_ai_video(force: bool = False, max_retries: int = 2, publish_ins
             video_file = data["video"]
             thumb_file = extract_thumbnail_from_video(video_file)
             results = {}
+            duplicate_on_youtube = False
 
             # 1. Upload to YouTube Shorts
             try:
@@ -306,6 +307,7 @@ def publish_twin_ai_video(force: bool = False, max_retries: int = 2, publish_ins
                 if yt_res and yt_res.get("duplicate"):
                     print(f"[YouTube-AI] {data['code']} already on channel ({yt_res.get('video_id')}) -> not re-uploaded")
                     yt_res = None
+                    duplicate_on_youtube = True
                 results["youtube"] = yt_res
             except Exception as e:
                 print(f"[YouTube-AI Upload Error] {e}")
@@ -335,6 +337,16 @@ def publish_twin_ai_video(force: bool = False, max_retries: int = 2, publish_ins
                                              dd.get("fp"), dd.get("sha256"), dd.get("phash"))
                 print(f"  ✓ Dual Publishing Succeeded! Code: {data['code']}")
                 return results
+
+            # Nothing was published: release the claim so this reel is not burned forever.
+            # Exception: if YouTube says the reel is already on the channel, the claim is correct.
+            if not duplicate_on_youtube:
+                import dedupe_guard
+                dd = data.get("dedupe") or {}
+                print(f"[AI Pipeline] Nothing published for {data['code']}; releasing claim for a later retry")
+                dedupe_guard.release_claim("ai", dd.get("claim_keys") or [data["code"]], HISTORY_FILE)
+                return None
+            return None
 
         except Exception as e:
             print(f"[Attempt {attempt} Exception] {e}")

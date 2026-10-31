@@ -118,10 +118,13 @@ def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2, slot_
     for attempt in range(1, max_retries + 1):
         try:
             print(f"\n[DISPATCH - QURAN VIRAL REELS] Attempt {attempt}/{max_retries} (slot #{slot_index+1})")
-            from fetch_and_upload_yasser_viral import find_and_download_viral_reel, load_history, save_history
+            from fetch_and_upload_yasser_viral import find_and_download_viral_reel, HISTORY_FILE
             from youtube_uploader import upload_short, CHANNELS
+            import dedupe_guard
 
-            reel_data = find_and_download_viral_reel(slot_index=slot_index)
+            # Rotate to the next reciter on retry: re-scanning the same hashtags 10s later returns
+            # the same (already rejected) candidates, so the old retry loop could never recover.
+            reel_data = find_and_download_viral_reel(slot_index=slot_index + (attempt - 1))
             if not reel_data:
                 print(f"  [Error] No eligible viral reel on attempt {attempt}.")
                 if attempt < max_retries:
@@ -142,13 +145,14 @@ def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 2, slot_
                 print(f"  [Dedupe] {reel_data['code']} already on channel ({upload_res.get('video_id')}); picking another reel")
                 continue
             if upload_res:
-                import dedupe_guard
                 dd = reel_data.get("dedupe") or {}
                 dedupe_guard.record_and_push("quran", reel_data["code"], upload_res.get("video_id"),
                                              reel_data["title"], dd.get("fp"), dd.get("sha256"), dd.get("phash"))
                 print(f"  ✓ Published: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
                 return upload_res
-            print(f"  [Warning] Upload attempt {attempt} did not return video ID.")
+            print(f"  [Warning] Upload attempt {attempt} did not return video ID; releasing claim for a later retry.")
+            dd = reel_data.get("dedupe") or {}
+            dedupe_guard.release_claim("quran", dd.get("claim_keys") or [reel_data["code"]], HISTORY_FILE)
             if attempt < max_retries:
                 time.sleep(15)
         except Exception as e:
@@ -184,12 +188,15 @@ def run_animals_channel(run_dir: Path, run_count: int):
     return None
 
 def run_pass(state, target_channel, force_upload, run_dir, run_count, daily_uploads, today_date, utc_now):
+    """Returns (uploaded, attempted): attempted counts channels whose gate said GO."""
     uploaded = 0
+    attempted = 0
     # 1. CHANNEL 1: QURAN — 8/day from 16:00 Baghdad, >=90 min apart, >=45 min from AI
     if target_channel in ["quran", "auto", "all"]:
         ok, slot_idx, reason = quran_gate(state, utc_now)
         if ok or force_upload:
             print(f"\n[Pacing Gate - Quran] GO: {reason}{' (forced)' if force_upload and not ok else ''}")
+            attempted += 1
             upload_res = run_quran_channel(run_dir, run_count, slot_index=slot_idx)
             if upload_res:
                 record_quran_upload(state, datetime.datetime.now(datetime.timezone.utc)); uploaded += 1
@@ -202,6 +209,7 @@ def run_pass(state, target_channel, force_upload, run_dir, run_count, daily_uplo
         ok_ai, ai_slot, ai_reason = ai_gate(state, utc_now)
         if ok_ai or force_upload:
             print(f"\n[Pacing Gate - AI Channel 2] GO: {ai_reason}{' (forced)' if force_upload and not ok_ai else ''}")
+            attempted += 1
             upload_ai_res = run_ai_channel(run_dir, run_count, force=force_upload)
             if upload_ai_res:
                 record_ai_upload(state, datetime.datetime.now(datetime.timezone.utc)); uploaded += 1
@@ -209,7 +217,7 @@ def run_pass(state, target_channel, force_upload, run_dir, run_count, daily_uplo
         else:
             print(f"[Pacing Gate - AI Channel 2] Standby: {ai_reason}")
 
-    return uploaded
+    return uploaded, attempted
 
 
 def next_open_in_minutes(state, target_channel, utc_now, horizon_min):
@@ -256,7 +264,8 @@ def main():
     force_upload = any(arg == "--force" for arg in sys.argv)
     current_epoch = time.time()
 
-    run_pass(state, target_channel, force_upload, run_dir, run_count, daily_uploads, today_date, utc_now)
+    published, attempted = run_pass(state, target_channel, force_upload, run_dir, run_count,
+                                   daily_uploads, today_date, utc_now)
 
     # CATCH-UP: GitHub cron is best-effort (runs are often dropped). If more slots are due
     # (only blocked by the min gap), keep this single run alive and publish them, spaced.
@@ -275,7 +284,10 @@ def main():
         print(f"\n[Catch-up] next due slot opens in {wait} min; waiting inside this run...")
         time.sleep(wait * 60 + 5)
         utc_now = datetime.datetime.now(datetime.timezone.utc)
-        if not run_pass(state, target_channel, False, run_dir, run_count, daily_uploads, today_date, utc_now):
+        pass_up, pass_att = run_pass(state, target_channel, False, run_dir, run_count, daily_uploads, today_date, utc_now)
+        published += pass_up
+        attempted += pass_att
+        if not pass_up:
             print("[Catch-up] pass published nothing; stopping catch-up to avoid a retry loop")
             break
 
@@ -286,8 +298,15 @@ def main():
     save_state(state)
 
     print("\n" + "=" * 65)
-    print(f"✓ Cycle #{run_count} Completed cleanly.")
+    print(f"✓ Cycle #{run_count} Completed cleanly. (published {published}/{attempted} attempts)")
     print("=" * 65)
+
+    # A gate said GO but nothing was published -> the run must be RED, otherwise a starved
+    # pipeline looks healthy for days (that is exactly how 59 Quran reels were burned silently).
+    if attempted and not published:
+        print(f"::error::Dispatcher published 0/{attempted} attempted slots - content sourcing or "
+              f"upload failed, see the log above.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
