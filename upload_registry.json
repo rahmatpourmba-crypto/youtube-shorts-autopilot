@@ -372,6 +372,24 @@
         "f3f3ffe707030300"
       ],
       "ts": 1793491317
+    },
+    {
+      "code": "DO-E9-cERpY",
+      "video_id": "I6gMY_UAC60",
+      "title": "How Is This Even Possible? 🤖 | Giant Shield Machine Builds Tunnels! 🛡️ #AI #tech #shorts",
+      "fp": "fp_19aa74137f65b258",
+      "sha256": "fae8ff71c841ece62e2966b7ae42947edd6ddae6face11a3c0909bb08795276b",
+      "phash": [
+        "0000ffffffff0000",
+        "0000ffffffff0000",
+        "00007fffffff0000",
+        "0000ffffffff0000",
+        "0000fbffffff0000",
+        "0000fdffffff0000",
+        "0000b8ffffff0000",
+        "0000ffff3fff0000"
+      ],
+      "ts": 1793496793
     }
   ]
 }
