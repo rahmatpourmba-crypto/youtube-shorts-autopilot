@@ -588,6 +588,24 @@
         "0f0f01809c7cfcfc"
       ],
       "ts": 1793589671
+    },
+    {
+      "code": "DMPFyL1peGE",
+      "video_id": "wduv0jtSZ6I",
+      "title": "How Is This Even Possible? 🤖 | Ever wondered how ice cream sticks are placed so #AI #tech #shorts",
+      "fp": "fp_0ca9fa37ffc7e8f5",
+      "sha256": "70849d2e518eb0e0eecdd22c17bbc55bb5542d3ff9c04601361ccfcefc2e5b34",
+      "phash": [
+        "00007efffe700000",
+        "00007efffe600000",
+        "00003e7efe780000",
+        "00007e7efe7c0000",
+        "00007e7efe780000",
+        "00007efefe7a0000",
+        "00007cfefe7c0000",
+        "00007e7efe7c0000"
+      ],
+      "ts": 1793595206
     }
   ]
 }
