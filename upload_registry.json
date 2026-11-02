@@ -606,6 +606,24 @@
         "00007e7efe7c0000"
       ],
       "ts": 1793595206
+    },
+    {
+      "code": "DaZvP7TRzon",
+      "video_id": "lQl5wxvgF7U",
+      "title": "You Won't Believe This Machine 🤯 | POV: The most satisfying road cleanup you’ll #AI #tech #shorts",
+      "fp": "fp_634ae646ff153b4e",
+      "sha256": "88104119d235128fd122e98837363ba3dcc80562226bcaddd270ac19f30bd29b",
+      "phash": [
+        "007f111c7effcb00",
+        "007e101e7effda00",
+        "0078203c7effdb00",
+        "00e0cc78fcffdf00",
+        "40e143fef8fcde00",
+        "4071637bf8fcde00",
+        "007f2373f8fcda00",
+        "207b20faf8f8de00"
+      ],
+      "ts": 1793600796
     }
   ]
 }
