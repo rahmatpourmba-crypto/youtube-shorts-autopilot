@@ -8,8 +8,8 @@
     "es",
     "de"
   ],
-  "last_run_timestamp": "2026-11-03_051545",
-  "run_count": 121,
+  "last_run_timestamp": "2026-11-03_080529",
+  "run_count": 122,
   "slot_index": 5,
   "daily_uploads": {
     "quran_short": "2026-11-03",
@@ -17,10 +17,10 @@
     "us_eu": "2026-10-18",
     "ai_short": "2026-11-02"
   },
-  "last_quran_upload_epoch": 1793674026.526084,
+  "last_quran_upload_epoch": 1793693189.074086,
   "last_ai_upload_epoch": 1793600796.979566,
   "quran_daily_date": "2026-11-02",
-  "quran_daily_count": 1,
+  "quran_daily_count": 2,
   "ai_daily_date": "2026-11-01",
   "ai_daily_count": 7
 }
