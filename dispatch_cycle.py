@@ -37,21 +37,21 @@ def save_state(state):
 #   All other channels (AI, Animals, CryptoLab, Cars) are permanently disabled.
 #   Focus 100% on Quran channel for maximum viral growth and million-view potential.
 #
-# SCHEDULE:
-#   Quran: 6 high-quality uploads/day
-#   Peak window: 17:00 -> 23:30 Tehran time (prime evening for Arabic/Islamic audience)
-#   Spacing: ~75-80 min between uploads to stay under YouTube daily limits while maximizing reach.
-#   Day starts 13:00 UTC (16:30 Tehran).
+# SCHEDULE (owner policy 2026-11-03):
+#   Quran: 5 uploads/day
+#   Window: 16:00 -> 23:00 Tehran time (12:30 -> 19:30 UTC)
+#   Spacing: >= 90 min between two uploads.
+#   Slots (Tehran): 16:00, 17:30, 19:00, 20:30, 22:00
 # ---------------------------------------------------------------------------
-DAY_START_UTC_MIN = 13 * 60                 # 13:00 UTC = 16:30 Tehran
-LATEST_UPLOAD_REL_MIN = 19 * 60             # allow until ~08:00 UTC next day if needed
+DAY_START_UTC_MIN = 12 * 60 + 30            # 12:30 UTC = 16:00 Tehran
 
-QURAN_DAILY_TARGET = 6
-QURAN_SLOT_START_REL = 30                   # 13:30 UTC = 17:00 Tehran
-QURAN_SLOT_SPACING_MIN = 75
-QURAN_MIN_GAP_MIN = 70
+QURAN_DAILY_TARGET = 5
+QURAN_SLOT_START_REL = 0                    # 12:30 UTC = 16:00 Tehran
+QURAN_SLOT_SPACING_MIN = 90
+QURAN_MIN_GAP_MIN = 90
 QURAN_SLOTS_REL = [QURAN_SLOT_START_REL + i * QURAN_SLOT_SPACING_MIN for i in range(QURAN_DAILY_TARGET)]
 QURAN_SLOTS_UTC_MIN = [(DAY_START_UTC_MIN + r) % 1440 for r in QURAN_SLOTS_REL]
+LATEST_UPLOAD_REL_MIN = 7 * 60              # 19:30 UTC = 23:00 Tehran, end of upload window
 
 def schedule_day_key(utc_now: datetime.datetime) -> str:
     return (utc_now - datetime.timedelta(minutes=DAY_START_UTC_MIN)).strftime("%Y-%m-%d")
@@ -98,8 +98,9 @@ def record_quran_upload(state: dict, utc_now: datetime.datetime):
 def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 3, slot_index: int = 0):
     """
     Viral Instagram Quran reels strategy optimized for million-view potential:
-    - Only reels < 45s with >= 1M views (fallback 500k)
-    - Priority famous reciters (Yasser Al-Dosari, Idris Al-Haidan, etc.)
+    - Only reels <= 50s with >= 1M views (fallback 500k)
+    - Priority reciter: Yasser Al-Dosari (others only as fallback)
+    - Duplicates allowed (best-performing reels may be re-uploaded)
     - Strong branding + ayah subtitles when possible
     - High-retention hooks and bilingual metadata
     """

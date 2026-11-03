@@ -8,7 +8,7 @@ Pipeline (see brand_reel):
      + translation (fa.ansarian / en.sahih). Otherwise subtitles are skipped and logged - we never
      show a possibly-wrong verse. Text is never generated.
   4. Always add channel branding (logo watermark + reciter lower-third) and re-encode to
-     1080x1920 H.264/AAC, < 45s, audio preserved.
+     1080x1920 H.264/AAC, <= 50s, audio preserved.
 
 Dedupe hashes are computed on the *source* download by dedupe_guard before this runs.
 """
@@ -30,7 +30,7 @@ FONT_PATH = BASE_DIR / "Vazirmatn-Bold.ttf"
 FONT_FAMILY = "Vazirmatn"
 CHANNEL_NAME_AR = "نور القرآن"
 CHANNEL_NAME_EN = "The Holy Light"
-MAX_OUT_SEC = 44.5
+MAX_OUT_SEC = 50.0
 W, H = 1080, 1920
 
 WHISPER_MODEL = os.environ.get("QURAN_WHISPER_MODEL", "small")

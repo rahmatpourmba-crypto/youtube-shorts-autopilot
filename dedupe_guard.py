@@ -1,7 +1,11 @@
 """
-Duplicate-upload guard (owner requirement: NEVER upload the same video twice).
+Duplicate-upload guard.
 
-Layers (any one of them blocks a duplicate):
+Owner policy 2026-11-03: duplicates are ALLOWED (re-uploading a reel is acceptable), so all
+layers below are bypassed while `ALLOW_DUPLICATES` is True. Set it to False to restore the
+original strict single-upload behaviour.
+
+Layers (any one of them blocks a duplicate when ALLOW_DUPLICATES is False):
   1. sync_latest()      - pull latest state from origin/main at run start and before every claim.
   2. claim()            - git-based distributed lock: a claim file per reel code and per
                           caption+duration fingerprint is committed and pushed to main BEFORE
@@ -27,6 +31,10 @@ CLAIMS_DIR = "claims"
 REGISTRY_FILE = "upload_registry.json"
 MARKER_PREFIX = "ref:ig/"
 PHASH_MAX_HAMMING = 6          # out of 64 bits per frame (averaged)
+
+# Owner policy 2026-11-03: re-uploading the same reel is acceptable. While True, claim(),
+# media_is_duplicate() and youtube_has_duplicate() all short-circuit to "not a duplicate".
+ALLOW_DUPLICATES = True
 
 
 def _base():
@@ -121,6 +129,8 @@ def save_registry(reg):
 
 def media_is_duplicate(channel, path, code=None):
     """Return reason string if the downloaded file matches an already-uploaded video."""
+    if ALLOW_DUPLICATES:
+        return None, None, None
     reg = load_registry().get(channel, [])
     sha = file_sha256(path)
     ph = perceptual_hash(path)
@@ -192,6 +202,8 @@ def _rel(path):
 def claim(channel, keys, history_file=None, run_id=None, max_tries=6):
     """Atomically claim keys (reel code first, then fingerprints). True => this run owns them.
     Fails closed: if the claim cannot be pushed, the caller must NOT upload."""
+    if ALLOW_DUPLICATES:
+        return True
     keys = [k for k in keys if k]
     paths = _claim_paths(channel, keys)
     run_id = run_id or os.environ.get("GITHUB_RUN_ID", "local")
@@ -291,6 +303,8 @@ def youtube_has_duplicate(youtube, code, title, max_items=100, match_title=False
     upload and silently burned the reel (see run 41155681798: 3 reels rejected as
     "same title already on channel"). Title matching is opt-in only (match_title=True).
     """
+    if ALLOW_DUPLICATES:
+        return None
     ch = youtube.channels().list(part="contentDetails", mine=True).execute()
     uploads = ch["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
     token, seen, t_norm = None, 0, (title or "").strip().casefold()

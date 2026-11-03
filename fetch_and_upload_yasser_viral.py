@@ -21,11 +21,14 @@ OUTPUT_DIR = BASE_DIR / "output" / "viral_quran_reels"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Owner policy (Quran channel):
-#   viral Instagram Quran reels, duration < 45s, views >= 1,000,000
+#   viral Instagram Quran reels, duration <= 50s, views >= 1,000,000
 #   (fallback: best candidates >= 500k only if nothing qualifies; logged)
-MAX_DURATION_SEC = 45.0
+#   Duplicates are allowed (see dedupe_guard.ALLOW_DUPLICATES).
+MAX_DURATION_SEC = 50.0
 MIN_VIEWS = 1_000_000
 FALLBACK_MIN_VIEWS = 500_000
+
+from dedupe_guard import ALLOW_DUPLICATES  # noqa: E402
 
 # =====================================================================
 # PRIORITY RECITERS (world-famous; Arabic + Latin hashtags)
@@ -64,8 +67,10 @@ RECITERS_CONFIG = {
         "keywords": ["صقير", "soqier", "soqer", "suqair", "saqer"],
     },
 }
-# Daily rotation of the 8 slots: Yasser gets 3, others get ~2 each
-SLOT_RECITER_ROTATION = ["yasser", "haidan", "soqier", "tareq", "yasser", "haidan", "yasser", "soqier"]
+# Owner policy: Yasser Al-Dosari is the primary reciter for every slot. The supporting reciters
+# (haidan / tareq / soqier) are used only as a fallback by rank_candidates() when no Yasser reel
+# qualifies for the target view threshold.
+SLOT_RECITER_ROTATION = ["yasser"]
 
 # General trending Arabic Quran tags (reels here must still name a priority reciter, or
 # they are accepted as "general" only if no priority-reciter reel qualifies)
@@ -143,7 +148,7 @@ def media_views(m) -> int:
 
 def evaluate_media(m, used_codes, max_duration=MAX_DURATION_SEC, log=print):
     """Return candidate dict or None. Pure function (testable with mocks)."""
-    if getattr(m, "media_type", None) != 2 or m.code in used_codes:
+    if getattr(m, "media_type", None) != 2 or (not ALLOW_DUPLICATES and m.code in used_codes):
         return None
     caption = getattr(m, "caption_text", "") or ""
     blocked = caption_is_blocked(caption)
@@ -158,7 +163,7 @@ def evaluate_media(m, used_codes, max_duration=MAX_DURATION_SEC, log=print):
     except ImportError:
         pass
     dur = float(getattr(m, "video_duration", 0) or 0)
-    if not dur or dur >= max_duration:
+    if not dur or dur > max_duration:
         return None
     views = media_views(m)
     return {
@@ -250,7 +255,7 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
     cands = search_candidates(client, target_reciter_key, used_codes, max_duration)
     ranked = rank_candidates(cands, target_reciter_key, min_views, min(FALLBACK_MIN_VIEWS, min_views))
     if not ranked:
-        print("[Error] No reel matched policy (<45s, >=500k views, priority reciter).")
+        print("[Error] No reel matched policy (<=50s, >=500k views, priority reciter).")
         return None
     import dedupe_guard
     for cand in ranked[:6]:
