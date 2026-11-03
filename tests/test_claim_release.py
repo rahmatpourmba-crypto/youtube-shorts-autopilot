@@ -8,6 +8,7 @@
 
 Run:  python3 tests/test_claim_release.py
 """
+import contextlib
 import json
 import os
 import shutil
@@ -19,6 +20,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import dedupe_guard as dg  # noqa: E402
 
 TITLE = "استمع بقلبك 🎧 | الشيخ ياسر الدوسري #ياسر_الدوسري #قرآن #shorts"
+
+
+@contextlib.contextmanager
+def strict_dedupe():
+    """Production runs with ALLOW_DUPLICATES = True (owner policy 2026-11-03), which short-circuits
+    the claim/media/YouTube layers below. These tests cover that strict logic, so they turn the
+    switch off for their duration."""
+    saved = dg.ALLOW_DUPLICATES
+    dg.ALLOW_DUPLICATES = False
+    try:
+        yield
+    finally:
+        dg.ALLOW_DUPLICATES = saved
 
 
 class FakeYouTube:
@@ -47,12 +61,13 @@ class FakeYouTube:
 
 def test_identical_title_is_not_a_duplicate():
     yt = FakeYouTube([{"id": "vid1", "title": TITLE, "description": "desc\n\nref:ig/AAA"}])
-    # Different reel, same templated title -> must NOT be blocked.
-    assert dg.youtube_has_duplicate(yt, "BBB", TITLE) is None
-    # Same reel -> still blocked by the hidden marker, even with an unrelated title.
-    assert dg.youtube_has_duplicate(yt, "AAA", "unrelated title") == "vid1"
-    # The old behaviour stays available as an explicit opt-in.
-    assert dg.youtube_has_duplicate(yt, "BBB", TITLE, match_title=True) == "vid1"
+    with strict_dedupe():
+        # Different reel, same templated title -> must NOT be blocked.
+        assert dg.youtube_has_duplicate(yt, "BBB", TITLE) is None
+        # Same reel -> still blocked by the hidden marker, even with an unrelated title.
+        assert dg.youtube_has_duplicate(yt, "AAA", "unrelated title") == "vid1"
+        # The old behaviour stays available as an explicit opt-in.
+        assert dg.youtube_has_duplicate(yt, "BBB", TITLE, match_title=True) == "vid1"
 
 
 class _Sandbox:
@@ -78,7 +93,7 @@ class _Sandbox:
 
 
 def test_claim_then_release_allows_retry():
-    with _Sandbox() as box:
+    with _Sandbox() as box, strict_dedupe():
         keys = ["CODE1", "fp_deadbeef"]
         assert dg.claim("quran", keys, history_file=box.history)
         assert json.loads(box.history.read_text(encoding="utf-8")) == ["CODE1"]
@@ -101,7 +116,7 @@ def test_download_failure_releases_claim():
 
 
 def test_successful_acquire_returns_claim_keys():
-    with _Sandbox() as box:
+    with _Sandbox() as box, strict_dedupe():
         media = box.tmp / "v.mp4"
         media.write_bytes(b"VIDEO" * 2000)
         cand = {"code": "CODE3", "caption": "تلاوة", "duration": 12.0}
