@@ -136,6 +136,21 @@ def save_history(history):
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
+def published_reel_codes():
+    """Reel codes already published to the Quran channel.
+
+    used_viral_reels.json is only written by dedupe_guard.claim(), which is bypassed while
+    duplicates are allowed. upload_registry.json is appended to after every successful upload,
+    so the union of both is the authoritative "already seen" set.
+    """
+    codes = set(load_history())
+    try:
+        import dedupe_guard
+        codes |= {e.get("code") for e in dedupe_guard.load_registry().get("quran", []) if e.get("code")}
+    except Exception:
+        pass
+    return codes
+
 def identify_reciter(caption: str):
     low = (caption or "").lower()
     for key, r in RECITERS_CONFIG.items():
@@ -257,6 +272,16 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
     if not ranked:
         print("[Error] No reel matched policy (<=50s, >=500k views, priority reciter).")
         return None
+    # Duplicates are allowed, but never let the same top reel win every slot: prefer reels that
+    # have not been published yet and only fall back to repeats when nothing fresh qualifies.
+    if ALLOW_DUPLICATES:
+        seen = published_reel_codes()
+        fresh = [c for c in ranked if c["code"] not in seen]
+        repeats = [c for c in ranked if c["code"] in seen]
+        if repeats:
+            print(f"  [Duplicates] {len(fresh)} fresh / {len(repeats)} already-published candidate(s); "
+                  f"preferring fresh")
+        ranked = fresh + repeats
     import dedupe_guard
     for cand in ranked[:6]:
         f, dd = dedupe_guard.acquire_candidate("quran", cand, HISTORY_FILE, download_reel)
