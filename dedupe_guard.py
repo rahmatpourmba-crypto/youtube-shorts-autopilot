@@ -34,7 +34,9 @@ PHASH_MAX_HAMMING = 6          # out of 64 bits per frame (averaged)
 
 # Owner policy 2026-11-03: re-uploading the same reel is acceptable. While True, claim(),
 # media_is_duplicate() and youtube_has_duplicate() all short-circuit to "not a duplicate".
-ALLOW_DUPLICATES = True
+ALLOW_DUPLICATES = false
+
+
 
 
 def _base():
