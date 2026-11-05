@@ -39,6 +39,9 @@ def is_content_halal_and_clean(title: str, description: str = "", tags: list = N
     Returns True if 100% clean, False if it violates moral or Islamic guidelines.
     """
     text_to_scan = f"{title} {description} {' '.join(tags or [])}".lower()
+    # Exempt valid negative music disclaimers like 'no music', 'without music', 'بدون موسيقى'
+    for safe_phrase in ["no music", "without music", "non music", "بدون موسيقى", "بدون موسیقی", "بدون آهنگ", "بدون موزیک"]:
+        text_to_scan = text_to_scan.replace(safe_phrase, " ")
     
     for word in FORBIDDEN_KEYWORDS:
         # Match word or subphrase

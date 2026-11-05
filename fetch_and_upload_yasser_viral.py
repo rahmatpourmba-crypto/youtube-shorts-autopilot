@@ -42,6 +42,22 @@ RECITERS_CONFIG = {
                  "yasseraldossari", "yasseraldosari", "yasser_aldosari"],
         "keywords": ["دوسري", "yasser", "dossar", "dosari", "dossary"],
     },
+    "islam": {
+        "name_ar": "القارئ إسلام صبحي",
+        "name_en": "Islam Sobhi",
+        "hashtag": "اسلام_صبحي",
+        "tags": ["اسلام_صبحي", "إسلام_صبحي", "تلاوات_اسلام_صبحي",
+                 "islamsobhi", "islam_sobhi"],
+        "keywords": ["صبحي", "islam", "sobhi", "subhi"],
+    },
+    "massad": {
+        "name_ar": "القارئ عبدالرحمن مسعد",
+        "name_en": "Abdul Rahman Mossad",
+        "hashtag": "عبدالرحمن_مسعد",
+        "tags": ["عبدالرحمن_مسعد", "عبد_الرحمن_مسعد", "تلاوات_عبدالرحمن_مسعد",
+                 "abdulrahmanmossad", "abdelrahmanmossad"],
+        "keywords": ["مسعد", "mossad", "massad"],
+    },
     "haidan": {
         "name_ar": "الشيخ إدريس الحيدان",
         "name_en": "Idris Al-Haidan",
@@ -49,6 +65,22 @@ RECITERS_CONFIG = {
         "tags": ["الحيدان", "ادريس_الحيدان", "إدريس_الحيدان", "احمد_الحيدان",
                  "alhaidan", "idrisalhaidan", "ahmedalhaidan"],
         "keywords": ["حيدان", "haidan"],
+    },
+    "raad": {
+        "name_ar": "القارئ رعد الكردي",
+        "name_en": "Raad Al-Kurdi",
+        "hashtag": "رعد_الكردي",
+        "tags": ["رعد_الكردي", "القارئ_رعد_الكردي", "تلاوات_رعد_الكردي",
+                 "raadalkurdi", "raad_alkurdi"],
+        "keywords": ["الكردي", "رعد", "raad", "kurdi"],
+    },
+    "hazza": {
+        "name_ar": "القارئ هزاع البلوشي",
+        "name_en": "Hazza Al-Bloushi",
+        "hashtag": "هزاع_البلوشي",
+        "tags": ["هزاع_البلوشي", "القارئ_هزاع_البلوشي", "تلاوات_هزاع_البلوشي",
+                 "hazzaalbloushi", "hazza_albloushi"],
+        "keywords": ["بلوشي", "هزاع", "hazza", "bloushi"],
     },
     "tareq": {
         "name_ar": "القارئ طارق عبدالغني دغريري",
@@ -66,11 +98,17 @@ RECITERS_CONFIG = {
                  "youssefalsoqier", "yousefalsoqier", "alsoqier"],
         "keywords": ["صقير", "soqier", "soqer", "suqair", "saqer"],
     },
+    "salimi": {
+        "name_ar": "الشيخ منصور السالمي",
+        "name_en": "Mansour Al-Salimi",
+        "hashtag": "منصور_السالمي",
+        "tags": ["منصور_السالمي", "الشيخ_منصور_السالمي", "تلاوات_منصور_السالمي",
+                 "mansouralsalimi", "mansoor_alsalimi"],
+        "keywords": ["سالمي", "salimi", "mansoor"],
+    },
 }
-# Owner policy: Yasser Al-Dosari is the primary reciter for every slot. The supporting reciters
-# (haidan / tareq / soqier) are used only as a fallback by rank_candidates() when no Yasser reel
-# qualifies for the target view threshold.
-SLOT_RECITER_ROTATION = ["yasser"]
+# Rotates across elite reciters for rich variety and audience retention
+SLOT_RECITER_ROTATION = ["yasser", "islam", "massad", "haidan", "raad", "hazza", "tareq", "soqier", "salimi"]
 
 # General trending Arabic Quran tags (reels here must still name a priority reciter, or
 # they are accepted as "general" only if no priority-reciter reel qualifies)
@@ -109,7 +147,8 @@ def caption_is_blocked(caption: str):
         if re.search(r"\s(?:و|ب|ل|ف)?(?:ال)?" + re.escape(k.strip()) + r"\s", joined):
             return kw
     letters = [c for c in low if "\u0600" <= c <= "\u06FF"]
-    if letters and sum(c in PERSIAN_ONLY_CHARS for c in letters) / len(letters) > 0.02:
+    persian_count = sum(c in PERSIAN_ONLY_CHARS for c in letters)
+    if letters and persian_count >= 2 and (persian_count / len(letters)) > 0.04:
         return "persian-text"
     return None
 
@@ -274,8 +313,10 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
         return None
     # Duplicates are allowed, but never let the same top reel win every slot: prefer reels that
     # have not been published yet and only fall back to repeats when nothing fresh qualifies.
-    if ALLOW_DUPLICATES:
-        seen = published_reel_codes()
+    seen = published_reel_codes() | set(used_codes)
+    if not ALLOW_DUPLICATES:
+        ranked = [c for c in ranked if c["code"] not in seen]
+    else:
         fresh = [c for c in ranked if c["code"] not in seen]
         repeats = [c for c in ranked if c["code"] in seen]
         if repeats:
