@@ -310,6 +310,24 @@
       "sha256": null,
       "phash": null,
       "ts": 1793818524
+    },
+    {
+      "code": "DZeyE0FT7ao",
+      "video_id": "QdB1YwiQNvk",
+      "title": "تلاوة أبكت الملايين 💔 | Yassir Al Dosari 1980 | الشيخ ياسر الدوسري #ياسر_الدوسري #قرآن #shorts",
+      "fp": "fp_99284fd6fa375959",
+      "sha256": "84d77e567c2a0211e1a021f42b0633b97ca724fa7a4a40f4c77b01ca8bda55f6",
+      "phash": [
+        "ffffff4000000000",
+        "ffff000000200000",
+        "ffff100018304000",
+        "ffbc00202c204080",
+        "fefdcdbb10000000",
+        "ffff388050000000",
+        "ffffffffffffffff",
+        "3f3e1c1c3c7cffff"
+      ],
+      "ts": 1793894064
     }
   ],
   "ai": [
