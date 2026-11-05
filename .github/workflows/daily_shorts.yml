@@ -5,11 +5,10 @@ on:
     # Resilient Pulse every 30 mins at odd minutes (:18 and :48)
     # Bypasses GitHub top-of-hour congestion, queue drops, and delays
     - cron: '18,48 * * * *'
-    # Upload window 16:00-23:00 Tehran (12:30-19:30 UTC): extra pulses so the union is
     # every 15 min (:03 :18 :33 :48); dispatch_cycle gates enforce 5 Quran slots/day,
     # >=90 min apart (16:00, 17:30, 19:00, 20:30, 22:00 Tehran).
-    - cron: '3,33 13-23 * * *'
-    - cron: '3,33 0 * * *'
+    # Golden Routine 12:00-23:40 Tehran: pulses every 15 min
+    - cron: '3,33 8-20 * * *'
   workflow_dispatch:
     inputs:
       target_channel:

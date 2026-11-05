@@ -43,15 +43,17 @@ def save_state(state):
 #   Spacing: >= 90 min between two uploads.
 #   Slots (Tehran): 16:00, 17:30, 19:00, 20:30, 22:00
 # ---------------------------------------------------------------------------
-DAY_START_UTC_MIN = 12 * 60 + 30            # 12:30 UTC = 16:00 Tehran
+# SCHEDULE (Golden Routine):
+#   5 uploads/day across peak audience windows:
+#   12:00, 15:00, 18:00, 20:30, 22:30 Tehran time (08:30, 11:30, 14:30, 17:00, 19:00 UTC)
+#   Window: 12:00 -> 23:40 Tehran (08:30 -> 20:10 UTC), min gap 75 min
+DAY_START_UTC_MIN = 8 * 60 + 30             # 08:30 UTC = 12:00 Tehran
 
 QURAN_DAILY_TARGET = 5
-QURAN_SLOT_START_REL = 0                    # 12:30 UTC = 16:00 Tehran
-QURAN_SLOT_SPACING_MIN = 90
-QURAN_MIN_GAP_MIN = 90
-QURAN_SLOTS_REL = [QURAN_SLOT_START_REL + i * QURAN_SLOT_SPACING_MIN for i in range(QURAN_DAILY_TARGET)]
+QURAN_SLOTS_REL = [0, 180, 360, 510, 630]   # 12:00, 15:00, 18:00, 20:30, 22:30 Tehran
 QURAN_SLOTS_UTC_MIN = [(DAY_START_UTC_MIN + r) % 1440 for r in QURAN_SLOTS_REL]
-LATEST_UPLOAD_REL_MIN = 7 * 60              # 19:30 UTC = 23:00 Tehran, end of upload window
+QURAN_MIN_GAP_MIN = 75
+LATEST_UPLOAD_REL_MIN = 700                 # until ~23:40 Tehran (20:10 UTC)
 
 def schedule_day_key(utc_now: datetime.datetime) -> str:
     return (utc_now - datetime.timedelta(minutes=DAY_START_UTC_MIN)).strftime("%Y-%m-%d")
