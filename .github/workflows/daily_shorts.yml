@@ -2,10 +2,8 @@
 
 on:
   schedule:
-    # High-density pulse every 10 minutes during active daytime window (11:30-00:30 Tehran)
-    - cron: '*/10 8-20 * * *'
-    # Nighttime heartbeat every 30 mins
-    - cron: '15,45 21-23,0-7 * * *'
+    # Universal 15-minute pulse 24/7 (clean POSIX cron, zero syntax rejections)
+    - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
       target_channel:

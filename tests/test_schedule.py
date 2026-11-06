@@ -62,11 +62,10 @@ def test_day_key_boundary():
 
 
 def _crons(day0, days):
-    """Trigger minutes from daily_shorts.yml (every 15 min inside the active window)."""
+    """Trigger minutes from daily_shorts.yml (every 15 min 24/7)."""
     out, t = [], day0
     while t < day0 + dt.timedelta(days=days):
-        m, h = t.minute, t.hour
-        if m in (18, 48) or (m in (3, 33) and (8 <= h <= 20)):
+        if t.minute % 15 == 0:
             out.append(t)
         t += dt.timedelta(minutes=1)
     return out
