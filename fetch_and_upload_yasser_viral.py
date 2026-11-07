@@ -305,10 +305,18 @@ CURATED_VIRAL_CODES = {
 
 def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC, amount=20):
     rec = RECITERS_CONFIG.get(target_key, RECITERS_CONFIG["yasser"])
-    # Only query the primary 2 tags of the specific target reciter to avoid triggering rate-limits
     tags = [rec["hashtag"]]
-    if rec["tags"]:
-        tags.append(rec["tags"][0])
+
+    # Dynamically inject active daily/hourly trend wave tag (e.g. #سورة_الملك at night, #سورة_الكهف on Friday)
+    try:
+        from daily_trend_radar import get_current_trend_profile
+        profile = get_current_trend_profile()
+        trend_tag = f"سورة_{profile['target_surah']}".replace(" ", "_")
+        tags.append(trend_tag)
+        print(f"  [Chrono-Radar Active] Wave: {profile['name_fa']} | Target Tag: #{trend_tag}")
+    except Exception as e:
+        if rec["tags"]:
+            tags.append(rec["tags"][0])
 
     cands = []
     rate_limited = False
@@ -327,14 +335,13 @@ def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC,
         except Exception as e:
             print(f"  [Instagram Query Notice] #{tag}: {e}")
             rate_limited = True
-            break  # Immediately stop to protect session
+            break
 
         time.sleep(2.5)
-        # Stop as soon as we have enough candidates for this slot
         if sum(1 for c in cands if c["reciter_key"] == target_key and c["views"] >= MIN_VIEWS) >= 3:
             break
 
-    # If rate-limited or no candidates found, engage emergency curated fallback via media_info_by_code
+    # Emergency Fallback Pool
     if not cands or rate_limited:
         print(f"  [Emergency Fallback] Activating curated viral media pool for {rec['name_ar']}...")
         pool = CURATED_VIRAL_CODES.get(target_key, []) + CURATED_VIRAL_CODES.get("yasser", [])
@@ -355,12 +362,24 @@ def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC,
     return cands
 
 def build_reel_metadata(chosen, detected_surah: str = None):
-    from metadata_optimizer import build_viral_quran_metadata
-    rec = RECITERS_CONFIG[chosen["reciter_key"]]
-    return build_viral_quran_metadata(
-        chosen["caption"], rec["name_ar"], rec["hashtag"], rec["name_en"], chosen["views"],
-        detected_surah=detected_surah
-    )
+    try:
+        from daily_trend_radar import enrich_metadata_for_current_trend
+        rec = RECITERS_CONFIG[chosen["reciter_key"]]
+        return enrich_metadata_for_current_trend(
+            base_title="",
+            caption=chosen.get("caption", ""),
+            reciter_ar=rec["name_ar"],
+            reciter_tag=rec["hashtag"],
+            reciter_en=rec["name_en"],
+            detected_surah=detected_surah
+        )
+    except Exception as e:
+        from metadata_optimizer import build_viral_quran_metadata
+        rec = RECITERS_CONFIG[chosen["reciter_key"]]
+        return build_viral_quran_metadata(
+            chosen.get("caption", ""), rec["name_ar"], rec["hashtag"], rec["name_en"], chosen.get("views", 0),
+            detected_surah=detected_surah
+        )
 
 def download_reel(cand):
     temp_file = OUTPUT_DIR / f"quran_{cand['code']}.mp4"
