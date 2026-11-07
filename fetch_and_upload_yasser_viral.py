@@ -291,34 +291,67 @@ def rank_candidates(cands, target_key, min_views=MIN_VIEWS, fallback_min=FALLBAC
             return sorted(pool, key=calculate_virality_score, reverse=True)
     return []
 
-def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC, amount=30):
-    tags = list(RECITERS_CONFIG[target_key]["tags"])
-    for k, r in RECITERS_CONFIG.items():
-        if k != target_key:
-            tags += r["tags"][:2]
-    tags += GENERAL_TAGS
+CURATED_VIRAL_CODES = {
+    "yasser": [
+        "DTBl92hDPxk", "DWGIFxWCGd0", "DS76eqdjEbn", "DTdqXMxjPbg", "DTVqb7yDG44",
+        "DTRCQchDK6I", "DTOPxc0jaJP", "DTGWTeojGvF", "DYdjm6CIuO0", "DTdtJGrDIHC",
+        "DTBtmiCDKUH", "DTX2E9NDGRs", "DS5djBlDLnH", "DVet0vCiGqw", "DTI7pzqjI8q",
+        "DZeyE0FT7ao", "DTJgz73DJib"
+    ],
+    "islam": ["DUJEQt3DTEV", "DUWwhRwAhsl", "DXR6IVZDReg", "DeE7_lvtwOt"],
+    "massad": ["DaYkZrTtEmc", "DVSIC4kCEP9", "Dem0MqCIDxB"],
+    "raad": ["DWEr1MbyEMj", "DSYP4DbArQj", "DePTqccC_2h"]
+}
+
+def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC, amount=20):
+    rec = RECITERS_CONFIG.get(target_key, RECITERS_CONFIG["yasser"])
+    # Only query the primary 2 tags of the specific target reciter to avoid triggering rate-limits
+    tags = [rec["hashtag"]]
+    if rec["tags"]:
+        tags.append(rec["tags"][0])
+
     cands = []
+    rate_limited = False
+
     for tag in tags:
         print(f"\n[Instagram Query] #{tag}")
-        for fetch in ("hashtag_medias_top", "hashtag_medias_reels_v1"):
-            fn = getattr(cl, fetch, None)
-            if not fn:
-                continue
-            try:
-                medias = fn(tag, amount=amount)
-            except Exception as e:
-                print(f"  [Warning] {fetch}(#{tag}) error: {e}")
-                time.sleep(2)
-                continue
+        fn = getattr(cl, "hashtag_medias_reels_v1", None) or getattr(cl, "hashtag_medias_top", None)
+        if not fn:
+            continue
+        try:
+            medias = fn(tag, amount=amount)
             for m in medias:
                 c = evaluate_media(m, used_codes, max_duration)
                 if c:
                     cands.append(c)
-        # stop early once we have at least 8 high-view candidates for the target reciter
-        # ensuring a competitive, rich virality comparison
-        target_1m = sum(1 for c in cands if c["reciter_key"] == target_key and c["views"] >= MIN_VIEWS)
-        if target_1m >= 8:
+        except Exception as e:
+            print(f"  [Instagram Query Notice] #{tag}: {e}")
+            rate_limited = True
+            break  # Immediately stop to protect session
+
+        time.sleep(2.5)
+        # Stop as soon as we have enough candidates for this slot
+        if sum(1 for c in cands if c["reciter_key"] == target_key and c["views"] >= MIN_VIEWS) >= 3:
             break
+
+    # If rate-limited or no candidates found, engage emergency curated fallback via media_info_by_code
+    if not cands or rate_limited:
+        print(f"  [Emergency Fallback] Activating curated viral media pool for {rec['name_ar']}...")
+        pool = CURATED_VIRAL_CODES.get(target_key, []) + CURATED_VIRAL_CODES.get("yasser", [])
+        for code in pool:
+            if not ALLOW_DUPLICATES and code in used_codes:
+                continue
+            try:
+                m = cl.media_info_by_code(code)
+                c = evaluate_media(m, used_codes, max_duration)
+                if c:
+                    cands.append(c)
+                    if len(cands) >= 3:
+                        break
+            except Exception as e:
+                print(f"  [Direct Media Lookup] {code} error: {e}")
+            time.sleep(1)
+
     return cands
 
 def build_reel_metadata(chosen, detected_surah: str = None):

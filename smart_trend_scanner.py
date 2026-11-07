@@ -15,7 +15,6 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
 
     cmd = [
         "yt-dlp",
-        "--proxy", "",
         f"ytsearch{max_candidates}:{clean_q}",
         "--dump-json",
         "--flat-playlist",
@@ -57,7 +56,7 @@ def find_highest_velocity_viral_short(search_query: str, max_candidates: int = 2
             engagement = (likes / views) if views > 0 else 0.05
             
             # 15-24s Retention Bonus (MrBeast & TikTok Viral Sweet Spot)
-            dur_bonus = 1.35 if 14 <= dur <= 25 else 1.0
+            dur_bonus = 1.35 if (dur is not None and 14 <= dur <= 25) else 1.0
             
             # Viral Velocity Score: prioritize fresh exploding short videos
             viral_velocity = (views / (days_active ** 0.8)) * (1.0 + engagement * 10) * dur_bonus
