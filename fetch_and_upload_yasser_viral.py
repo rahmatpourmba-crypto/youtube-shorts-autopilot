@@ -112,7 +112,12 @@ SLOT_RECITER_ROTATION = ["yasser", "islam", "massad", "haidan", "raad", "hazza",
 
 # General trending Arabic Quran tags (reels here must still name a priority reciter, or
 # they are accepted as "general" only if no priority-reciter reel qualifies)
-GENERAL_TAGS = ["قرآن", "تلاوة_خاشعة", "قران_كريم", "تلاوات_خاشعة", "quran", "quranrecitation"]
+GENERAL_TAGS = [
+    "قرآن", "تلاوة_خاشعة", "قران_كريم", "تلاوات_خاشعة",
+    "قران_كريم_ارح_به_سمعك_وقلبك", "راحة_نفسية", "تلاوة_تهز_القلوب",
+    "سورة_الرحمن", "سورة_الكهف", "سورة_مريم", "سورة_الملك",
+    "quran", "quranrecitation", "quran_kareem",
+]
 
 # Negative filter: sectarian / shrine / telegram-bio spam / Persian-language reels.
 # NOTE: matched as whole tokens (see caption_is_blocked), not raw substrings.
@@ -220,14 +225,57 @@ def evaluate_media(m, used_codes, max_duration=MAX_DURATION_SEC, log=print):
     if not dur or dur > max_duration:
         return None
     views = media_views(m)
+    likes = int(getattr(m, "like_count", 0) or 0)
+    comments = int(getattr(m, "comment_count", 0) or 0)
+    taken_at = getattr(m, "taken_at", None)
     return {
         "code": m.code, "pk": getattr(m, "pk", None), "video_url": str(getattr(m, "video_url", "")),
-        "caption": caption, "views": views, "likes": getattr(m, "like_count", 0) or 0,
-        "duration": dur, "reciter_key": identify_reciter(caption),
+        "caption": caption, "views": views, "likes": likes, "comments": comments,
+        "taken_at": taken_at, "duration": dur, "reciter_key": identify_reciter(caption),
     }
 
+def calculate_virality_score(cand: dict) -> float:
+    """Composite viral trend index:
+    Combines view mass, audience engagement rate (like & comment ratios),
+    and freshness velocity. High engagement (e.g. 15%+ like ratio) and recent
+    posts are heavily boosted over old, low-engagement reels.
+    """
+    views = max(cand.get("views", 0), 1)
+    likes = max(cand.get("likes", 0), 0)
+    comments = max(cand.get("comments", 0), 0)
+
+    # Engagement rate: likes/views and comments/views
+    like_ratio = min(likes / views, 0.40)
+    comment_ratio = min(comments / views, 0.05)
+
+    # Freshness velocity factor
+    freshness_factor = 1.0
+    taken_at = cand.get("taken_at")
+    if taken_at:
+        try:
+            if isinstance(taken_at, (int, float)):
+                age_days = (datetime.datetime.now(datetime.timezone.utc).timestamp() - taken_at) / 86400.0
+            elif hasattr(taken_at, "timestamp"):
+                age_days = (datetime.datetime.now(datetime.timezone.utc) - taken_at).total_seconds() / 86400.0
+            else:
+                age_days = 90.0
+
+            if age_days <= 14:       # explosive new trend (< 2 weeks)
+                freshness_factor = 1.40
+            elif age_days <= 60:     # recent trend (< 2 months)
+                freshness_factor = 1.20
+            elif age_days > 365:     # older than 1 year
+                freshness_factor = 0.85
+        except Exception:
+            pass
+
+    engagement_multiplier = 1.0 + (like_ratio * 4.5) + (comment_ratio * 10.0)
+    return (views ** 0.85) * engagement_multiplier * freshness_factor
+
 def rank_candidates(cands, target_key, min_views=MIN_VIEWS, fallback_min=FALLBACK_MIN_VIEWS, log=print):
-    """Priority: target reciter >=1M, any priority reciter >=1M, then (logged) >=500k fallback."""
+    """Priority: target reciter >=1M, any priority reciter >=1M, then (logged) >=500k fallback.
+    Sorted by composite virality score (engagement + velocity + views) rather than raw views.
+    """
     uniq = {}
     for c in cands:
         uniq.setdefault(c["code"], c)
@@ -240,7 +288,7 @@ def rank_candidates(cands, target_key, min_views=MIN_VIEWS, fallback_min=FALLBAC
         if pool:
             if label == "FALLBACK":
                 log(f"  [Fallback] No reel >= {min_views:,} views; using best >= {fallback_min:,}.")
-            return sorted(pool, key=lambda c: c["views"], reverse=True)
+            return sorted(pool, key=calculate_virality_score, reverse=True)
     return []
 
 def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC, amount=30):
@@ -266,15 +314,20 @@ def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC,
                 c = evaluate_media(m, used_codes, max_duration)
                 if c:
                     cands.append(c)
-        # stop early once enough 1M+ reels for the target reciter are found
-        if sum(1 for c in cands if c["reciter_key"] == target_key and c["views"] >= MIN_VIEWS) >= 3:
+        # stop early once we have at least 8 high-view candidates for the target reciter
+        # ensuring a competitive, rich virality comparison
+        target_1m = sum(1 for c in cands if c["reciter_key"] == target_key and c["views"] >= MIN_VIEWS)
+        if target_1m >= 8:
             break
     return cands
 
-def build_reel_metadata(chosen):
+def build_reel_metadata(chosen, detected_surah: str = None):
     from metadata_optimizer import build_viral_quran_metadata
     rec = RECITERS_CONFIG[chosen["reciter_key"]]
-    return build_viral_quran_metadata(chosen["caption"], rec["name_ar"], rec["hashtag"], rec["name_en"], chosen["views"])
+    return build_viral_quran_metadata(
+        chosen["caption"], rec["name_ar"], rec["hashtag"], rec["name_en"], chosen["views"],
+        detected_surah=detected_surah
+    )
 
 def download_reel(cand):
     temp_file = OUTPUT_DIR / f"quran_{cand['code']}.mp4"
@@ -336,7 +389,20 @@ def find_and_download_viral_reel(min_views: int = MIN_VIEWS, max_duration: float
                 print(f"  [Branding] FAILED for {cand['code']} ({e}); not uploading it unmodified, releasing claim")
                 dedupe_guard.release_claim("quran", dd.get("claim_keys") or [cand["code"]], HISTORY_FILE)
                 continue
-            meta = build_reel_metadata(cand)
+
+            detected_surah = None
+            if ayah_match and ayah_match.get("surah"):
+                try:
+                    s_idx = int(ayah_match["surah"])
+                    from quran_branding import surahs
+                    s_list = surahs()
+                    if 1 <= s_idx <= len(s_list):
+                        detected_surah = s_list[s_idx - 1]["name"]
+                        print(f"  [AI Audio Match] Identified Surah from recitation: سورة {detected_surah}")
+                except Exception as e:
+                    pass
+
+            meta = build_reel_metadata(cand, detected_surah=detected_surah)
             print(f"★ SELECTED {cand['code']} | {cand['reciter_key']} | {cand['views']:,} views | {cand['duration']}s")
             print(f"  Title: {meta['title']}")
             return {"video": str(f), "code": cand["code"], "title": meta["title"],

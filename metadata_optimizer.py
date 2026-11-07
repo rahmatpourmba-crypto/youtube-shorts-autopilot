@@ -313,18 +313,61 @@ SURAH_NAMES = [
 
 def _norm_ar(t: str) -> str:
     t = re.sub(r"[\u064B-\u0652\u0670]", "", t or "")  # strip tashkeel
-    return t.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا").replace("ة", "ه").replace("_", " ")
+    return t.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا").replace("ة", "ه").replace("ى", "ي").replace("ئ", "ي").replace("_", " ")
+
+SURAH_ENGLISH_MAP = {
+    "الفاتحة": "Al-Fatiha", "البقرة": "Al-Baqarah", "آل عمران": "Ali Imran", "النساء": "An-Nisa",
+    "الأنعام": "Al-Anam", "الأعراف": "Al-Araf", "يوسف": "Yusuf", "الكهف": "Al-Kahf",
+    "مريم": "Maryam", "طه": "Taha", "المؤمنون": "Al-Muminun", "النور": "An-Nur",
+    "الفرقان": "Al-Furqan", "يس": "Ya-Sin", "الصافات": "As-Saffat", "الزمر": "Az-Zumar",
+    "غافر": "Ghafir", "فصلت": "Fussilat", "الدخان": "Ad-Dukhan", "ق": "Qaf",
+    "النجم": "An-Najm", "الرحمن": "Ar-Rahman", "الواقعة": "Al-Waqiah", "الملك": "Al-Mulk",
+    "القلم": "Al-Qalam", "الحاقة": "Al-Haqqah", "المعارج": "Al-Maarij", "نوح": "Nuh",
+    "الجن": "Al-Jinn", "المزمل": "Al-Muzzammil", "المدثر": "Al-Muddathir", "القيامة": "Al-Qiyamah",
+    "الإنسان": "Al-Insan", "النبأ": "An-Naba", "النازعات": "An-Naziat", "الفجر": "Al-Fajr",
+    "الضحى": "Ad-Duha", "الشرح": "Ash-Sharh", "القدر": "Al-Qadr", "الإخلاص": "Al-Ikhlas",
+    "الفلق": "Al-Falaq", "الناس": "An-Nas",
+}
+
+FAMOUS_DISTINCT_SURAHS = [
+    "الكهف", "الرحمن", "الملك", "مريم", "يوسف", "البقرة", "الواقعة", "يس",
+    "طه", "القيامة", "الانسان", "الفجر", "الضحى", "الشرح", "القدر", "الاخلاص",
+    "الفلق", "الناس", "ق", "النجم", "الدخان", "الحديد", "المنافقون", "المزمل", "المدثر"
+]
 
 def detect_surah(caption: str):
-    """Return surah name if caption says 'سورة X' / '#سورة_X'. Short/ambiguous names need the 'سورة' prefix."""
+    """Return surah name if caption mentions a surah in Arabic, English, or famous hashtags."""
+    if not caption:
+        return None
     norm = _norm_ar(caption)
+    low = (caption or "").lower().replace("-", " ").replace("_", " ")
+
+    # 1. Ayat al-Kursi
+    if any(k in norm for k in ["ايه الكرسي", "اية الكرسي"]) or any(k in low for k in ["ayat al kursi", "ayatul kursi", "ayat kursi"]):
+        return "آية الكرسی"
+
+    # 2. Arabic explicit 'سورة X' / 'سوره X'
     for name in sorted(SURAH_NAMES, key=len, reverse=True):
         n = _norm_ar(name)
-        if re.search(r"سوره\s*" + re.escape(n) + r"(?![\w])", norm):
+        bare = re.sub(r"^ال", "", n)
+        if re.search(r"سوره\s*(?:ال)?" + re.escape(bare) + r"(?![\w])", norm):
             return name
+
+    # 3. English explicit 'Surah X'
+    for ar_name, en_name in SURAH_ENGLISH_MAP.items():
+        bare_en = re.sub(r"^(al|ar|an|at|az|as|ash|ad)\s+", "", en_name.lower().replace("-", " "))
+        if re.search(r"(?:surah|sura|surat)\s+(?:al\s+|ar\s+|an\s+|at\s+)?" + re.escape(bare_en) + r"(?![\w])", low):
+            return ar_name
+
+    # 4. Standalone Hashtags for famous distinct Surahs (e.g. #الكهف, #الرحمن, #الملك, #مريم, #يوسف)
+    for s_name in FAMOUS_DISTINCT_SURAHS:
+        s_norm = _norm_ar(s_name)
+        if re.search(r"#\s*(?:سوره)?" + re.escape(s_norm) + r"(?![\w])", norm):
+            return s_name
+
     return None
 
-QURAN_GEO_HASHTAGS = ["#العراق", "#مصر", "#الجزائر"]
+QURAN_GEO_HASHTAGS = ["#العراق", "#مصر", "#الجزائر", "#السعودية", "#المغرب"]
 QURAN_BASE_HASHTAGS = ["#قرآن", "#تلاوة", "#القرآن_الكريم", "#تلاوة_خاشعة", "#راحة_نفسية", "#quran", "#shorts"]
 QURAN_TITLE_HOOKS = [
     "تلاوة تقشعر لها الأبدان 😢",
@@ -335,18 +378,23 @@ QURAN_TITLE_HOOKS = [
     "استمع بقلبك 🎧",
 ]
 
+QURAN_SPIRITUAL_THEMES = [
+    "راحة نفسية لا توصف.. استمع بقلبك 🕊️✨",
+    "تلاوة خاشعة تسكن الروح وتريح القلب 🌿",
+    "صوت تقشعر له الأبدان من خشية الله 🤍",
+    "أجمل ما ستسمعه اليوم.. أرح مسمعك 🎧",
+    "تلاوة تفيض بالسكينة والطمأنينة 🌙",
+    "آيات عطرة تبكي العيون وتهز القلوب 💔",
+    "تلاوة ندية خاشعة تأخذك إلى عالم آخر ✨",
+]
+
 _TITLE_SNIPPET_STOPWORDS = {
     "بصوت", "الشيخ", "القارئ", "للشيخ", "تلاوة", "تلاوه", "مقطع", "من", "في", "على", "عن",
     "مع", "هذه", "هذا", "التي", "الذي", "رحمه", "الله", "تعالى", "كاملة", "كامل",
 }
 
-
 def _title_snippet(caption: str, reciter_ar: str = "", max_words: int = 4) -> str:
-    """Short human-readable phrase from the reel caption (hashtags/@/links/diacritics stripped).
-
-    Titles used to be `hook | reciter` only, drawn from 6 templates, so distinct reels produced
-    byte-identical titles. This snippet makes titles unique per reel (and better for search).
-    """
+    """Legacy fallback snippet; only used if explicitly requested."""
     t = re.sub(r"https?://\S+|@\w+|#\S+", " ", caption or "")
     t = re.sub(r"[\u064B-\u0652\u0670\u0640]", "", t)
     t = re.sub(r"[^\w\u0600-\u06FF\s]+", " ", t)
@@ -355,43 +403,74 @@ def _title_snippet(caption: str, reciter_ar: str = "", max_words: int = 4) -> st
              if len(w) > 1 and w not in rec_words and w not in _TITLE_SNIPPET_STOPWORDS]
     return " ".join(words[:max_words]).strip()
 
-
-def build_viral_quran_metadata(caption: str, reciter_ar: str, reciter_tag: str, reciter_en: str = "", views: int = 0, rng=None):
-    """Viral Arabic title/description/tags for a Quran reel. Title <= 100 chars, never cut mid-word."""
+def build_viral_quran_metadata(caption: str, reciter_ar: str, reciter_tag: str, reciter_en: str = "", views: int = 0, rng=None, detected_surah: str = None):
+    """Viral Arabic title/description/tags for a Quran reel. High CTR, zero caption spam in titles."""
     rng = rng or random
-    surah = detect_surah(caption or "")
+    surah = detected_surah or detect_surah(caption or "")
     hook = rng.choice(QURAN_TITLE_HOOKS)
-    snippet = _title_snippet(caption or "", reciter_ar)
+
     if surah:
-        body = f"{hook} | سورة {surah} | {reciter_ar}"
-    elif snippet:
-        body = f"{hook} | {snippet} | {reciter_ar}"
+        surah_label = surah if surah.startswith("آية") else f"سورة {surah}"
+        body = f"{hook} | {surah_label} | {reciter_ar}"
     else:
-        body = f"{hook} | {reciter_ar}"
+        # High-converting spiritual theme hook (NEVER inject random Instagram caption words into title)
+        theme = rng.choice(QURAN_SPIRITUAL_THEMES)
+        body = f"{theme} | {reciter_ar}"
+
     title = build_title_with_suffix(body, f"#{reciter_tag} #قرآن #shorts")
 
     hashtags = [f"#{reciter_tag}"] + QURAN_BASE_HASHTAGS[:5]
-    if surah:
+    if surah and not surah.startswith("آية"):
         hashtags.insert(1, "#سورة_" + surah.replace(" ", "_"))
-    hashtags += QURAN_GEO_HASHTAGS + ["#quran", "#shorts"]
+    hashtags += QURAN_GEO_HASHTAGS + ["#quran", "#shorts", "#quranrecitation"]
     seen, uniq = set(), []
     for h in hashtags:
         if h not in seen:
             seen.add(h); uniq.append(h)
-    surah_line = f"📖 سورة {surah}\n" if surah else ""
+
+    surah_line = f"📖 {surah_label}\n" if surah else "📖 تلاوة مباركة خاشعة من آيات الذكر الحكيم\n"
     description = (
         f"{title}\n\n"
         f"🎙️ بصوت {reciter_ar}\n{surah_line}\n"
-        "🌿 تلاوة خاشعة تريح القلب وتسكن الروح.\n"
-        "🤍 اكتب من أي بلد تسمع: 🇮🇶 العراق | 🇪🇬 مصر | 🇩🇿 الجزائر\n"
-        "📌 شارك المقطع ليكون صدقة جارية لك، واشترك لتصلك تلاوة جديدة كل مساء.\n\n"
+        "🌿 تلاوة خاشعة تفيض بالسكينة والنور وتملأ القلب طمأنينة وسلاماً.\n"
+        "✨ قال الله تعالى: ﴿الَّذينَ آمَنوا وَتَطمَئِنُّ قُلوبُهُم بِذِكرِ اللَّهِ أَلا بِذِكرِ اللَّهِ تَطمَئِنُّ القُلوبُ﴾\n\n"
+        "🤍 صلّوا على الحبيب المصطفى ﷺ واكتب من أي بلد تستمع لهذه التلاوة المباركة 🌍\n"
+        "📌 شارك المقطع ليكون صدقة جارية لك، واشترك في القناة ليصلك جديد التلاوات الخاشعة يومياً.\n\n"
         + " ".join(uniq)
     )
-    tags = [reciter_ar, reciter_tag.replace("_", " "), reciter_en, "قرآن", "تلاوة", "تلاوة خاشعة",
-            "القرآن الكريم", "راحة نفسية", "تلاوات العراق", "تلاوات مصر", "الجزائر", "Quran", "Quran recitation", "Shorts"]
+
+    tags = [
+        reciter_ar,
+        reciter_tag.replace("_", " "),
+        reciter_en,
+        "قرآن",
+        "تلاوة",
+        "تلاوة خاشعة",
+        "تلاوات خاشعة",
+        "القرآن الكريم",
+        "راحة نفسية",
+        "قران كريم صوت جميل جدا جدا",
+        "اجمل تلاوة للقران الكريم",
+        "تلاوات خاشعة ومبكية",
+        "تلاوة تهز القلوب",
+        "تلاوات العراق",
+        "تلاوات مصر",
+        "الجزائر",
+        "Quran",
+        "Quran recitation",
+        "Holy Quran",
+        "Relaxing Quran",
+        "Emotional Quran recitation",
+        "Islamic Shorts",
+        "Shorts",
+    ]
     if surah:
-        tags.insert(2, f"سورة {surah}")
+        tags.insert(2, surah_label)
+        en_s = SURAH_ENGLISH_MAP.get(surah)
+        if en_s:
+            tags.insert(3, f"Surah {en_s}")
     tags = [t for t in tags if t]
+
     # YouTube tag budget ~500 chars
     out, total = [], 0
     for t in tags:
