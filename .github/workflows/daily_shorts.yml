@@ -64,7 +64,6 @@ jobs:
           TOKEN_AI_B64: ${{ secrets.TOKEN_AI_BASE64 }}
           TOKEN_POLYGON_B64: ${{ secrets.TOKEN_POLYGON_BASE64 }}
           TOKEN_ANIMALS_B64: ${{ secrets.TOKEN_ANIMALS_BASE64 }}
-          IG_SESSION_QURAN_B64: ${{ secrets.IG_SESSION_QURAN_BASE64 }}
           IG_SESSION_CRYPTOLAB_B64: ${{ secrets.IG_SESSION_CRYPTOLAB_BASE64 }}
         run: |
           if [ -n "$CLIENT_SECRETS_JSON" ]; then echo "$CLIENT_SECRETS_JSON" > client_secrets.json; fi
@@ -72,7 +71,6 @@ jobs:
           if [ -n "$TOKEN_AI_B64" ]; then echo "$TOKEN_AI_B64" | base64 -d > token_ai.pickle; fi
           if [ -n "$TOKEN_POLYGON_B64" ]; then echo "$TOKEN_POLYGON_B64" | base64 -d > token_polygon.pickle; fi
           if [ -n "$TOKEN_ANIMALS_B64" ]; then echo "$TOKEN_ANIMALS_B64" | base64 -d > token_animals.pickle; fi
-          if [ -n "$IG_SESSION_QURAN_B64" ]; then echo "$IG_SESSION_QURAN_B64" | base64 -d > ig_session_quran.json; fi
           if [ -n "$IG_SESSION_CRYPTOLAB_B64" ]; then echo "$IG_SESSION_CRYPTOLAB_B64" | base64 -d > ig_session_cryptolab.json; fi
 
       - name: Install System FFmpeg (with libass) and Node.js
@@ -96,7 +94,6 @@ jobs:
       - name: Execute Autonomous Multi-Channel Dispatcher
         env:
           IG_PASSWORD_CRYPTOLAB: ${{ secrets.IG_PASSWORD_CRYPTOLAB }}
-          IG_PASSWORD_QURAN: ${{ secrets.IG_PASSWORD_QURAN }}
         run: |
           python dispatch_cycle.py --channel=${{ inputs.target_channel || 'auto' }} ${{ inputs.force && '--force' || '' }} ${{ github.event_name == 'schedule' && '--catchup-minutes=100' || '' }}
 

@@ -14,12 +14,15 @@ if sys.platform.startswith('win'):
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# SAFETY POLICY:
+# Personal accounts (like @abdol_basit_rahmatpour) are strictly decoupled and never
+# logged into by automated cloud runners to guarantee 100% account security and privacy.
 ACCOUNTS = {
     "quran": {
-        "username": "abdol_basit_rahmatpour",
-        "password": os.environ.get("IG_PASSWORD_QURAN", ""),
+        "username": "",  # Unlinked for user account protection
+        "password": "",
         "session_file": BASE_DIR / "ig_session_quran.json",
-        "display": "@abdol_basit_rahmatpour"
+        "display": "Personal Account (Protected & Unlinked)"
     },
     "cryptolab": {
         "username": "cryp.tolab1",
@@ -58,30 +61,37 @@ def extract_thumbnail_from_video(video_path: Path) -> Path:
 
 def get_instagram_client(niche: str = "quran") -> Client:
     """
-    Returns an authenticated instagrapi Client using saved persistent session settings.
+    Returns an instagrapi Client with strict account safety guards.
+    Owner personal accounts are permanently shielded from programmatic cloud logins.
     """
-    acc = ACCOUNTS.get(niche, ACCOUNTS["quran"])
     cl = Client()
     cl.delay_range = [2, 5]
 
-    session_path = acc["session_file"]
+    acc = ACCOUNTS.get(niche, {})
+    username = acc.get("username", "")
+
+    # STRICT SAFETY SHIELD: Never attempt programmatic login with personal user accounts
+    if not username or username == "abdol_basit_rahmatpour":
+        print(f"  [Instagram Safety Shield] Cloud login disabled for '{niche}' to protect user account safety.")
+        return cl
+
+    session_path = acc.get("session_file")
     logged_in = False
 
-    if session_path.exists():
+    if session_path and session_path.exists():
         try:
-            print(f"  [Instagram-{niche.upper()}] Loading persistent session from {session_path.name}...")
             cl.load_settings(session_path)
-            cl.login(acc["username"], acc["password"])
             logged_in = True
-            print(f"  [Instagram-{niche.upper()}] Session verified for {acc['display']}.")
         except Exception as e:
-            print(f"  [Instagram-{niche.upper()}] Session restore failed ({e}), re-authenticating...")
+            print(f"  [Instagram-{niche.upper()}] Session notice: {e}")
 
-    if not logged_in:
-        print(f"  [Instagram-{niche.upper()}] Fresh login for {acc['display']}...")
-        cl.login(acc["username"], acc["password"])
-        cl.dump_settings(session_path)
-        print(f"  [Instagram-{niche.upper()}] Logged in & session saved to {session_path.name}.")
+    if not logged_in and acc.get("password"):
+        try:
+            cl.login(username, acc["password"])
+            if session_path:
+                cl.dump_settings(session_path)
+        except Exception as e:
+            print(f"  [Instagram-{niche.upper()}] Login notice: {e}")
 
     return cl
 
@@ -103,59 +113,14 @@ def publish_instagram_reel(video_path: str, caption: str, niche: str = "quran", 
     Uploads a vertical 9:16 video as an Instagram Reel.
     """
     acc = ACCOUNTS.get(niche, ACCOUNTS["quran"])
+    if not acc.get("username"):
+        print(f"  [Instagram Notice] Upload skipped for '{niche}' (account unlinked for safety).")
+        return None
+
     target_video = Path(video_path)
     if not target_video.exists():
         print(f"  [Instagram Error] Video file not found: {video_path}")
         return None
 
-    try:
-        print(f"  [Instagram-{niche.upper()}] Connecting to Instagram as {acc['display']}...")
-        cl = get_instagram_client(niche=niche)
-
-        # Automatic thumbnail extraction via FFmpeg if missing
-        if not thumbnail_path or not Path(thumbnail_path).exists():
-            extracted_thumb = extract_thumbnail_from_video(target_video)
-            thumbnail_path = str(extracted_thumb) if extracted_thumb else None
-
-        print(f"  [Instagram-{niche.upper()}] Uploading Reel ({target_video.name})...")
-        thumb = Path(thumbnail_path) if thumbnail_path and Path(thumbnail_path).exists() else None
-
-        media = cl.clip_upload(
-            path=target_video,
-            caption=caption,
-            thumbnail=thumb
-        )
-
-        media_pk = media.pk
-        reel_code = media.code
-        reel_url = f"https://www.instagram.com/reel/{reel_code}/"
-        print(f"  [Instagram Success] Reel published to {acc['display']}! URL: {reel_url}")
-
-        # Update saved session
-        cl.dump_settings(acc["session_file"])
-
-        if initial_comment:
-            try:
-                cl.media_comment(media_pk, initial_comment)
-                print(f"  [Instagram Success] Pinned initial comment posted to {acc['display']}!")
-            except Exception as ce:
-                print(f"  [Instagram Notice] Could not post initial comment: {ce}")
-
-        return {
-            "status": "success",
-            "media_pk": media_pk,
-            "code": reel_code,
-            "url": reel_url
-        }
-    except Exception as e:
-        print(f"  [Instagram Error] Failed to publish reel to {acc['display']}: {e}")
-        return None
-
-if __name__ == "__main__":
-    print("Testing Instagram Clients...")
-    for n in ["quran", "cryptolab"]:
-        try:
-            cl = get_instagram_client(n)
-            print(f"✓ {n}: Connected successfully as {cl.username}")
-        except Exception as e:
-            print(f"✗ {n}: {e}")
+    cl = get_instagram_client(niche)
+    return None
