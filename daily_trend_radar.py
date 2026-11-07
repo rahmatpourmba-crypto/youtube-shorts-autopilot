@@ -192,18 +192,34 @@ def enrich_metadata_for_current_trend(
     profile = get_current_trend_profile(utc_now)
     surah = detected_surah or profile["target_surah"]
     
-    # Pick a high-converting hook tailored for this wave
-    hook = rng.choice(profile["hooks"])
+    # Pick a high-converting hook tailored for this wave, avoiding mismatch with detected surah
+    valid_hooks = []
+    for h in profile["hooks"]:
+        if "آية الكرسي" in h and surah not in ("آية الكرسي", "البقرة"):
+            continue
+        if "الملك" in h and surah != "الملك":
+            continue
+        if "الكهف" in h and surah != "الكهف":
+            continue
+        valid_hooks.append(h)
+    hook = rng.choice(valid_hooks) if valid_hooks else profile["hooks"][0]
     
-    # Build Title (ensure clean, zero-spam structure)
+    # Build Title (ensure clean, zero-spam structure with intact reciter name)
     if surah in hook:
-        body = f"{hook} | {reciter_ar}"
+        core_title = f"{hook} | {reciter_ar}"
     else:
         surah_label = surah if surah.startswith("آية") else f"سورة {surah}"
-        body = f"{hook} | {surah_label} | {reciter_ar}"
+        core_title = f"{hook} | {surah_label} | {reciter_ar}"
+        
+    # Dynamically select suffix so reciter name is NEVER chopped
+    suffix = f"#{reciter_tag} #قرآن #shorts"
+    if len(core_title) + len(suffix) + 1 > 100:
+        suffix = "#قرآن #shorts"
+    if len(core_title) + len(suffix) + 1 > 100:
+        suffix = "#shorts"
         
     from metadata_optimizer import build_title_with_suffix
-    title = build_title_with_suffix(body, f"#{reciter_tag} #قرآن #shorts")
+    title = build_title_with_suffix(core_title, suffix)
     
     # Merge wave tags with core YouTube SEO tags
     trend_tags = profile["tags"][:5]
