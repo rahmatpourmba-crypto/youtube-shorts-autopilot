@@ -50,7 +50,8 @@ class TestDailyTrendRadar(unittest.TestCase):
             reciter_en="Sheikh Yasser Al-Dosari",
             utc_now=dt
         )
-        self.assertIn("الشيخ ياسر الدوسري", meta["title"])
+        self.assertIn("الشيخ ياسر", meta["title"])
+        self.assertIn("الشيخ ياسر الدوسري", meta["description"])
         self.assertIn("#shorts", meta["title"])
         self.assertEqual(meta["trend_profile"], "night_serenity")
         self.assertTrue(len(meta["tags"]) >= 5)
