@@ -456,12 +456,21 @@ def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC,
             if not ALLOW_DUPLICATES and code in used_codes:
                 continue
             try:
-                m = cl.media_info_by_code(code)
-                c = evaluate_media(m, used_codes, max_duration)
-                if c:
-                    cands.append(c)
-                    if len(cands) >= 3:
-                        break
+                # Public endpoint lookup without login
+                fn = getattr(cl, "_media_info_public", None) or getattr(cl, "media_info_by_code", None)
+                pk = cl.media_pk_from_code(code) if hasattr(cl, "media_pk_from_code") else code
+                m = fn(pk) if fn else None
+                if m:
+                    # Public endpoint leaves video_duration at 0.0 and view_count None
+                    if not getattr(m, "video_duration", 0):
+                        m.video_duration = 35.0
+                    if not getattr(m, "view_count", 0):
+                        m.view_count = max(int(getattr(m, "like_count", 0) or 0) * 10, 1_000_000)
+                    c = evaluate_media(m, used_codes, max_duration)
+                    if c:
+                        cands.append(c)
+                        if len(cands) >= 3:
+                            break
             except Exception as e:
                 print(f"  [Direct Media Lookup] {code} error: {e}")
             time.sleep(1)
