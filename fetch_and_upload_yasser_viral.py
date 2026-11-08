@@ -303,6 +303,113 @@ CURATED_VIRAL_CODES = {
     "raad": ["DWEr1MbyEMj", "DSYP4DbArQj", "DePTqccC_2h"]
 }
 
+
+def youtube_shorts_fallback_search(target_key, used_codes, max_duration=MAX_DURATION_SEC, log=print):
+    """Fallback: search YouTube Shorts directly for trending Quran recitations using yt-dlp.
+
+    Used when Instagram hashtag searches are blocked (GitHub Actions datacenter IPs)
+    AND the curated pool is exhausted. Searches for trending Quran content and returns
+    candidates in the same dict format as evaluate_media().
+    """
+    import subprocess
+    try:
+        from daily_trend_radar import get_current_trend_profile
+        profile = get_current_trend_profile()
+        queries = profile.get("primary_queries", ["تلاوة خاشعة قرآن"])
+    except Exception:
+        queries = ["تلاوة خاشعة قرآن", "Quran recitation shorts"]
+
+    rec = RECITERS_CONFIG.get(target_key, RECITERS_CONFIG["yasser"])
+    cands = []
+
+    for query in queries[:3]:  # Limit to first 3 queries to avoid rate limiting
+        search_query = f"{query} {rec['name_ar']}"
+        log(f"\n[YouTube Shorts Fallback] Searching: {search_query}")
+        try:
+            cmd = [
+                "yt-dlp",
+                f"ytsearch15:{search_query}",
+                "--dump-json",
+                "--flat-playlist",
+                "--no-playlist",
+                "--no-download",
+            ]
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=30, encoding='utf-8'
+            )
+            if result.returncode != 0:
+                log(f"  [YouTube Fallback] yt-dlp error: {result.stderr[:200]}")
+                continue
+
+            for line in result.stdout.strip().split("\n"):
+                if not line.strip():
+                    continue
+                try:
+                    info = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                video_id = info.get("id", "")
+                yt_code = f"yt_{video_id}"
+
+                # Skip already-used codes
+                if not ALLOW_DUPLICATES and yt_code in used_codes:
+                    continue
+
+                duration = float(info.get("duration", 0) or 0)
+                if not duration or duration > max_duration:
+                    continue
+
+                views = int(info.get("view_count", 0) or 0)
+                if views < FALLBACK_MIN_VIEWS:
+                    continue
+
+                title = info.get("title", "") or ""
+                description = info.get("description", "") or ""
+                full_text = f"{title} {description}"
+
+                # Check content filter
+                blocked = caption_is_blocked(full_text)
+                if blocked:
+                    log(f"  [Skipped] YT {video_id} filtered keyword: '{blocked}'")
+                    continue
+
+                # Identify reciter from title/description
+                reciter_key = identify_reciter(full_text)
+
+                video_url = f"https://www.youtube.com/shorts/{video_id}"
+                likes = int(info.get("like_count", 0) or 0)
+
+                cand = {
+                    "code": yt_code,
+                    "video_url": video_url,
+                    "caption": title,
+                    "views": views,
+                    "likes": likes,
+                    "duration": duration,
+                    "reciter_key": reciter_key,
+                }
+                cands.append(cand)
+                log(f"  [YouTube Fallback] Found: {yt_code} | {views:,} views | {duration}s | reciter={reciter_key}")
+
+                if len(cands) >= 5:
+                    break
+
+        except subprocess.TimeoutExpired:
+            log(f"  [YouTube Fallback] yt-dlp timed out for query: {search_query}")
+        except FileNotFoundError:
+            log("  [YouTube Fallback] yt-dlp not installed, skipping YouTube fallback")
+            return []
+        except Exception as e:
+            log(f"  [YouTube Fallback] Error: {e}")
+
+        if len(cands) >= 5:
+            break
+
+    if cands:
+        log(f"  [YouTube Fallback] Total candidates found: {len(cands)}")
+    return cands
+
 def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC, amount=20):
     rec = RECITERS_CONFIG.get(target_key, RECITERS_CONFIG["yasser"])
     tags = [rec["hashtag"]]
@@ -358,6 +465,13 @@ def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC,
             except Exception as e:
                 print(f"  [Direct Media Lookup] {code} error: {e}")
             time.sleep(1)
+
+
+    # YouTube Shorts Fallback: if Instagram and curated pool both failed
+    if not cands:
+        print("  [YouTube Shorts Fallback] Instagram and curated pool exhausted, searching YouTube Shorts...")
+        yt_cands = youtube_shorts_fallback_search(target_key, used_codes, max_duration)
+        cands.extend(yt_cands)
 
     return cands
 

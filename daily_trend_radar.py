@@ -7,7 +7,8 @@ Algorithmic Core:
 2. Night Serenity Wave (شب‌ها و ساعات پایانی): Surah Al-Mulk, Ayatul Kursi, and deep calming sleep recitation.
 3. Morning Barakah Wave (صبح‌ها و ظهر): Surah Al-Waqiah (sustenance/barakah) and Surah Ar-Rahman.
 4. Afternoon Relief Wave (عصر و غروب): Surah Yusuf, Surah Maryam, Surah Taha (comfort & overcoming grief).
-5. 24-Hour Velocity Tracking: Feeds real-time trending search queries into video sourcing.
+5. Islamic Eschatology Wave (ترندهای اسلامی انفجاری): Dajjal, Yajuj/Majuj, Day of Judgment trending topics.
+6. 24-Hour Velocity Tracking: Feeds real-time trending search queries into video sourcing.
 """
 
 import os
@@ -25,6 +26,44 @@ if sys.platform.startswith('win'):
         pass
 
 TEHRAN_TZ = datetime.timezone(datetime.timedelta(hours=3, minutes=30))
+
+
+# =====================================================================
+# TREND PROFILES (topic-based trending themes)
+# =====================================================================
+TREND_PROFILES = {
+    "islamic_eschatology": {
+        "key": "islamic_eschatology",
+        "name_fa": "ترندهای اسلامی انفجاری (دجال، یأجوج و مأجوج، قیامت، دابة الأرض)",
+        "target_surah": "الكهف",
+        "surah_en": "Al-Kahf",
+        "primary_queries": [
+            "الدجال علامات الساعة",
+            "يأجوج ومأجوج",
+            "علامات يوم القيامة",
+            "دابة الأرض",
+            "أشراط الساعة الكبرى",
+            "Dajjal signs end times",
+        ],
+        "hooks": [
+            "هل اقتربت الساعة؟ علامات تحدث الآن أمام أعيننا 😱🔥",
+            "الدجال.. أعظم فتنة في تاريخ البشرية ⚠️ | حقائق مرعبة",
+            "يأجوج ومأجوج.. متى يخرجون؟ وما الذي سيحدث؟ 🌍⚡",
+            "دابة الأرض.. المخلوق الذي سيكلم الناس قبل يوم القيامة 🕊️",
+            "علامات الساعة الكبرى التي بدأت تتحقق الآن 🔥😢",
+        ],
+        "tags": [
+            "الدجال", "يأجوج ومأجوج", "علامات الساعة", "يوم القيامة",
+            "دابة الأرض", "أشراط الساعة", "نهاية العالم",
+            "Dajjal", "Yajuj Majuj", "End Times Islam", "Day of Judgment",
+        ],
+        "description_intro": (
+            "⚠️ قال الله تعالى: ﴿اقْتَرَبَتِ السَّاعَةُ وَانشَقَّ الْقَمَرُ﴾\n"
+            "🔥 علامات الساعة الكبرى التي أخبرنا عنها النبي ﷺ بدأت تتحقق أمام أعيننا.\n"
+            "🤲 اللهم أجرنا من فتنة الدجال ومن عذاب يوم القيامة."
+        ),
+    },
+}
 
 DAYPART_PROFILES = {
     "friday_kahf": {
@@ -139,11 +178,19 @@ DAYPART_PROFILES = {
 }
 
 
-def get_current_trend_profile(utc_now: Optional[datetime.datetime] = None) -> Dict[str, Any]:
+def get_current_trend_profile(utc_now: Optional[datetime.datetime] = None,
+                              force_profile: Optional[str] = None) -> Dict[str, Any]:
     """
     Evaluates current wall-clock Tehran time and returns the winning
     daily/hourly psychological wave profile.
     """
+    # Allow forcing a specific profile
+    if force_profile:
+        if force_profile in DAYPART_PROFILES:
+            return DAYPART_PROFILES[force_profile]
+        if force_profile in TREND_PROFILES:
+            return TREND_PROFILES[force_profile]
+
     utc_now = utc_now or datetime.datetime.now(datetime.timezone.utc)
     tehran_dt = utc_now.astimezone(TEHRAN_TZ)
 
@@ -152,18 +199,27 @@ def get_current_trend_profile(utc_now: Optional[datetime.datetime] = None) -> Di
 
     # 1. Friday Worldwide Wave: Friday between 04:00 AM and 23:59 PM Tehran
     if weekday == 4 and 4 <= hour <= 23:
-        return DAYPART_PROFILES["friday_kahf"]
+        return DAYPART_PROFILES["friday_kahf"]  # No eschatology mix on Friday
 
     # 2. Night Serenity Wave: 20:00 (8 PM) through 04:59 AM Tehran
     if hour >= 20 or hour < 5:
-        return DAYPART_PROFILES["night_serenity"]
+        base_profile = DAYPART_PROFILES["night_serenity"]
 
     # 3. Morning Barakah Wave: 05:00 AM through 13:59 PM Tehran
-    if 5 <= hour < 14:
-        return DAYPART_PROFILES["morning_barakah"]
+    elif 5 <= hour < 14:
+        base_profile = DAYPART_PROFILES["morning_barakah"]
 
     # 4. Afternoon Relief Wave: 14:00 (2 PM) through 19:59 PM Tehran
-    return DAYPART_PROFILES["afternoon_relief"]
+    base_profile = DAYPART_PROFILES["afternoon_relief"]
+
+    # Eschatology trending mix-in: 20% chance to substitute with
+    # islamic_eschatology when it's not already Friday (Kahf) wave.
+    # This keeps the channel fresh with viral end-times content.
+    if ("islamic_eschatology" in TREND_PROFILES
+            and random.random() < 0.20):
+        return TREND_PROFILES["islamic_eschatology"]
+
+    return base_profile
 
 
 def get_recommended_search_query(target_reciter_ar: str, utc_now: Optional[datetime.datetime] = None) -> str:
