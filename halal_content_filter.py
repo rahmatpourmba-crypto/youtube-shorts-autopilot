@@ -51,6 +51,25 @@ def is_content_halal_and_clean(title: str, description: str = "", tags: list = N
             
     return True
 
+RECITATION_KEYWORDS = {"تلاوة", "سورة", "قرآن", "مصحف", "ترتيل", "تجويد", "recitation", "surah"}
+ESCHATOLOGY_KEYWORDS = {"الدجال", "يأجوج", "مأجوج", "دابة الأرض", "علامات الساعة", "أشراط الساعة", "نهاية العالم"}
+
+def validate_shorts_pairing(video_meta: dict) -> bool:
+    """
+    Guarantees strict Topic Disentanglement:
+    Prevents assigning Eschatology titles to peaceful Quran recitation videos.
+    """
+    title = video_meta.get("title", "")
+    description = video_meta.get("description", "")
+    content_text = f"{title} {description}"
+
+    is_recitation_audio = any(w in content_text for w in RECITATION_KEYWORDS)
+    is_eschatology_topic = any(w in content_text for w in ESCHATOLOGY_KEYWORDS)
+
+    if is_eschatology_topic and is_recitation_audio and "تفسير" not in content_text:
+        return False
+    return True
+
 def clean_search_query_for_halal(query: str, niche: str) -> str:
     """
     Appends negative filter tags and halal/no-music enforcement to queries.

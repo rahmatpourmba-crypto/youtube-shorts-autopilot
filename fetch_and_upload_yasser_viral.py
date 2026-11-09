@@ -487,8 +487,9 @@ def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC,
 def build_reel_metadata(chosen, detected_surah: str = None):
     try:
         from daily_trend_radar import enrich_metadata_for_current_trend
+        from halal_content_filter import validate_shorts_pairing
         rec = RECITERS_CONFIG[chosen["reciter_key"]]
-        return enrich_metadata_for_current_trend(
+        meta = enrich_metadata_for_current_trend(
             base_title="",
             caption=chosen.get("caption", ""),
             reciter_ar=rec["name_ar"],
@@ -496,6 +497,14 @@ def build_reel_metadata(chosen, detected_surah: str = None):
             reciter_en=rec["name_en"],
             detected_surah=detected_surah
         )
+        if not validate_shorts_pairing(meta):
+            print(f"  [Safety Gate] Detected topic mismatch in trend metadata; reverting to pure Quran metadata.")
+            from metadata_optimizer import build_viral_quran_metadata
+            return build_viral_quran_metadata(
+                chosen.get("caption", ""), rec["name_ar"], rec["hashtag"], rec["name_en"], chosen.get("views", 0),
+                detected_surah=detected_surah
+            )
+        return meta
     except Exception as e:
         from metadata_optimizer import build_viral_quran_metadata
         rec = RECITERS_CONFIG[chosen["reciter_key"]]

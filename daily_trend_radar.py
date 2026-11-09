@@ -212,13 +212,8 @@ def get_current_trend_profile(utc_now: Optional[datetime.datetime] = None,
     # 4. Afternoon Relief Wave: 14:00 (2 PM) through 19:59 PM Tehran
     base_profile = DAYPART_PROFILES["afternoon_relief"]
 
-    # Eschatology trending mix-in: 20% chance to substitute with
-    # islamic_eschatology when it's not already Friday (Kahf) wave.
-    # This keeps the channel fresh with viral end-times content.
-    if ("islamic_eschatology" in TREND_PROFILES
-            and random.random() < 0.20):
-        return TREND_PROFILES["islamic_eschatology"]
-
+    # NOTE: Islamic Eschatology is decoupled into its own independent track
+    # and MUST NEVER be randomly injected into Quran recitations.
     return base_profile
 
 
