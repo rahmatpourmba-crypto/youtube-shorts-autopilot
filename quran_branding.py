@@ -23,6 +23,12 @@ from functools import lru_cache
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
+
+# Ensure full ffmpeg/ffprobe binary directory is available at the very front of PATH
+_img_bin = str(Path(r"C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\imageio_ffmpeg\binaries"))
+_cleaned_paths = [p for p in os.environ.get("PATH", "").split(os.pathsep) if "remotion" not in p.lower()]
+os.environ["PATH"] = _img_bin + os.pathsep + os.pathsep.join(_cleaned_paths)
+
 DATA_DIR = BASE_DIR / "data" / "quran"
 BRAND_DIR = BASE_DIR / "assets" / "branding"
 LOGO_PATH = BRAND_DIR / "logo_noor_alquran.png"
@@ -307,18 +313,19 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 
 def probe_duration(path):
-    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
-                         capture_output=True, text=True)
-    try:
-        return float(out.stdout.strip())
-    except ValueError:
-        return 0.0
+    cmd = ["ffmpeg", "-hide_banner", "-i", str(path)]
+    out = subprocess.run(cmd, capture_output=True, text=True, errors="ignore")
+    m = re.search(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", out.stderr or "")
+    if m:
+        h, mn, s = float(m.group(1)), float(m.group(2)), float(m.group(3))
+        return h * 3600 + mn * 60 + s
+    return 0.0
 
 
 def has_audio(path):
-    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index",
-                          "-of", "csv=p=0", str(path)], capture_output=True, text=True)
-    return bool(out.stdout.strip())
+    cmd = ["ffmpeg", "-hide_banner", "-i", str(path)]
+    out = subprocess.run(cmd, capture_output=True, text=True, errors="ignore")
+    return "Audio:" in (out.stderr or "")
 
 
 def render(src, out, ass_text, audio=None):
@@ -331,7 +338,7 @@ def render(src, out, ass_text, audio=None):
         shutil.copy(FONT_PATH, fonts / FONT_PATH.name)
         (tmp / "subs.ass").write_text(ass_text, encoding="utf-8")
         dur = min(probe_duration(audio or src) or MAX_OUT_SEC, MAX_OUT_SEC)
-        vf = (f"[0:v]split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:2,"
+        vf = (f"[0:v]split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=20:2,"
               f"eq=brightness=-0.08[bg];[b]scale={W}:{H}:force_original_aspect_ratio=decrease[fg];"
               f"[bg][fg]overlay=(W-w)/2:(H-h)/2,setsar=1[base];"
               f"[1:v]scale=190:-1,format=rgba,colorchannelmixer=aa=0.85[logo];"

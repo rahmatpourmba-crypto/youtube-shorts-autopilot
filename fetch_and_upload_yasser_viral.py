@@ -463,7 +463,7 @@ def search_candidates(cl, target_key, used_codes, max_duration=MAX_DURATION_SEC,
                 if m:
                     # Public endpoint leaves video_duration at 0.0 and view_count None
                     if not getattr(m, "video_duration", 0):
-                        m.video_duration = 35.0
+                        m.video_duration = 20.0  # High-retention golden duration
                     if not getattr(m, "view_count", 0):
                         m.view_count = max(int(getattr(m, "like_count", 0) or 0) * 10, 1_000_000)
                     c = evaluate_media(m, used_codes, max_duration)
