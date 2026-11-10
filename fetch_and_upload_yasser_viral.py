@@ -24,7 +24,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 #   viral Instagram Quran reels, duration <= 50s, views >= 1,000,000
 #   (fallback: best candidates >= 500k only if nothing qualifies; logged)
 #   Duplicates are allowed (see dedupe_guard.ALLOW_DUPLICATES).
-MAX_DURATION_SEC = 50.0
+MAX_DURATION_SEC = 25.0  # Golden Retention Pivot (<=25s)
 MIN_VIEWS = 1_000_000
 FALLBACK_MIN_VIEWS = 500_000
 

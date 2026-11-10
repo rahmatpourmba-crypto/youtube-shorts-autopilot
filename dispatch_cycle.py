@@ -47,13 +47,14 @@ def save_state(state):
 #   5 uploads/day across peak audience windows:
 #   12:00, 15:00, 18:00, 20:30, 22:30 Tehran time (08:30, 11:30, 14:30, 17:00, 19:00 UTC)
 #   Window: 12:00 -> 23:40 Tehran (08:30 -> 20:10 UTC), min gap 75 min
-DAY_START_UTC_MIN = 8 * 60 + 30             # 08:30 UTC = 12:00 Tehran
+DAY_START_UTC_MIN = 9 * 60 + 30             # 09:30 UTC = 13:00 Tehran
 
-QURAN_DAILY_TARGET = 5
-QURAN_SLOTS_REL = [0, 180, 360, 510, 630]   # 12:00, 15:00, 18:00, 20:30, 22:30 Tehran
+# 2 Golden High-Retention Uploads/Day (Pivot Policy 2026-11-10)
+QURAN_DAILY_TARGET = 2
+QURAN_SLOTS_REL = [0, 450]                  # 13:00 Tehran (Slot 1), 20:30 Tehran (Slot 2)
 QURAN_SLOTS_UTC_MIN = [(DAY_START_UTC_MIN + r) % 1440 for r in QURAN_SLOTS_REL]
-QURAN_MIN_GAP_MIN = 75
-LATEST_UPLOAD_REL_MIN = 700                 # until ~23:40 Tehran (20:10 UTC)
+QURAN_MIN_GAP_MIN = 240
+LATEST_UPLOAD_REL_MIN = 660                 # until ~00:00 Tehran
 
 def schedule_day_key(utc_now: datetime.datetime) -> str:
     return (utc_now - datetime.timedelta(minutes=DAY_START_UTC_MIN)).strftime("%Y-%m-%d")

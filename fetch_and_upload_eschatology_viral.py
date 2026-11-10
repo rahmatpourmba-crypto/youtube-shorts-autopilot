@@ -43,7 +43,7 @@ HISTORY_FILE = BASE_DIR / "used_eschatology_reels.json"
 OUTPUT_DIR = BASE_DIR / "output" / "viral_eschatology_reels"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-MAX_DURATION_SEC = 48.0  # Sub-50s retention rule
+MAX_DURATION_SEC = 25.0  # Golden Retention Pivot (<=25s)
 MIN_VIEWS = 300_000
 
 ESCHATOLOGY_TOPICS = [
