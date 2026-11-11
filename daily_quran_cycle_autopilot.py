@@ -3,7 +3,7 @@ import sys
 import time
 import socket
 from pathlib import Path
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, time as dtime, timezone, timedelta
 
 # Fast DNS cache to prevent local DNS timeouts
 DNS_CACHE = {
@@ -32,6 +32,15 @@ sys.path.append(str(BASE_DIR))
 import quran_pinterest_aesthetic_engine as qe
 import youtube_uploader
 
+# Golden Publishing Window: 11:00 AM to 11:00 PM (Peak Islamic audience activity)
+TARGET_HOURS = [
+    (11, 0),  # 11:00 AM (نوبت اول)
+    (14, 0),  # 02:00 PM (نوبت دوم)
+    (17, 0),  # 05:00 PM (نوبت سوم)
+    (20, 0),  # 08:00 PM (نوبت چهارم)
+    (23, 0)   # 11:00 PM (نوبت پنجم)
+]
+
 DAILY_CYCLES = [
     # Day A (Core Yasser Favorites)
     [
@@ -52,38 +61,40 @@ DAILY_CYCLES = [
 ]
 
 def run_daily_cycle(cycle_id=0):
-    now_utc = datetime.now(timezone.utc)
+    now_local = datetime.now().astimezone()
+    today = now_local.date()
     items = DAILY_CYCLES[cycle_id % len(DAILY_CYCLES)]
     
     print("=" * 75)
-    print(f"=== RUNNING AUTONOMOUS 24-HOUR QURAN CYCLE (Batch {cycle_id}) ===")
-    print(f"Base UTC: {now_utc.strftime('%Y-%m-%d %H:%M:%S UTC')}")
-    print("Cadence: 5 Slots spaced every 4.5 hours across 24h")
+    print(f"=== RUNNING AUTONOMOUS QURAN CYCLE (11:00 AM - 11:00 PM WINDOW) ===")
+    print(f"Current Local Time: {now_local.strftime('%Y-%m-%d %H:%M:%S %Z')}")
+    print("Publishing Window: 11:00 AM, 02:00 PM, 05:00 PM, 08:00 PM, 11:00 PM")
     print("=" * 75)
 
     out_base = BASE_DIR / "output" / f"cycle_batch_{int(time.time())}"
     out_base.mkdir(parents=True, exist_ok=True)
 
     results = []
-    offsets = [0.0, 4.5, 9.0, 13.5, 18.0]
 
     for idx, (story_idx, surah, title, pinned) in enumerate(items):
-        offset = offsets[idx]
+        target_h, target_m = TARGET_HOURS[idx]
+        slot_dt_local = datetime.combine(today, dtime(target_h, target_m), tzinfo=now_local.tzinfo)
+        
+        # If the specific slot time has already passed today, queue it for tomorrow's window
+        if slot_dt_local <= now_local:
+            slot_dt_local += timedelta(days=1)
+            
+        slot_dt_utc = slot_dt_local.astimezone(timezone.utc)
+        publish_at_iso = slot_dt_utc.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        schedule_label = f"SCHEDULED for {slot_dt_local.strftime('%Y-%m-%d %I:%M %p')} local ({publish_at_iso})"
+
         slot_dir = out_base / f"slot_{idx+1}_{surah.replace(' ', '_')}"
         slot_dir.mkdir(parents=True, exist_ok=True)
 
-        print(f"\n[Slot {idx+1}/5] Preparing {surah} (Offset: +{offset}h)...")
+        print(f"\n[Slot {idx+1}/5] Preparing {surah}...")
         rendered = qe.render_quran_aesthetic_short(story_idx, slot_dir)
         vid_path = rendered["video"]
         thumb_path = rendered["thumbnail"]
-
-        publish_at_iso = None
-        if offset > 0:
-            target_dt = now_utc + timedelta(hours=offset)
-            publish_at_iso = target_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-            schedule_label = f"SCHEDULED for {publish_at_iso} (+{offset}h)"
-        else:
-            schedule_label = "PUBLISHING LIVE PUBLIC NOW"
 
         print(f"  Timing: {schedule_label}")
         print(f"  Title: {title}")
@@ -105,7 +116,7 @@ def run_daily_cycle(cycle_id=0):
         uploaded = False
         for attempt in range(1, 4):
             try:
-                print(f"  Uploading (Attempt {attempt}/3)...")
+                print(f"  Uploading to YouTube (Attempt {attempt}/3)...")
                 up_res = youtube_uploader.upload_short(
                     channel_key="quran",
                     video_path=str(vid_path),
@@ -119,8 +130,8 @@ def run_daily_cycle(cycle_id=0):
                 if up_res:
                     res_id = up_res.get("video_id") or up_res.get("id")
                     url = up_res.get("url", f"https://youtube.com/shorts/{res_id}")
-                    print(f"  ✓ Slot {idx+1} Published/Scheduled: {url}")
-                    results.append((idx+1, surah, url, schedule_label))
+                    print(f"  ✓ Slot {idx+1} Scheduled Successfully: {url}")
+                    results.append((idx+1, surah, url, slot_dt_local.strftime('%I:%M %p')))
                     uploaded = True
                     break
             except Exception as e:
@@ -134,7 +145,7 @@ def run_daily_cycle(cycle_id=0):
         time.sleep(3)
 
     print("\n" + "=" * 75)
-    print("✨ DAILY 24-HOUR BATCH COMPLETE:")
+    print("✨ 11 AM - 11 PM QURAN CAMPAIGN COMPLETE:")
     for slot_num, surah_name, url_str, timing_str in results:
         print(f"  Slot {slot_num} ({surah_name}): {timing_str} ➜ {url_str}")
     print("=" * 75)
