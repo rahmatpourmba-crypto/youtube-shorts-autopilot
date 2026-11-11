@@ -180,10 +180,40 @@ def process_video_file(video_path: Path):
     print(f"  Title: {full_title}")
     print(f"  Hook Badge: {hook_badge}")
 
-    # Generate custom thumbnail
-    thumb_path = video_path.parent / f"thumb_{video_path.stem}.jpg"
-    create_master_thumbnail(video_path, thumb_path, hook_badge, is_vertical=is_vertical)
-    print(f"  ✓ Generated Master Thumbnail: {thumb_path.name}")
+    # Check if user provided their own custom thumbnail (from Gemini or elsewhere)
+    user_thumb = None
+    possible_thumbs = [
+        video_path.with_suffix('.jpg'),
+        video_path.with_suffix('.png'),
+        video_path.parent / f"{video_path.stem}_thumb.jpg",
+        video_path.parent / f"{video_path.stem}_thumb.png",
+        video_path.parent / "thumbnail.jpg",
+        video_path.parent / "thumbnail.png",
+        video_path.parent / "thumb.jpg",
+        video_path.parent / "thumb.png",
+        video_path.parent / "cover.jpg",
+        video_path.parent / "cover.png",
+    ]
+    for pt in possible_thumbs:
+        if pt.exists() and pt.is_file():
+            user_thumb = pt
+            break
+
+    # If no exact match, look for any standalone jpg/png in DROP_DIR
+    if not user_thumb:
+        for p in video_path.parent.iterdir():
+            if p.is_file() and p.suffix.lower() in [".jpg", ".jpeg", ".png"] and not p.name.startswith("_") and not p.name.startswith("thumb_"):
+                user_thumb = p
+                break
+
+    if user_thumb:
+        thumb_path = user_thumb
+        print(f"  🎨 Using User's Custom Gemini Thumbnail: {thumb_path.name}")
+    else:
+        # Generate master thumbnail from frame
+        thumb_path = video_path.parent / f"thumb_{video_path.stem}.jpg"
+        create_master_thumbnail(video_path, thumb_path, hook_badge, is_vertical=is_vertical)
+        print(f"  ✓ Generated Master Thumbnail: {thumb_path.name}")
 
     # SEO Description
     description = (
