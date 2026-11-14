@@ -10,6 +10,12 @@ on:
     - cron: '0 14 * * *'
     - cron: '30 18 * * *'
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force run immediately'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: master-quran-factory
