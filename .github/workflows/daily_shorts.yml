@@ -73,6 +73,11 @@ jobs:
           if [ -n "$TOKEN_ANIMALS_B64" ]; then echo "$TOKEN_ANIMALS_B64" | base64 -d > token_animals.pickle; fi
           if [ -n "$IG_SESSION_CRYPTOLAB_B64" ]; then echo "$IG_SESSION_CRYPTOLAB_B64" | base64 -d > ig_session_cryptolab.json; fi
 
+      - name: Install Deno for yt-dlp JavaScript runtime
+        run: |
+          curl -fsSL https://deno.land/install.sh | sh
+          echo "$HOME/.deno/bin" >> $GITHUB_PATH
+
       - name: Install System FFmpeg (with libass) and Node.js
         run: |
           sudo apt-get update

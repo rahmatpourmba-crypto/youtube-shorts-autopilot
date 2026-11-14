@@ -136,7 +136,7 @@ class ViralRadar:
     def __init__(self, youtube_service):
         self.youtube = youtube_service
 
-    def scan_top_short(self) -> dict:
+    def scan_candidates(self) -> list:
         now_utc = datetime.now(timezone.utc)
         used_ids = load_used_video_ids()
         candidates = []
@@ -225,12 +225,13 @@ class ViralRadar:
         sorted_cands = sorted(unique_cands.values(), key=lambda x: x["velocity"], reverse=True)
         winner = sorted_cands[0]
 
-        print(f"\n🏆 [ویدیوی برنده رادار ترندهای داغ انتخاب شد]:")
-        print(f"  • شناسه ویدیو (ID): {winner['video_id']}")
-        print(f"  • عنوان اصلی: {winner['title']}")
-        print(f"  • مدت زمان: {winner['duration']} ثانیه (فیلتر زیر ۴۵ ثانیه پاس شد)")
-        print(f"  • شتاب بازدید: {winner['velocity']:.1f} بازدید در ساعت (مجموع بازدیدها: {winner.get('views', 0):,})")
-        return winner
+        print(f"\n🏆 [رادار ترندها: {len(sorted_cands)} کاندیدای واجد شرایط آماده است]:")
+        print(f"  • برترین کاندیدا: {winner['title']} ({winner['duration']}s - {winner['velocity']:.0f} views/h)")
+        return sorted_cands
+
+    def scan_top_short(self) -> dict:
+        cands = self.scan_candidates()
+        return cands[0]
 
     @staticmethod
     def _parse_iso_duration(iso_dur: str) -> float:
@@ -262,21 +263,26 @@ class SecureDownloader:
         if out_file.exists() and out_file.stat().st_size > 50000:
             return out_file
 
-        cmd = [
-            "yt-dlp",
-            "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-            "--merge-output-format", "mp4",
-            "-o", str(out_file),
-            target["url"]
+        cmd_attempts = [
+            ["yt-dlp", "--js-runtimes", "node", "--extractor-args", "youtube:player_client=android,web", "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best", "--merge-output-format", "mp4", "-o", str(out_file), target["url"]],
+            ["yt-dlp", "--extractor-args", "youtube:player_client=ios,mweb", "-f", "b/best", "--merge-output-format", "mp4", "-o", str(out_file), target["url"]],
+            ["yt-dlp", "--js-runtimes", "node", "-f", "b/best", "-o", str(out_file), target["url"]],
+            ["yt-dlp", "-f", "b/best", "-o", str(out_file), target["url"]]
         ]
 
-        print(f"  در حال اجرای دانلود برای: {target['url']}...")
-        res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        if res.returncode == 0 and out_file.exists() and out_file.stat().st_size > 50000:
-            print(f"  ✓ دانلود با موفقیت تکمیل شد: {out_file.name} ({out_file.stat().st_size:,} بایت)")
-            return out_file
+        last_err = ""
+        for i, cmd in enumerate(cmd_attempts, 1):
+            print(f"  در حال تلاش دانلود {i}/{len(cmd_attempts)} برای {target['url']}...")
+            try:
+                res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=60)
+                if res.returncode == 0 and out_file.exists() and out_file.stat().st_size > 50000:
+                    print(f"  ✓ دانلود با موفقیت تکمیل شد: {out_file.name} ({out_file.stat().st_size:,} بایت)")
+                    return out_file
+                last_err = res.stderr[:200]
+            except Exception as ex:
+                last_err = str(ex)
 
-        raise RuntimeError(f"دانلود ویدیو ناموفق بود: {res.stderr[:200]}")
+        raise RuntimeError(f"دانلود ویدیو ناموفق بود: {last_err}")
 
 
 # ===========================================================================
@@ -484,15 +490,25 @@ class MasterQuranFactory:
         print("🚀 [شروع چرخه تولید کارخانه خودکار: حالت الف - ترندیابی ۱۰۰٪ جدید]")
         print("#" * 70)
 
-        # 1. 24h Viral Radar
-        winner = self.radar.scan_top_short()
+        # 1. 24h Viral Radar & Multi-Candidate Safe Processor
+        candidates = self.radar.scan_candidates()
+        winner = None
+        clean_video = None
 
-        # 2. Secure Downloader
-        raw_video = self.downloader.download(winner)
+        for cand in candidates[:5]:
+            try:
+                print(f"\n[Factory Pipeline] پردازش کاندیدای ویرال: {cand['title']} ({cand['url']})...")
+                raw_video = self.downloader.download(cand)
+                processed_video = WORKSPACE_OUTPUT / f"fresh_trend_{cand['video_id']}_{int(time.time())}.mp4"
+                clean_video = self.anti_fingerprint.process_video(raw_video, processed_video)
+                winner = cand
+                break
+            except Exception as e:
+                print(f"  ⚠️ خطا در کاندیدای {cand['video_id']}: {e}. ارزیابی کاندیدای بعدی...")
+                continue
 
-        # 3. Anti-Fingerprint FFmpeg Engine
-        processed_video = WORKSPACE_OUTPUT / f"fresh_trend_{winner['video_id']}_{int(time.time())}.mp4"
-        clean_video = self.anti_fingerprint.process_video(raw_video, processed_video)
+        if not winner or not clean_video:
+            raise RuntimeError("تمام کاندیداهای رادار با خطای دانلود یا پردازش مواجه شدند.")
 
         # 4. Arabic SEO Generator
         seo = self.seo_engine.generate_seo(winner["title"])
