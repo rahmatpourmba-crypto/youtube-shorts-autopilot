@@ -64,7 +64,22 @@ def get_authenticated_service(channel_key: str):
             
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            import requests as req_lib, time as time_lib
+            from urllib3.util.retry import Retry
+            from requests.adapters import HTTPAdapter
+            _s = req_lib.Session()
+            _retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
+            _s.mount('https://', HTTPAdapter(max_retries=_retries))
+            _refreshed = False
+            for _attempt in range(1, 5):
+                try:
+                    creds.refresh(Request(session=_s))
+                    _refreshed = True
+                    break
+                except Exception:
+                    time_lib.sleep(2)
+            if not _refreshed:
+                creds.refresh(Request())
         else:
             if not CLIENT_SECRETS_FILE.exists():
                 raise FileNotFoundError(f"Missing client_secrets.json at {CLIENT_SECRETS_FILE}")
