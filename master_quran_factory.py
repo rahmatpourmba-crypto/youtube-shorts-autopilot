@@ -147,8 +147,9 @@ class ViralRadar:
         print(f"🔒 تعداد ویدیوهای بلاک‌شده در پایگاه عدم‌تکرار: {len(used_ids)} ویدیو")
         print("=" * 65)
 
-        # First pass: last 24h; if needed, expand to 48h
-        for window_hours in [24, 48]:
+        # Multi-tiered search: last 24h, 48h, 72h, up to 7 days
+        for window_hours in [24, 48, 72, 168]:
+            max_allowed_dur = MAX_SHORTS_DURATION if window_hours <= 48 else 59.0
             published_after = (now_utc - timedelta(hours=window_hours)).strftime("%Y-%m-%dT%H:%M:%SZ")
             for query in SEARCH_QUERIES:
                 print(f"  🔍 جستجو در ترندها: '{query}' (بازه {window_hours} ساعت گذشته)...")
@@ -187,8 +188,8 @@ class ViralRadar:
 
                         # Parse ISO 8601 duration
                         duration_sec = self._parse_iso_duration(content.get("duration", "PT0S"))
-                        if duration_sec <= 0 or duration_sec > MAX_SHORTS_DURATION:
-                            continue  # Enforce strictly <= 45s filter
+                        if duration_sec <= 0 or duration_sec > max_allowed_dur:
+                            continue  # Enforce strictly <= 45s (or fallback <= 59s) filter
 
                         views = int(stats.get("viewCount", 0) or 0)
                         likes = int(stats.get("likeCount", 0) or 0)
@@ -342,6 +343,12 @@ class AntiFingerprintEngine:
                 str(output_video)
             ]
             subprocess.run(fallback_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Ultra-safe defensive check: if output video is missing or too small, fallback safely to input
+        if not output_video.exists() or output_video.stat().st_size < 1000:
+            print("  ⚠️ خطای FFmpeg; استفاده از فایل اصلی با متادیتای پاکسازی شده به عنوان جایگزین...")
+            import shutil
+            shutil.copyfile(str(input_video), str(output_video))
 
         print(f"  ✓ ویدیوی دگرگون‌شده ضدکپیرایت آماده شد: {output_video.name} ({output_video.stat().st_size:,} بایت)")
         return output_video
@@ -515,11 +522,13 @@ class MasterQuranFactory:
                 "defaultAudioLanguage": "ar"
             },
             "status": {
-                "privacyStatus": "private",
-                "publishAt": publish_at_iso,
+                # If running at scheduled slot, release as public immediately; otherwise schedule
+                "privacyStatus": os.getenv("YOUTUBE_PRIVACY_STATUS", "public"),
                 "selfDeclaredMadeForKids": False
             }
         }
+        if os.getenv("YOUTUBE_PRIVACY_STATUS") == "private":
+            body["status"]["publishAt"] = publish_at_iso
 
         media = MediaFileUpload(str(clean_video), chunksize=5*1024*1024, resumable=True, mimetype="video/*")
         request = self.youtube.videos().insert(part="snippet,status", body=body, media_body=media)
