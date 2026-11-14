@@ -47,14 +47,14 @@ def save_state(state):
 #   5 uploads/day across peak audience windows:
 #   12:00, 15:00, 18:00, 20:30, 22:30 Tehran time (08:30, 11:30, 14:30, 17:00, 19:00 UTC)
 #   Window: 12:00 -> 23:40 Tehran (08:30 -> 20:10 UTC), min gap 75 min
-DAY_START_UTC_MIN = 9 * 60 + 30             # 09:30 UTC = 13:00 Tehran
+DAY_START_UTC_MIN = 7 * 60 + 30             # 07:30 UTC = 11:00 Tehran (Slot 1)
 
-# 2 Golden High-Retention Uploads/Day (Pivot Policy 2026-11-10)
-QURAN_DAILY_TARGET = 2
-QURAN_SLOTS_REL = [0, 450]                  # 13:00 Tehran (Slot 1), 20:30 Tehran (Slot 2)
+# 3 Golden High-Retention Uploads/Day (Golden Hours: 11:00, 17:30, 22:00 Tehran)
+QURAN_DAILY_TARGET = 3
+QURAN_SLOTS_REL = [0, 390, 660]             # 11:00 Tehran (Slot 1), 17:30 Tehran (Slot 2), 22:00 Tehran (Slot 3)
 QURAN_SLOTS_UTC_MIN = [(DAY_START_UTC_MIN + r) % 1440 for r in QURAN_SLOTS_REL]
-QURAN_MIN_GAP_MIN = 240
-LATEST_UPLOAD_REL_MIN = 660                 # until ~00:00 Tehran
+QURAN_MIN_GAP_MIN = 180
+LATEST_UPLOAD_REL_MIN = 800                 # until ~00:20 Tehran
 
 def schedule_day_key(utc_now: datetime.datetime) -> str:
     return (utc_now - datetime.timedelta(minutes=DAY_START_UTC_MIN)).strftime("%Y-%m-%d")
@@ -100,70 +100,32 @@ def record_quran_upload(state: dict, utc_now: datetime.datetime):
 
 def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 3, slot_index: int = 0):
     """
-    Viral Instagram Quran reels strategy optimized for million-view potential:
-    - Only reels <= 50s with >= 1M views (fallback 500k)
-    - Priority reciter: Yasser Al-Dosari (others only as fallback)
-    - Duplicates allowed (best-performing reels may be re-uploaded)
-    - Strong branding + ayah subtitles when possible
-    - High-retention hooks and bilingual metadata
+    Mode: Option A (100% Pure Fresh Trend Discovery - Zero Repeats)
+    Delegates directly to MasterQuranFactory:
+    - 24h/48h Arabic Quran Viral Radar (views / hours elapsed velocity, duration < 45s)
+    - Strict Deduplication Engine (used_radar_ids.json)
+    - Anti-Fingerprint FFmpeg Engine (102% zoom, audio atempo=1.02, color polish, -map_metadata -1)
+    - Arabic SEO Generator (Gemini AI + High CTR Arabic keywords)
+    - Golden-Hour Scheduling & Publishing to YouTube
     """
     for attempt in range(1, max_retries + 1):
         try:
-            print(f"\n[DISPATCH - QURAN VIRAL] Attempt {attempt}/{max_retries} (slot #{slot_index+1})")
-            from fetch_and_upload_yasser_viral import find_and_download_viral_reel, HISTORY_FILE
-            from youtube_uploader import upload_short
-            import dedupe_guard
-
-            # Rotate reciter on retry so we don't keep hitting the same blocked candidates
-            reel_data = find_and_download_viral_reel(slot_index=slot_index + (attempt - 1))
-            if not reel_data:
-                print(f"  [Error] No eligible viral reel on attempt {attempt}.")
-                if attempt < max_retries:
-                    time.sleep(12)
-                    continue
-                return None
-
-            upload_res = upload_short(
-                channel_key="quran",
-                video_path=reel_data["video"],
-                title=reel_data["title"],
-                description=reel_data["description"],
-                tags=reel_data["tags"],
-                category_id="22",
-                source_code=reel_data["code"]
-            )
-
-            if upload_res and upload_res.get("duplicate"):
-                print(f"  [Dedupe] {reel_data['code']} already on channel ({upload_res.get('video_id')}); trying next")
-                continue
-
-            if upload_res:
-                dd = reel_data.get("dedupe") or {}
-                dedupe_guard.record_and_push(
-                    "quran",
-                    reel_data["code"],
-                    upload_res.get("video_id"),
-                    reel_data["title"],
-                    dd.get("fp"),
-                    dd.get("sha256"),
-                    dd.get("phash")
-                )
-                print(f"  ✓ Published: https://youtube.com/shorts/{(upload_res.get('video_id') or upload_res.get('id', ''))}")
-                print(f"  Source views on Instagram: {reel_data.get('views', 0):,}")
+            print(f"\n[DISPATCH - MASTER QURAN FACTORY] Attempt {attempt}/{max_retries} (Slot #{slot_index+1})...")
+            from master_quran_factory import MasterQuranFactory
+            factory = MasterQuranFactory()
+            upload_res = factory.run_factory_cycle()
+            if upload_res and upload_res.get("status") == "SUCCESS":
+                print(f"  ✓ Successfully processed & scheduled: {upload_res.get('url')}")
                 return upload_res
-
-            print(f"  [Warning] Upload attempt {attempt} returned no video ID; releasing claim.")
-            dd = reel_data.get("dedupe") or {}
-            dedupe_guard.release_claim("quran", dd.get("claim_keys") or [reel_data["code"]], HISTORY_FILE)
+            print(f"  [Warning] Factory returned non-success status: {upload_res}")
             if attempt < max_retries:
                 time.sleep(15)
-
         except Exception as e:
             print(f"  [Self-Healing] Exception in run_quran_channel (attempt {attempt}): {e}")
             import traceback
             traceback.print_exc()
             if attempt < max_retries:
-                time.sleep(12)
+                time.sleep(15)
 
     return None
 
