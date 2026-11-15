@@ -216,7 +216,7 @@ def upload_short(channel_key: str, video_path: str, title: str, description: str
             print(f"  [Thumbnail Warning] Could not set thumbnail: {e}")
 
     # Post engagement comment to spike the algorithm
-    if pinned_comment and video_id:
+    if pinned_comment and video_id and not publish_at:
         add_pinned_engagement_comment(youtube, video_id, pinned_comment)
 
     return {
