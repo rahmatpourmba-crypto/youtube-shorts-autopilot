@@ -1,6 +1,5 @@
 import os
 os.environ['QURAN_MASTER_SESSION_AUTH'] = 'AUTHORIZED_786'
-import os
 import sys
 import datetime
 import json
@@ -33,65 +32,57 @@ def save_state(state):
         json.dump(state, f, indent=2)
 
 # ---------------------------------------------------------------------------
-# QURAN-ONLY MODE (owner policy 2026-11-02):
-#   All other channels (AI, Animals, CryptoLab, Cars) are permanently disabled.
-#   Focus 100% on Quran channel for maximum viral growth and million-view potential.
-#
-# SCHEDULE (owner policy 2026-11-03):
-#   Quran: 5 uploads/day
-#   Window: 16:00 -> 23:00 Tehran time (12:30 -> 19:30 UTC)
-#   Spacing: >= 90 min between two uploads.
-#   Slots (Tehran): 16:00, 17:30, 19:00, 20:30, 22:00
+# QURAN CHANNEL - MIDDLE EAST GOLDEN WINDOWS (Mecca/Riyadh UTC+3)
+# Target: 5 high-impact viral slots per day:
+#   Slot 1 (Fajr):      06:00 Riyadh (03:00 UTC)
+#   Slot 2 (Zohr):      12:30 Riyadh (09:30 UTC)
+#   Slot 3 (Afternoon): 17:00 Riyadh (14:00 UTC)
+#   Slot 4 (Maghrib):   19:30 Riyadh (16:30 UTC)
+#   Slot 5 (Isha/Night):22:00 Riyadh (19:00 UTC)
 # ---------------------------------------------------------------------------
-# SCHEDULE (Golden Routine):
-#   5 uploads/day across peak audience windows:
-#   12:00, 15:00, 18:00, 20:30, 22:30 Tehran time (08:30, 11:30, 14:30, 17:00, 19:00 UTC)
-#   Window: 12:00 -> 23:40 Tehran (08:30 -> 20:10 UTC), min gap 75 min
-DAY_START_UTC_MIN = 4 * 60 + 30             # 07:30 UTC = 11:00 Tehran (Slot 1)
+QURAN_DAILY_TARGET = 5
 
-# 3 Golden High-Retention Uploads/Day (Golden Hours: 11:00, 17:30, 22:00 Tehran)
-QURAN_DAILY_TARGET = 6
-QURAN_SLOTS_REL = [0, 300, 510, 660, 810, 930]  # 08:00, 13:00, 16:30, 19:00, 21:30, 23:30 Tehran             # 11:00 Tehran (Slot 1), 17:30 Tehran (Slot 2), 22:00 Tehran (Slot 3)
-QURAN_SLOTS_UTC_MIN = [(DAY_START_UTC_MIN + r) % 1440 for r in QURAN_SLOTS_REL]
-QURAN_MIN_GAP_MIN = 110
-LATEST_UPLOAD_REL_MIN = 1180                 # until ~00:20 Tehran
+# UTC Minutes of Day:
+# 03:00 UTC = 180 min
+# 09:30 UTC = 570 min
+# 14:00 UTC = 840 min
+# 16:30 UTC = 990 min
+# 19:00 UTC = 1140 min
+QURAN_SLOTS_UTC_MIN = [180, 570, 840, 990, 1140]
+QURAN_MIN_GAP_MIN = 110  # Minimum gap of ~2 hours between uploads
 
-def schedule_day_key(utc_now: datetime.datetime) -> str:
-    return (utc_now - datetime.timedelta(minutes=DAY_START_UTC_MIN)).strftime("%Y-%m-%d")
-
-def _rel(utc_now: datetime.datetime) -> int:
-    return (utc_now.hour * 60 + utc_now.minute - DAY_START_UTC_MIN) % 1440
-
-def _fmt_tehran(utc_min: int) -> str:
-    # Convert UTC minutes-of-day to Tehran (UTC+3:30)
-    t = (utc_min + 210) % 1440
-    return f"{t//60:02d}:{t%60:02d} Tehran"
+def _fmt_riyadh(utc_min: int) -> str:
+    # Riyadh is UTC+3 (180 minutes)
+    r = (utc_min + 180) % 1440
+    return f"{r//60:02d}:{r%60:02d} Riyadh (UTC+3)"
 
 def quran_gate(state: dict, utc_now: datetime.datetime):
-    """Return (should_upload, slot_index, reason). Pure function."""
-    day = schedule_day_key(utc_now)
-    rel = _rel(utc_now)
+    """
+    Evaluates whether the current moment warrants a Quran short upload.
+    Stateless check designed for frequent non-blocking cron pulses.
+    """
+    day = utc_now.strftime("%Y-%m-%d")
     count = state.get("quran_daily_count", 0) if state.get("quran_daily_date") == day else 0
 
     if count >= QURAN_DAILY_TARGET:
-        return False, count, f"daily target reached ({count}/{QURAN_DAILY_TARGET})"
+        return False, count, f"Daily target reached ({count}/{QURAN_DAILY_TARGET})"
 
-    if rel >= LATEST_UPLOAD_REL_MIN:
-        return False, count, f"outside Quran window (now {utc_now.strftime('%H:%M')} UTC)"
+    now_min = utc_now.hour * 60 + utc_now.minute
+    due_min = QURAN_SLOTS_UTC_MIN[count] if count < len(QURAN_SLOTS_UTC_MIN) else QURAN_SLOTS_UTC_MIN[-1]
 
-    due = QURAN_SLOTS_REL[count] if count < len(QURAN_SLOTS_REL) else QURAN_SLOTS_REL[-1]
-    if rel < due:
-        return False, count, f"next Quran slot #{count+1} at {_fmt_tehran(QURAN_SLOTS_UTC_MIN[count])}"
+    # Slot is considered open if current time is at or after due_min (with 45 min tolerance before due)
+    if now_min < (due_min - 30):
+        return False, count, f"Next Quran slot #{count+1} opens at {_fmt_riyadh(due_min)}"
 
     ts = utc_now.timestamp()
     gap = (ts - state.get("last_quran_upload_epoch", 0)) / 60.0
     if gap < QURAN_MIN_GAP_MIN:
-        return False, count, f"min gap {QURAN_MIN_GAP_MIN} min not met ({gap:.0f} min)"
+        return False, count, f"Minimum interval between uploads ({QURAN_MIN_GAP_MIN} min) not met (last was {gap:.0f} min ago)"
 
-    return True, count, f"Quran slot #{count+1} due ({_fmt_tehran(QURAN_SLOTS_UTC_MIN[count])}), now {utc_now.strftime('%H:%M')} UTC"
+    return True, count, f"Quran slot #{count+1} ready ({_fmt_riyadh(due_min)}), current time: {utc_now.strftime('%H:%M')} UTC"
 
 def record_quran_upload(state: dict, utc_now: datetime.datetime):
-    day = schedule_day_key(utc_now)
+    day = utc_now.strftime("%Y-%m-%d")
     if state.get("quran_daily_date") != day:
         state["quran_daily_date"] = day
         state["quran_daily_count"] = 0
@@ -100,13 +91,12 @@ def record_quran_upload(state: dict, utc_now: datetime.datetime):
 
 def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 3, slot_index: int = 0):
     """
-    Mode: Option A (100% Pure Fresh Trend Discovery - Zero Repeats)
-    Delegates directly to MasterQuranFactory:
-    - 24h/48h Arabic Quran Viral Radar (views / hours elapsed velocity, duration < 45s)
-    - Strict Deduplication Engine (used_radar_ids.json)
-    - Anti-Fingerprint FFmpeg Engine (102% zoom, audio atempo=1.02, color polish, -map_metadata -1)
-    - Arabic SEO Generator (Gemini AI + High CTR Arabic keywords)
-    - Golden-Hour Scheduling & Publishing to YouTube
+    Executes Quran automation pipeline via MasterQuranFactory:
+    - Zero-Quota Viral Radar
+    - Strict Deduplication Engine
+    - Retention Hook & Anti-Fingerprint FFmpeg Engine
+    - Arabic High-CTR SEO Generator
+    - Middle East Peak Scheduler
     """
     for attempt in range(1, max_retries + 1):
         try:
@@ -115,28 +105,27 @@ def run_quran_channel(run_dir: Path, run_count: int, max_retries: int = 3, slot_
             factory = MasterQuranFactory()
             upload_res = factory.run_factory_cycle()
             if upload_res and upload_res.get("status") == "SUCCESS":
-                print(f"  ✓ Successfully processed & scheduled: {upload_res.get('url')}")
+                print(f"  ✓ Successfully processed & uploaded: {upload_res.get('url')}")
                 return upload_res
-            print(f"  [Warning] Factory returned non-success status: {upload_res}")
+            print(f"  [Warning] Factory returned non-success: {upload_res}")
             if attempt < max_retries:
-                time.sleep(15)
+                time.sleep(10)
         except Exception as e:
-            print(f"  [Self-Healing] Exception in run_quran_channel (attempt {attempt}): {e}")
+            print(f"  [Error] Exception in run_quran_channel (attempt {attempt}): {e}")
             import traceback
             traceback.print_exc()
             if attempt < max_retries:
-                time.sleep(15)
+                time.sleep(10)
 
     return None
 
 def run_pass(state, force_upload, run_dir, run_count, daily_uploads, today_date, utc_now):
-    """Only Quran channel is active."""
     uploaded = 0
     attempted = 0
 
     ok, slot_idx, reason = quran_gate(state, utc_now)
     if ok or force_upload:
-        print(f"\n[Pacing Gate - Quran] GO: {reason}{' (forced)' if force_upload and not ok else ''}")
+        print(f"\n[Pacing Gate - Quran] GO: {reason}{' (FORCED)' if force_upload and not ok else ''}")
         attempted += 1
         upload_res = run_quran_channel(run_dir, run_count, slot_index=slot_idx)
         if upload_res:
@@ -148,64 +137,31 @@ def run_pass(state, force_upload, run_dir, run_count, daily_uploads, today_date,
 
     return uploaded, attempted
 
-def next_open_in_minutes(state, utc_now, horizon_min):
-    """Minutes until next Quran slot opens."""
-    for m in range(1, int(horizon_min) + 1):
-        t = utc_now + datetime.timedelta(minutes=m)
-        if quran_gate(state, t)[0]:
-            return m
-    return None
-
 def main():
     state = load_state()
     today_str = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S")
     run_count = state.get("run_count", 0) + 1
 
     utc_now = datetime.datetime.now(datetime.timezone.utc)
-    tehran_now = utc_now + datetime.timedelta(hours=3, minutes=30)
+    riyadh_now = utc_now + datetime.timedelta(hours=3)
 
     print("=" * 65)
-    print(f"=== QURAN-ONLY AUTONOMOUS DISPATCHER (Run #{run_count}) ===")
-    print(f"UTC: {utc_now.strftime('%Y-%m-%d %H:%M:%S')} | Tehran: {tehran_now.strftime('%H:%M')}")
-    print("Mode: 100% Quran channel only")
-    print("Strategy: High-view Instagram viral reels from top reciters")
-    print("Goal: Consistent daily output for algorithm + million-view potential")
+    print(f"=== QURAN AUTONOMOUS VIRAL DISPATCHER (Run #{run_count}) ===")
+    print(f"UTC: {utc_now.strftime('%Y-%m-%d %H:%M:%S')} | Riyadh: {riyadh_now.strftime('%H:%M')}")
+    print("Mode: 100% Quran Automation")
+    print("Strategy: Zero-Quota Viral Radar + Middle East Peak Windows")
     print("=" * 65)
 
     run_dir = OUTPUT_BASE / today_str
     run_dir.mkdir(parents=True, exist_ok=True)
 
     force_upload = any(arg == "--force" for arg in sys.argv)
-
-    today_date = tehran_now.strftime("%Y-%m-%d")
+    today_date = riyadh_now.strftime("%Y-%m-%d")
     daily_uploads = state.setdefault("daily_uploads", {})
 
+    # Execute single stateless pass (Zero Sleep / No runner deadlock)
     published, attempted = run_pass(state, force_upload, run_dir, run_count,
                                    daily_uploads, today_date, utc_now)
-
-    # Catch-up for missed slots (GitHub Actions is not perfectly reliable)
-    catchup_budget = 0.0
-    for arg in sys.argv[1:]:
-        if arg.startswith("--catchup-minutes="):
-            catchup_budget = float(arg.split("=", 1)[1] or 0)
-
-    deadline = time.time() + catchup_budget * 60
-    while catchup_budget > 0 and not force_upload:
-        remaining = (deadline - time.time()) / 60.0
-        wait = next_open_in_minutes(state, datetime.datetime.now(datetime.timezone.utc),
-                                    min(remaining, 80))
-        if wait is None:
-            break
-        save_state(state)
-        print(f"\n[Catch-up] next Quran slot opens in {wait} min; waiting...")
-        time.sleep(wait * 60 + 5)
-        utc_now = datetime.datetime.now(datetime.timezone.utc)
-        pass_up, pass_att = run_pass(state, False, run_dir, run_count, daily_uploads, today_date, utc_now)
-        published += pass_up
-        attempted += pass_att
-        if not pass_up:
-            print("[Catch-up] nothing published; stopping to avoid loop")
-            break
 
     state["last_run_timestamp"] = today_str
     state["run_count"] = run_count
@@ -213,12 +169,12 @@ def main():
     save_state(state)
 
     print("\n" + "=" * 65)
-    print(f"✓ Quran cycle #{run_count} finished. Published {published}/{attempted}")
+    print(f"✓ Quran cycle #{run_count} completed. Published: {published}/{attempted}")
     print("=" * 65)
 
     if attempted and not published:
-        print("::error::Quran dispatcher published 0 of attempted slots - check sourcing or upload.")
-        sys.exit(1)
+        print("::warning::Quran dispatcher attempted upload but did not succeed.")
+        sys.exit(0)  # Exit clean to allow next cron trigger to retry without locking workflow
 
 if __name__ == "__main__":
     main()

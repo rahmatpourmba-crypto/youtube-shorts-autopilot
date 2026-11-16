@@ -2,13 +2,17 @@ name: "Master Quran Factory (100% Cloud Autopilot - Option A)"
 
 on:
   schedule:
-    # Golden Hours across Mecca & Middle East (UTC+3 / Tehran UTC+3:30):
-    # 07:30 UTC = 11:00 AM Tehran (نوبت ظهر)
-    # 14:00 UTC = 17:30 PM Tehran (نوبت عصر طلایی)
-    # 18:30 UTC = 22:00 PM Tehran (نوبت شبانگاهی)
-    - cron: '30 7 * * *'
+    # Middle East & Mecca Golden Peak Windows (UTC+3):
+    # 03:00 UTC = 06:00 AM Riyadh (نوبت فجر و صبحگاه)
+    # 09:30 UTC = 12:30 PM Riyadh (نوبت ظهر)
+    # 14:00 UTC = 17:00 PM Riyadh (نوبت عصر طلایی)
+    # 16:30 UTC = 19:30 PM Riyadh (نوبت مغرب و اوایل شب)
+    # 19:00 UTC = 22:00 PM Riyadh (نوبت شبانگاهی و آرامش قبل خواب)
+    - cron: '0 3 * * *'
+    - cron: '30 9 * * *'
     - cron: '0 14 * * *'
-    - cron: '30 18 * * *'
+    - cron: '30 16 * * *'
+    - cron: '0 19 * * *'
   workflow_dispatch:
     inputs:
       force:

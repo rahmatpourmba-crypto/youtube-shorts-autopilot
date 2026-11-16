@@ -99,13 +99,15 @@ jobs:
       - name: Execute Autonomous Multi-Channel Dispatcher
         env:
           IG_PASSWORD_CRYPTOLAB: ${{ secrets.IG_PASSWORD_CRYPTOLAB }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CHANNEL_WATERMARK: "@NourAlQuran"
         run: |
-          python dispatch_cycle.py --channel=${{ inputs.target_channel || 'auto' }} ${{ inputs.force && '--force' || '' }} ${{ github.event_name == 'schedule' && '--catchup-minutes=100' || '' }}
+          python dispatch_cycle.py ${{ inputs.force && '--force' || '' }}
 
       - name: Commit and Push Updated State (Keepalive Heartbeat Activity - NO skip-ci)
         if: always()
         run: |
-          git add claims upload_registry.json 2>/dev/null || true
+          git add claims upload_registry.json used_radar_ids.json 2>/dev/null || true
           git add state.json growth_brain.json used_trends_history.json used_viral_reels.json used_ai_viral_reels.json
           git commit -m "chore(autopilot): update multi-channel state and keepalive heartbeat" || echo "No changes to state"
           for i in 1 2 3 4 5; do
