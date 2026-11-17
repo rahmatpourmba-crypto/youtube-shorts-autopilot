@@ -260,6 +260,92 @@ def record_to_registry(vid_id: str, title: str, publish_at: str):
 
 
 # ===========================================================================
+# MODULE 0: Real Trend Hunter (شکار ترندهای داغ و اثبات‌شده در بازار - اولویت ۱)
+# ===========================================================================
+class RealTrendHunter:
+    """
+    Priority 1 Engine: Hunts real viral trending Quran clips with 500k-2M+ views.
+    Downloads authentic real-world footage via high-speed CDN / Archive streams.
+    Applies the proven 124K interactive hook: 'اكتب شيء تؤجر عليه 🌿'
+    and anti-fingerprint transformation.
+    """
+    def __init__(self, output_dir: Path):
+        self.output_dir = output_dir
+
+    def hunt_and_prepare_trend(self) -> dict:
+        print("\n" + "=" * 65)
+        print("📡 [MODULE 0: Real Trend Hunter - شکار ترندهای داغ و اثبات‌شده در بازار]")
+        print("=" * 65)
+        try:
+            from viral_trends_bank_50 import VIRAL_TRENDS_50
+            used_ids = load_used_video_ids()
+            candidates = [
+                item for item in VIRAL_TRENDS_50.get("quran", [])
+                if item.get("stream") and item["stream"] not in used_ids and item.get("title") not in used_ids
+            ]
+            if not candidates:
+                candidates = VIRAL_TRENDS_50.get("quran", [])
+
+            chosen = candidates[0]
+            print(f"  • ترند منتخب: {chosen['title']}")
+            print(f"  • سورس ویدیوی زنده: {chosen['stream']}")
+
+            # Download stream
+            raw_file = self.output_dir / f"raw_trend_{int(time.time())}.mp4"
+            req = requests.get(chosen["stream"], headers={'User-Agent': 'Mozilla/5.0'}, timeout=35)
+            req.raise_for_status()
+            with open(raw_file, "wb") as f:
+                f.write(req.content)
+
+            if not raw_file.exists() or raw_file.stat().st_size < 50000:
+                raise RuntimeError("فایل ترند دانلود نشد یا حجم آن کم است.")
+
+            # Apply Anti-Fingerprint & 124K Interactive Hook
+            hook_text = random.choice(VIRAL_HOOKS)
+            processed_file = self.output_dir / f"trend_124k_{int(time.time())}.mp4"
+
+            vf = (
+                "crop=iw*0.98:ih*0.98,"
+                "scale=1080:1920:force_original_aspect_ratio=increase,"
+                "crop=1080:1920,"
+                "eq=contrast=1.03:saturation=1.05,"
+                f"drawtext=text='{CHANNEL_WATERMARK}':x=w-tw-40:y=160:fontsize=36:fontcolor=white@0.80:shadowcolor=black@0.6:shadowx=2:shadowy=2,"
+                f"drawtext=text='{hook_text}':x=(w-tw)/2:y=240:fontsize=52:fontcolor=white@0.98:shadowcolor=black@0.8:shadowx=3:shadowy=3"
+            )
+
+            cmd = [
+                FFMPEG_BIN, "-y", "-hide_banner",
+                "-i", str(raw_file),
+                "-vf", vf,
+                "-af", "atempo=1.02,volume=1.10",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+                "-c:a", "aac", "-b:a", "192k",
+                "-map_metadata", "-1",
+                "-t", "45",
+                str(processed_file)
+            ]
+            subprocess.run(cmd, capture_output=True, check=True)
+            print(f"  ✓ ویدیوی ترند واقعی با فرمول ۱۲۴K آماده شد: {processed_file.name}")
+
+            theme_info = {
+                "id": chosen["stream"],
+                "surah": chosen.get("title", "سورة خاشعة")[:30],
+                "reciter": chosen.get("qari", "الشيخ ياسر الدوسري"),
+                "theme_desc": chosen.get("hook", "تلاوة خاشعة تسكن الروح وتريح القلب"),
+                "pinned_cta": "سبحان الله وبحمده، سبحان الله العظيم 🤍 اكتب شيء تؤجر عليه في التعليقات واكسب حسنة جارية ✨"
+            }
+
+            return {
+                "theme": theme_info,
+                "video_path": processed_file,
+                "pinned_comment": theme_info["pinned_cta"]
+            }
+        except Exception as e:
+            print(f"  ⚠️ هشدار ترندیاب ({e})؛ سوئیچ به استودیو اختصاصی...")
+            return None
+
+
+# ===========================================================================
 # MODULE 1: Autonomous Studio Master Synthesizer (100% Monetizable & Unblockable)
 # ===========================================================================
 class StudioMasterSynthesizer:
@@ -489,6 +575,7 @@ class MasterQuranFactory:
 
     def __init__(self):
         self.youtube = self._authenticate_youtube()
+        self.trend_hunter = RealTrendHunter(WORKSPACE_OUTPUT)
         self.synthesizer = StudioMasterSynthesizer(WORKSPACE_OUTPUT)
         self.seo_engine = ArabicPromptSEOEngine(GEMINI_API_KEY)
         self.scheduler = GoldenHourScheduler()
@@ -515,8 +602,12 @@ class MasterQuranFactory:
         print("👑 [اجرای چرخه اتوماسیون مانیتایزیشن نور القرآن: محتوای استودیویی اورجینال]")
         print("#" * 70)
 
-        # 1. Synthesize Studio Master Short
-        prod = self.synthesizer.synthesize_next_short()
+        # 1. Real Trend Hunter (Priority 1) with Studio Fallback (Priority 2)
+        prod = self.trend_hunter.hunt_and_prepare_trend()
+        if not prod:
+            print("  [Auto-Fallback] تولید اختصاصی استودیویی به عنوان پشتیبان فعال شد...")
+            prod = self.synthesizer.synthesize_next_short()
+
         theme = prod["theme"]
         clean_video = prod["video_path"]
 
