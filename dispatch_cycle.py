@@ -32,24 +32,19 @@ def save_state(state):
         json.dump(state, f, indent=2)
 
 # ---------------------------------------------------------------------------
-# QURAN CHANNEL - MIDDLE EAST GOLDEN WINDOWS (Mecca/Riyadh UTC+3)
-# Target: 5 high-impact viral slots per day:
-#   Slot 1 (Fajr):      06:00 Riyadh (03:00 UTC)
-#   Slot 2 (Zohr):      12:30 Riyadh (09:30 UTC)
-#   Slot 3 (Afternoon): 17:00 Riyadh (14:00 UTC)
-#   Slot 4 (Maghrib):   19:30 Riyadh (16:30 UTC)
-#   Slot 5 (Isha/Night):22:00 Riyadh (19:00 UTC)
+# QURAN CHANNEL - STRATEGIC PACING (Anti-Cannibalization Formula)
+# Target: 2 high-retention viral slots per day (Peak Arabic Engagement):
+#   Slot 1 (Afternoon Leisure / Commute): 17:00 Riyadh (14:00 UTC / 17:30 Tehran)
+#   Slot 2 (Night Calm / Bedtime):        21:30 Riyadh (18:30 UTC / 22:00 Tehran)
+# Spacing: >= 4 hours between uploads to allow algorithmic feed saturation.
 # ---------------------------------------------------------------------------
-QURAN_DAILY_TARGET = 5
+QURAN_DAILY_TARGET = 2
 
 # UTC Minutes of Day:
-# 03:00 UTC = 180 min
-# 09:30 UTC = 570 min
-# 14:00 UTC = 840 min
-# 16:30 UTC = 990 min
-# 19:00 UTC = 1140 min
-QURAN_SLOTS_UTC_MIN = [180, 570, 840, 990, 1140]
-QURAN_MIN_GAP_MIN = 110  # Minimum gap of ~2 hours between uploads
+# 14:00 UTC = 840 min (17:00 Riyadh)
+# 18:30 UTC = 1110 min (21:30 Riyadh)
+QURAN_SLOTS_UTC_MIN = [840, 1110]
+QURAN_MIN_GAP_MIN = 240  # Minimum gap of 4 hours between uploads
 
 def _fmt_riyadh(utc_min: int) -> str:
     # Riyadh is UTC+3 (180 minutes)

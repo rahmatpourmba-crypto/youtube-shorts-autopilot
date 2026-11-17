@@ -75,20 +75,17 @@ CHANNEL_WATERMARK = os.getenv("CHANNEL_WATERMARK", "@NourAlQuran")
 # Middle East / Riyadh Peak Windows (UTC+3)
 RIYADH_TZ_OFFSET = timedelta(hours=3)
 GOLDEN_HOURS_RIYADH = [
-    (6, 0),   # Fajr / Dawn
-    (12, 30), # Noon / Zohr
-    (17, 0),  # Afternoon / Asr
-    (19, 30), # Maghrib
-    (22, 0)   # Night Calm
+    (17, 0),  # Slot 1: Afternoon Leisure (17:00 Riyadh / 17:30 Tehran)
+    (21, 30)  # Slot 2: Night Calm / Sleep (21:30 Riyadh / 22:00 Tehran)
 ]
 
 # High-retention hooks for first 3.5 seconds
 VIRAL_HOOKS = [
-    "أرح سمعك وقلبك 🌿",
-    "تلاوة خاشعة تسكن الروح 🤍",
-    "آيات تلامس القلوب 🕊️",
-    "تلاوة تريح النفس والبال ✨",
-    "قف واستمع لدقيقة مع كتاب الله 🌸"
+    "اكتب شيء تؤجر عليه 🌿",
+    "تخيل أن كل رشفة ماء تشربها... 💧",
+    "آية إذا ضاق صدرك استمع لها 🤍",
+    "توقف دقيقة واكسب حسنة جارية ✨",
+    "قلبٌ يطمئن بذكر الله 🕊️"
 ]
 
 # Studio Master Quran Catalog for 100% Monetizable, Non-Reused Video Generation
@@ -346,8 +343,9 @@ class StudioMasterSynthesizer:
         vf_chain = (
             "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,"
             "eq=contrast=1.05:saturation=1.08,"
-            f"drawtext=text='{CHANNEL_WATERMARK}':x=w-tw-40:y=180:fontsize=36:fontcolor=white@0.80:shadowcolor=black@0.6:shadowx=2:shadowy=2,"
-            f"drawtext=text='{theme['surah']} | {theme['reciter']}':x=(w-tw)/2:y=260:fontsize=44:fontcolor=white@0.95:shadowcolor=black@0.7:shadowx=2:shadowy=2"
+            f"drawtext=text='{CHANNEL_WATERMARK}':x=w-tw-40:y=160:fontsize=36:fontcolor=white@0.80:shadowcolor=black@0.6:shadowx=2:shadowy=2,"
+            f"drawtext=text='{hook_text}':x=(w-tw)/2:y=240:fontsize=52:fontcolor=white@0.98:shadowcolor=black@0.8:shadowx=3:shadowy=3,"
+            f"drawtext=text='{theme['surah']} | {theme['reciter']}':x=(w-tw)/2:y=310:fontsize=38:fontcolor=white@0.85:shadowcolor=black@0.6:shadowx=2:shadowy=2"
         )
 
         bg_input = str(BG_VIDEO_DEFAULT) if BG_VIDEO_DEFAULT.exists() else "color=c=0x0a1128:s=1080x1920:d=30"
@@ -418,7 +416,7 @@ class ArabicPromptSEOEngine:
 - مفهوم معنوی: {theme['theme_desc']}
 
 دستورالعمل‌های مهندسی پرامپت برای الگوریتم یوتیوب:
-1. عنوان (Title) باید کمتر از ۶۰ کاراکتر، دارای هوک عاطفی-روحی، ایموجی معنوی و هشتگ #Shorts باشد (مثال: «ضاق صدرك؟ 🌿 استمع لهذه الآيات ۳۰ ثانية | الشيخ ياسر الدوسري #Shorts»).
+1. عنوان (Title) باید دقیقاً بر اساس فرمول ویدیوهای ۱۲۴ هزار بازدیدی کانال باشد: حاوی عبارت تعاملی جذاب مانند «اكتب شيء تؤجر عليه 🌿» یا «تخيل أن...» یا «آية تريح قلبك» به همراه نام سوره، نام قاری و #Shorts #Quran (مثال: «اكتب شيء تؤجر عليه 🌿 | الشيخ ياسر الدوسري #Shorts #Quran» یا «تلاوة تهز القلوب 🤍 | اكتب شيء تؤجر عليه | الشيخ ياسر الدوسري #Shorts»).
 2. توضیحات (Description) شامل ۳ خط متن خاشعانه با ذکر آیه و دعوت به اشتراک و ثواب صدقه جاریه.
 3. هشتگ‌ها و تگ‌های پرجستجوی ترند خاورمیانه.
 
