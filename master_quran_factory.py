@@ -216,6 +216,52 @@ def save_used_video_id(vid_id: str):
         json.dump(sorted(list(used)), f, ensure_ascii=False, indent=2)
 
 
+def record_state_upload(vid_id: str, title: str):
+    """Synchronizes state.json across cloud runners and dispatch cycles."""
+    state_file = BASE_DIR / "state.json"
+    now_utc = datetime.now(timezone.utc)
+    today_str = now_utc.strftime("%Y-%m-%d")
+    state = {}
+    if state_file.exists():
+        try:
+            with open(state_file, "r", encoding="utf-8") as f:
+                state = json.load(f)
+        except Exception:
+            state = {}
+    if state.get("quran_daily_date") != today_str:
+        state["quran_daily_date"] = today_str
+        state["quran_daily_count"] = 0
+    state["quran_daily_count"] = state.get("quran_daily_count", 0) + 1
+    state["last_quran_upload_epoch"] = now_utc.timestamp()
+    state["last_run_timestamp"] = now_utc.strftime("%Y-%m-%d_%H%M%S")
+    daily_uploads = state.setdefault("daily_uploads", {})
+    daily_uploads["quran_short"] = today_str
+    with open(state_file, "w", encoding="utf-8") as f:
+        json.dump(state, f, indent=2)
+
+
+def record_to_registry(vid_id: str, title: str, publish_at: str):
+    """Appends upload record to upload_registry.json."""
+    reg_file = BASE_DIR / "upload_registry.json"
+    reg = {}
+    if reg_file.exists():
+        try:
+            with open(reg_file, "r", encoding="utf-8") as f:
+                reg = json.load(f)
+        except Exception:
+            reg = {}
+    q_list = reg.setdefault("quran", [])
+    q_list.append({
+        "video_id": vid_id,
+        "title": title,
+        "publish_at": publish_at,
+        "uploaded_at": datetime.now(timezone.utc).isoformat(),
+        "ts": int(time.time())
+    })
+    with open(reg_file, "w", encoding="utf-8") as f:
+        json.dump(reg, f, ensure_ascii=False, indent=2)
+
+
 # ===========================================================================
 # MODULE 1: Autonomous Studio Master Synthesizer (100% Monetizable & Unblockable)
 # ===========================================================================
@@ -530,6 +576,13 @@ class MasterQuranFactory:
                     # Save theme ID to deduplication record
                     save_used_video_id(theme["id"])
                     save_used_video_id(vid_id)
+
+                    # Synchronize state.json and upload_registry.json
+                    try:
+                        record_state_upload(vid_id, seo['title'])
+                        record_to_registry(vid_id, seo['title'], display_time)
+                    except Exception as s_err:
+                        print(f"  ⚠️ هشدار در ثبت وضعیت: {s_err}")
 
                     # Post pinned comment to boost engagement
                     try:
