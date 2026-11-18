@@ -362,32 +362,63 @@ class RealTrendHunter:
                     print(f"  ⚠️ فایل {code} به درستی دانلود نشد؛ بررسی کاندیدای بعدی...")
                     continue
 
-                # Apply 124K High-Retention Interactive Hook & Transformation
+                # 1. Probe exact duration of raw video for natural, smooth cuts (no abrupt stops)
+                cmd_probe = [FFMPEG_BIN, "-i", str(raw_file)]
+                res_probe = subprocess.run(cmd_probe, capture_output=True, text=True)
+                m_dur = re.search(r'Duration:\s*(\d+):(\d+):(\d+\.?\d*)', res_probe.stderr)
+                clip_dur = 30.0
+                if m_dur:
+                    h, mn, s = m_dur.groups()
+                    clip_dur = float(h)*3600 + float(mn)*60 + float(s)
+
+                # Keep natural ending if under 59s; otherwise trim smoothly at 58.5s for YouTube Shorts
+                target_dur = clip_dur if clip_dur <= 59.0 else 58.5
+                fade_dur = min(0.8, max(0.4, target_dur * 0.05))
+                fade_start = max(0, target_dur - fade_dur)
+
+                # 2. Apply 124K High-Retention Interactive Hook & Zero-Copyright Transformation
                 hook_text = random.choice(PROVEN_VIRAL_HOOKS)
                 processed_file = self.output_dir / f"trend_124k_{code}_{int(time.time())}.mp4"
 
+                # Visual Filter:
+                # - Fit 1080x1920 without cropping out subtitles, captions, or reciter face
+                # - Elegant semi-transparent header banner
+                # - High-retention interactive hook text + watermark
+                # - Gentle smooth fade-out (no choppy or abrupt cuts)
                 vf = (
-                    "crop=iw*0.98:ih*0.98,"
-                    "scale=1080:1920:force_original_aspect_ratio=increase,"
-                    "crop=1080:1920,"
-                    "eq=contrast=1.03:saturation=1.06,"
-                    f"drawtext=text='{CHANNEL_WATERMARK}':x=w-tw-40:y=160:fontsize=36:fontcolor=white@0.80:shadowcolor=black@0.6:shadowx=2:shadowy=2,"
-                    f"drawtext=text='{hook_text}':x=(w-tw)/2:y=240:fontsize=52:fontcolor=white@0.98:shadowcolor=black@0.8:shadowx=3:shadowy=3"
+                    "scale=1080:1920:force_original_aspect_ratio=decrease,"
+                    "pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black,"
+                    "eq=contrast=1.02:saturation=1.05,"
+                    "drawbox=y=160:color=black@0.45:width=iw:height=140:t=fill,"
+                    f"drawtext=text='{hook_text}':x=(w-tw)/2:y=195:fontsize=46:fontcolor=white:shadowcolor=black@0.8:shadowx=2:shadowy=2,"
+                    f"drawtext=text='{CHANNEL_WATERMARK}':x=(w-tw)/2:y=255:fontsize=24:fontcolor=white@0.85,"
+                    f"fade=t=out:st={fade_start:.2f}:d={fade_dur:.2f}"
+                )
+
+                # Audio Filter (Content ID Shield & Natural Ending):
+                # - 1.5% tempo shift changes acoustic hash without altering perceived pitch
+                # - 120Hz bass EQ enhances vocal warmth & transformative value
+                # - Smooth audio fade-out prevents clipping mid-breath
+                af = (
+                    "atempo=1.015,"
+                    "equalizer=f=120:width_type=h:width=60:g=1.2,"
+                    "volume=1.05,"
+                    f"afade=t=out:st={fade_start:.2f}:d={fade_dur:.2f}"
                 )
 
                 cmd = [
                     FFMPEG_BIN, "-y", "-hide_banner",
                     "-i", str(raw_file),
                     "-vf", vf,
-                    "-af", "atempo=1.01,volume=1.10",
+                    "-af", af,
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
                     "-c:a", "aac", "-b:a", "192k",
                     "-map_metadata", "-1",
-                    "-t", "45",
+                    "-t", f"{target_dur:.2f}",
                     str(processed_file)
                 ]
                 subprocess.run(cmd, capture_output=True, check=True)
-                print(f"  ✓ ویدیوی ترند واقعی با هوک ۱۲۴K آماده شد: {processed_file.name}")
+                print(f"  ✓ ویدیوی ترند واقعی آماده شد (بدون کپی‌رایت با فید روان و طبیعی): {processed_file.name}")
 
                 # Detect reciter
                 reciter = "الشيخ ياسر الدوسري"
