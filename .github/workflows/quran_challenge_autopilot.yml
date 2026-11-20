@@ -15,6 +15,10 @@ on:
           - produce-upload
           - fix-channel
           - dry-run
+      challenge_id:
+        description: 'Optional: Force specific challenge ID (e.g. duha_4_5, raad_28, kahf_10_11)'
+        required: false
+        default: ''
 
 concurrency:
   group: quran-challenge-autopilot
@@ -41,6 +45,20 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main || true
 
+      - name: "Restore Credentials from GitHub Secrets"
+        env:
+          CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
+          TOKEN_QURAN_B64: ${{ secrets.TOKEN_QURAN_BASE64 }}
+        run: |
+          if [ -n "$CLIENT_SECRETS_JSON" ]; then
+            echo "$CLIENT_SECRETS_JSON" > client_secrets.json
+            echo "Restored client_secrets.json from secrets"
+          fi
+          if [ -n "$TOKEN_QURAN_B64" ]; then
+            echo "$TOKEN_QURAN_B64" | base64 -d > token_quran.pickle
+            echo "Restored token_quran.pickle from secrets"
+          fi
+
       - name: "Install System Dependencies (FFmpeg & Arabic Fonts)"
         run: |
           sudo apt-get update
@@ -59,13 +77,21 @@ jobs:
 
       - name: "Execute Quran Challenge Autopilot"
         env:
+          CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
+          TOKEN_QURAN_B64: ${{ secrets.TOKEN_QURAN_BASE64 }}
           YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           MODE: ${{ github.event.inputs.mode || 'produce-upload' }}
+          CHALLENGE_ID: ${{ github.event.inputs.challenge_id || '' }}
         run: |
-          python quran_challenge_autopilot.py --mode "$MODE"
+          CMD="python quran_challenge_autopilot.py --mode $MODE"
+          if [ -n "$CHALLENGE_ID" ]; then
+            CMD="$CMD --challenge-id $CHALLENGE_ID"
+          fi
+          echo "Executing: $CMD"
+          eval $CMD
 
       - name: "Commit and Push State Updates"
         if: always()

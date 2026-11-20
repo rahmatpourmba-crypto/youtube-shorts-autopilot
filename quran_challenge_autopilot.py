@@ -323,15 +323,41 @@ def ensure_fonts():
 def get_youtube_service(client_secrets_path: str = "client_secrets.json"):
     """
     Initializes and returns the authenticated Google YouTube API v3 service.
-    1. Checks environment variables (CI / GitHub Actions):
-       YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_REFRESH_TOKEN.
-    2. Fallback to local token.json.
-    3. Raises clear instructions if missing.
+    1. Restores credentials from environment variables if present (CLIENT_SECRETS_JSON, TOKEN_QURAN_BASE64).
+    2. Checks direct env vars (YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_REFRESH_TOKEN).
+    3. Checks token_quran.pickle (Production token for @islamrazekhoshabkhte in GitHub Secrets).
+    4. Fallback to local token.json.
+    5. Raises clear instructions if missing.
     """
+    import base64
+    import pickle
     from google.oauth2.credentials import Credentials
     from google.auth.transport.requests import Request
     from googleapiclient.discovery import build
 
+    # 0. Check and restore credentials from base64 env vars (GitHub Secrets integration)
+    env_cs_json = os.getenv("CLIENT_SECRETS_JSON")
+    if env_cs_json:
+        cs_dest = BASE_DIR / client_secrets_path
+        if not cs_dest.exists():
+            try:
+                with open(cs_dest, "w", encoding="utf-8") as f:
+                    f.write(env_cs_json)
+                print(f"[OAuth] Restored {cs_dest.name} from CLIENT_SECRETS_JSON.")
+            except Exception as e:
+                print(f"[OAuth Warning] Could not write CLIENT_SECRETS_JSON: {e}")
+
+    env_b64 = os.getenv("TOKEN_QURAN_B64") or os.getenv("TOKEN_QURAN_BASE64")
+    token_pickle = BASE_DIR / "token_quran.pickle"
+    if env_b64 and not token_pickle.exists():
+        try:
+            with open(token_pickle, "wb") as pf:
+                pf.write(base64.b64decode(env_b64.strip()))
+            print(f"[OAuth] Restored {token_pickle.name} from TOKEN_QURAN_BASE64.")
+        except Exception as e:
+            print(f"[OAuth Warning] Could not write token_quran.pickle from base64: {e}")
+
+    # 1. Environment variables (direct ID / Secret / Refresh Token)
     env_cid = os.getenv("YOUTUBE_CLIENT_ID")
     env_csec = os.getenv("YOUTUBE_CLIENT_SECRET")
     env_reftok = os.getenv("YOUTUBE_REFRESH_TOKEN")
@@ -349,6 +375,25 @@ def get_youtube_service(client_secrets_path: str = "client_secrets.json"):
         creds.refresh(Request())
         return build("youtube", "v3", credentials=creds)
 
+    # 2. Check token_quran.pickle (Production token for @islamrazekhoshabkhte)
+    if token_pickle.exists():
+        print(f"[OAuth] Checking credentials from {token_pickle}...")
+        try:
+            with open(token_pickle, "rb") as pf:
+                creds = pickle.load(pf)
+            if not creds.valid:
+                if creds.expired and creds.refresh_token:
+                    print("[OAuth] Refreshing token_quran.pickle credentials...")
+                    creds.refresh(Request())
+                    with open(token_pickle, "wb") as pf:
+                        pickle.dump(creds, pf)
+            if creds and creds.valid:
+                print("[OAuth] Successfully authenticated via token_quran.pickle!")
+                return build("youtube", "v3", credentials=creds)
+        except Exception as e:
+            print(f"[OAuth Warning] Failed to refresh token_quran.pickle: {e}")
+
+    # 3. Fallback to local token.json
     token_file = BASE_DIR / "token.json"
     if token_file.exists():
         print(f"[OAuth] Loading credentials from {token_file}...")
