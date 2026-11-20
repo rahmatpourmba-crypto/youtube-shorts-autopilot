@@ -730,7 +730,7 @@ def render_quiz_frame(
     from PIL import Image, ImageDraw, ImageFont
 
     ensure_fonts()
-    quran_font_to_use = SCHEHERAZADE_FONT_PATH if SCHEHERAZADE_FONT_PATH.exists() else AMIRI_FONT_PATH
+    quran_font_to_use = AMIRI_FONT_PATH
     
     font_badge = ImageFont.truetype(str(CAIRO_FONT_PATH), 36)
     font_verse = ImageFont.truetype(str(quran_font_to_use), 56)
@@ -850,7 +850,7 @@ def render_quiz_frame(
     opt_y = 1010
     opt_gap = 26
     letters = ["أ", "ب", "ج"]
-    font_opt = ImageFont.truetype(str(quran_font_to_use), 42)
+    font_opt = ImageFont.truetype(str(AMIRI_FONT_PATH), 40)
     font_let = ImageFont.truetype(str(CAIRO_FONT_PATH), 36)
 
     for i, opt_text in enumerate(options):
@@ -895,7 +895,7 @@ def render_quiz_frame(
         # Verse Option Text
         ot_lines = wrap_arabic_lines(opt_text, font_opt, opt_w - med_dia - 70)
         if len(ot_lines) > 1:
-            font_opt_small = ImageFont.truetype(str(quran_font_to_use), 36)
+            font_opt_small = ImageFont.truetype(str(AMIRI_FONT_PATH), 34)
             ot_lines = wrap_arabic_lines(opt_text, font_opt_small, opt_w - med_dia - 70)
             use_font = font_opt_small
             ot_spacing = 44
