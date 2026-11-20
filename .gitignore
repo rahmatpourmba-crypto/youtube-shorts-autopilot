@@ -29,3 +29,11 @@ upload_secrets.py
 # Bundled authoritative Quran text/translations (Tanzil)
 !data/
 !data/**
+
+# Added for Quran Challenge Engine
+token.json
+.env
+output/*.mp4
+assets/fonts/
+output/debug_frames/
+!requirements_quran_quiz.txt
