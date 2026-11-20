@@ -294,12 +294,14 @@ FFMPEG_BIN = get_ffmpeg_exe()
 # ---------------------------------------------------------------------------
 AMIRI_FONT_PATH = FONTS_DIR / "Amiri-Bold.ttf"
 CAIRO_FONT_PATH = FONTS_DIR / "Cairo-Bold.ttf"
+SCHEHERAZADE_FONT_PATH = FONTS_DIR / "ScheherazadeNew-Bold.ttf"
 
 def ensure_fonts():
-    """Ensures Amiri-Bold and Cairo-Bold fonts are present in assets/fonts/."""
+    """Ensures Amiri-Bold, Cairo-Bold, and ScheherazadeNew-Bold fonts are present in assets/fonts/."""
     urls = {
         AMIRI_FONT_PATH: "https://github.com/google/fonts/raw/main/ofl/amiri/Amiri-Bold.ttf",
-        CAIRO_FONT_PATH: "https://github.com/google/fonts/raw/main/ofl/cairo/Cairo%5Bslnt%2Cwght%5D.ttf"
+        CAIRO_FONT_PATH: "https://github.com/google/fonts/raw/main/ofl/cairo/Cairo%5Bslnt%2Cwght%5D.ttf",
+        SCHEHERAZADE_FONT_PATH: "https://github.com/google/fonts/raw/main/ofl/scheherazadenew/ScheherazadeNew-Bold.ttf"
     }
     for path, url in urls.items():
         if not path.exists() or path.stat().st_size < 1000:
@@ -672,6 +674,11 @@ def reshape_arabic(text: str) -> str:
         return ""
     import arabic_reshaper
     from bidi.algorithm import get_display
+    config = {
+        'delete_harakat': False,
+        'support_ligatures': True,
+        'OFL': True
+    }
     reshaped = arabic_reshaper.reshape(text)
     return get_display(reshaped)
 
@@ -696,6 +703,14 @@ def wrap_arabic_lines(text: str, font, max_width: int) -> list[str]:
         lines.append(" ".join(curr))
     return lines
 
+def draw_luxury_box(draw, x, y, w, h, radius, fill_color, border_color, border_w=3):
+    """Draws a 3D glassmorphic luxury card with soft drop shadow and inner top bevel."""
+    shadow_offset = 6
+    draw.rounded_rectangle([x + 2, y + shadow_offset, x + w + 2, y + h + shadow_offset], radius=radius, fill=(0, 0, 0, 160))
+    draw.rounded_rectangle([x, y, x + w, y + h], radius=radius, fill=fill_color, outline=border_color, width=border_w)
+    # 3D top bevel
+    draw.line([x + radius, y + 4, x + w - radius, y + 4], fill=(255, 255, 255, 45), width=2)
+
 def render_quiz_frame(
     badge_title: str,
     reciter_display: str,
@@ -708,268 +723,269 @@ def render_quiz_frame(
     sub_note: str = ""
 ) -> Image.Image:
     """
-    Renders a pixel-perfect 1080x1920 RGBA frame.
+    Renders a pixel-perfect 1080x1920 luxury RGBA frame.
     ZERO EMOJI BUG RULE: Uses clean geometric shapes, borders, and pure Arabic text.
-    Respects Shorts UI safe zones (clears bottom 330px and right 130px).
+    Respects Shorts UI safe zones (clears bottom 420px and right 130px).
     """
     from PIL import Image, ImageDraw, ImageFont
 
     ensure_fonts()
-    font_ui = ImageFont.truetype(str(CAIRO_FONT_PATH), 32)
+    quran_font_to_use = SCHEHERAZADE_FONT_PATH if SCHEHERAZADE_FONT_PATH.exists() else AMIRI_FONT_PATH
+    
     font_badge = ImageFont.truetype(str(CAIRO_FONT_PATH), 36)
-    font_verse = ImageFont.truetype(str(AMIRI_FONT_PATH), 46)
+    font_verse = ImageFont.truetype(str(quran_font_to_use), 56)
 
     canvas = Image.new("RGBA", (1080, 1920), (0, 0, 0, 0))
     draw = ImageDraw.Draw(canvas)
 
-    # 1. Top Badges (y = 120..240)
+    # 1. Top Badges (y = 110..245)
     # Channel Mini Handle
-    handle_txt = reshape_arabic("@islamrazekhoshabkhte | نور القرآن")
+    handle_txt = reshape_arabic("@islamrazekhoshabkhte  |  نور القرآن")
     font_handle = ImageFont.truetype(str(CAIRO_FONT_PATH), 24)
     b_h = font_handle.getbbox(handle_txt)
-    draw.text(((1080 - (b_h[2] - b_h[0])) // 2, 120), handle_txt, font=font_handle, fill=(203, 213, 225, 230))
+    draw.text(((1080 - (b_h[2] - b_h[0])) // 2, 110), handle_txt, font=font_handle, fill=(203, 213, 225, 220))
 
-    # Top Challenge Badge (Gold Pill)
-    badge_w, badge_h = 760, 85
+    # Top Challenge Badge (Luxury Gold Pill)
+    badge_w, badge_h = 800, 85
     bx = (1080 - badge_w) // 2
-    by = 165
-    draw.rounded_rectangle([bx, by, bx + badge_w, by + badge_h], radius=42, fill=(15, 23, 42, 230), outline=(212, 175, 55, 255), width=3)
+    by = 155
+    draw_luxury_box(draw, bx, by, badge_w, badge_h, radius=42, fill_color=(10, 25, 24, 240), border_color=(234, 179, 8, 255), border_w=3)
     b_txt = reshape_arabic(badge_title)
     bb = font_badge.getbbox(b_txt)
-    draw.text((bx + (badge_w - (bb[2] - bb[0])) // 2, by + 18), b_txt, font=font_badge, fill=(245, 208, 110, 255))
+    draw.text((bx + (badge_w - (bb[2] - bb[0])) // 2, by + 18), b_txt, font=font_badge, fill=(254, 240, 138, 255))
 
-    # 2. Upper-Middle Question Card (y = 290..780)
-    card_w, card_h = 960, 470
+    # 2. Upper-Middle Sacred Quran Card (y = 270..780)
+    card_w, card_h = 980, 490
     cx = (1080 - card_w) // 2
-    cy = 285
-    draw.rounded_rectangle([cx, cy, cx + card_w, cy + card_h], radius=34, fill=(8, 16, 28, 215), outline=(212, 175, 55, 220), width=3)
+    cy = 270
+    draw_luxury_box(draw, cx, cy, card_w, card_h, radius=36, fill_color=(4, 22, 18, 245), border_color=(212, 175, 55, 255), border_w=3)
+    # Inner gold border
+    draw.rounded_rectangle([cx + 12, cy + 12, cx + card_w - 12, cy + card_h - 12], radius=28, outline=(234, 179, 8, 80), width=1)
 
-    # Reciter label
-    rec_txt = reshape_arabic(reciter_display)
-    font_rec = ImageFont.truetype(str(CAIRO_FONT_PATH), 28)
-    br = font_rec.getbbox(rec_txt)
-    draw.text(((1080 - (br[2] - br[0])) // 2, cy + 28), rec_txt, font=font_rec, fill=(212, 175, 55, 240))
+    # Reciter Pill Tag
+    rec_w, rec_h = 440, 52
+    rx = (1080 - rec_w) // 2
+    ry = cy + 20
+    draw.rounded_rectangle([rx, ry, rx + rec_w, ry + rec_h], radius=26, fill=(15, 35, 30, 210), outline=(212, 175, 55, 140), width=1)
+    font_rec = ImageFont.truetype(str(CAIRO_FONT_PATH), 26)
+    r_txt = reshape_arabic(f"🎙️ {reciter_display}")
+    br = font_rec.getbbox(r_txt)
+    draw.text((rx + (rec_w - (br[2] - br[0])) // 2, ry + 10), r_txt, font=font_rec, fill=(253, 224, 71, 255))
 
-    # Quranic Verses (Amiri-Bold with auto-wrap)
+    # Quranic Verse Calligraphy
     verse_lines = wrap_arabic_lines(question_text, font_verse, card_w - 90)
     if len(verse_lines) > 3:
-        font_verse = ImageFont.truetype(str(AMIRI_FONT_PATH), 38)
+        font_verse = ImageFont.truetype(str(quran_font_to_use), 46)
         verse_lines = wrap_arabic_lines(question_text, font_verse, card_w - 90)
 
-    line_spacing = 68
+    line_spacing = 74 if len(verse_lines) <= 3 else 62
     total_text_h = len(verse_lines) * line_spacing
-    vy = cy + 100 + (320 - total_text_h) // 2
+    vy = cy + 95 + (350 - total_text_h) // 2
 
     for line in verse_lines:
         line_bidi = reshape_arabic(line)
         bl = font_verse.getbbox(line_bidi)
         lx = (1080 - (bl[2] - bl[0])) // 2
-        # Drop shadow
-        draw.text((lx + 2, vy + 2), line_bidi, font=font_verse, fill=(0, 0, 0, 180))
-        draw.text((lx, vy), line_bidi, font=font_verse, fill=(255, 255, 255, 255))
+        # Deep dark drop-shadow for 100% legibility
+        draw.text((lx + 3, vy + 4), line_bidi, font=font_verse, fill=(0, 0, 0, 255))
+        draw.text((lx + 1, vy + 2), line_bidi, font=font_verse, fill=(0, 0, 0, 200))
+        # Crisp lettering
+        draw.text((lx, vy), line_bidi, font=font_verse, fill=(255, 255, 255, 255), stroke_width=2, stroke_fill=(2, 15, 12, 230))
         vy += line_spacing
 
-    # 3. Middle Countdown / Reveal Section (y = 790..980)
+    # 3. Middle Countdown / Reveal Section (y = 795..990)
     mid_y = 795
     if state == "countdown":
-        # Shrinking gold progress bar
-        bar_w, bar_h = 880, 18
+        # Luxury Glowing Gold Progress Bar
+        bar_w, bar_h = 880, 20
         bar_x = (1080 - bar_w) // 2
-        draw.rounded_rectangle([bar_x, mid_y, bar_x + bar_w, mid_y + bar_h], radius=9, fill=(30, 41, 59, 200), outline=(71, 85, 105, 180), width=1)
+        draw.rounded_rectangle([bar_x, mid_y, bar_x + bar_w, mid_y + bar_h], radius=10, fill=(15, 30, 26, 220), outline=(71, 85, 105, 200), width=1)
         fill_w = int(bar_w * max(0.0, min(1.0, countdown_ratio)))
         if fill_w > 0:
-            draw.rounded_rectangle([bar_x, mid_y, bar_x + fill_w, mid_y + bar_h], radius=9, fill=(212, 175, 55, 255))
+            draw.rounded_rectangle([bar_x, mid_y, bar_x + fill_w, mid_y + bar_h], radius=10, fill=(234, 179, 8, 255))
 
-        # Circular Countdown Digit Badge
-        badge_dia = 90
-        cdx = (1080 - badge_dia) // 2
-        cdy = mid_y + 36
-        draw.ellipse([cdx, cdy, cdx + badge_dia, cdy + badge_dia], fill=(220, 38, 38, 235), outline=(255, 255, 255, 240), width=3)
-        font_digit = ImageFont.truetype(str(CAIRO_FONT_PATH), 52)
+        # Circular Countdown Timer Badge
+        dial_dia = 96
+        dx = (1080 - dial_dia) // 2
+        dy = mid_y + 36
+        draw.ellipse([dx - 4, dy - 4, dx + dial_dia + 4, dy + dial_dia + 4], fill=(234, 179, 8, 120))
+        draw.ellipse([dx, dy, dx + dial_dia, dy + dial_dia], fill=(185, 28, 28, 255), outline=(255, 255, 255, 255), width=3)
+        font_dial = ImageFont.truetype(str(CAIRO_FONT_PATH), 54)
         d_txt = str(countdown_number)
-        db = font_digit.getbbox(d_txt)
-        draw.text((cdx + (badge_dia - (db[2] - db[0])) // 2, cdy + 12), d_txt, font=font_digit, fill=(255, 255, 255, 255))
+        db = font_dial.getbbox(d_txt)
+        draw.text((dx + (dial_dia - (db[2] - db[0])) // 2, dy + 14), d_txt, font=font_dial, fill=(255, 255, 255, 255))
 
-        # Urgent Prompt Text
-        p_txt = reshape_arabic("اكتب إجابتك في التعليقات قبل انتهاء الوقت")
-        font_p = ImageFont.truetype(str(CAIRO_FONT_PATH), 26)
-        pb = font_p.getbbox(p_txt)
-        draw.text(((1080 - (pb[2] - pb[0])) // 2, cdy + badge_dia + 16), p_txt, font=font_p, fill=(250, 204, 21, 250))
-
-    elif state == "reveal":
-        # Glowing Emerald Green Answer Banner
-        r_box_w, r_box_h = 740, 80
-        rx = (1080 - r_box_w) // 2
-        ry = mid_y + 35
-        draw.rounded_rectangle([rx, ry, rx + r_box_w, ry + r_box_h], radius=40, fill=(15, 122, 73, 245), outline=(74, 222, 128, 255), width=3)
-        rev_txt = reshape_arabic(f"الإجابة الصحيحة: {sub_note}")
-        font_rev = ImageFont.truetype(str(CAIRO_FONT_PATH), 32)
-        rb = font_rev.getbbox(rev_txt)
-        draw.text((rx + (r_box_w - (rb[2] - rb[0])) // 2, ry + 18), rev_txt, font=font_rev, fill=(255, 255, 255, 255))
-    else:
-        # Prompt Idle State
-        p_txt = reshape_arabic("اختر الإجابة الصحيحة من الخيارات التالية")
+        # Urgent Prompt Banner
+        p_txt = reshape_arabic("⚡ اكتب إجابتك في التعليقات قبل انتهاء الوقت! ⚡")
         font_p = ImageFont.truetype(str(CAIRO_FONT_PATH), 28)
         pb = font_p.getbbox(p_txt)
-        draw.text(((1080 - (pb[2] - pb[0])) // 2, mid_y + 45), p_txt, font=font_p, fill=(203, 213, 225, 230))
+        draw.text(((1080 - (pb[2] - pb[0])) // 2 + 2, dy + dial_dia + 18), p_txt, font=font_p, fill=(0, 0, 0, 200))
+        draw.text(((1080 - (pb[2] - pb[0])) // 2, dy + dial_dia + 16), p_txt, font=font_p, fill=(253, 224, 71, 255))
 
-    # 4. Lower-Middle Option Cards (y = 1010..1480)
-    opt_y = 1010
-    opt_w, opt_h = 940, 132
+    elif state == "reveal":
+        # Majestic Glowing Emerald Banner
+        r_box_w, r_box_h = 760, 86
+        rx = (1080 - r_box_w) // 2
+        ry = mid_y + 35
+        draw_luxury_box(draw, rx, ry, r_box_w, r_box_h, radius=43, fill_color=(13, 148, 100, 255), border_color=(74, 222, 128, 255), border_w=3)
+        font_rev = ImageFont.truetype(str(CAIRO_FONT_PATH), 38)
+        rev_txt = reshape_arabic(f"✓ الإجابة الصحيحة  ({sub_note})")
+        rvb = font_rev.getbbox(rev_txt)
+        draw.text((rx + (r_box_w - (rvb[2] - rvb[0])) // 2, ry + 18), rev_txt, font=font_rev, fill=(255, 255, 255, 255))
+
+    else:  # prompt state
+        # Prompt Guidance Badge
+        g_w, g_h = 720, 68
+        gx = (1080 - g_w) // 2
+        gy = mid_y + 45
+        draw.rounded_rectangle([gx, gy, gx + g_w, gy + g_h], radius=34, fill=(10, 28, 24, 210), outline=(212, 175, 55, 180), width=2)
+        font_g = ImageFont.truetype(str(CAIRO_FONT_PATH), 28)
+        g_txt = reshape_arabic("🎧 استمع جيداً واختر الإجابة الصحيحة")
+        gb = font_g.getbbox(g_txt)
+        draw.text((gx + (g_w - (gb[2] - gb[0])) // 2, gy + 14), g_txt, font=font_g, fill=(253, 224, 71, 255))
+
+    # 4. Multiple Choice Option Cards (y = 1010..1520)
+    opt_w, opt_h = 960, 124
     opt_x = (1080 - opt_w) // 2
+    opt_y = 1010
+    opt_gap = 26
     letters = ["أ", "ب", "ج"]
+    font_opt = ImageFont.truetype(str(quran_font_to_use), 42)
+    font_let = ImageFont.truetype(str(CAIRO_FONT_PATH), 36)
 
-    for i, opt in enumerate(options):
-        curr_y = opt_y + i * (opt_h + 24)
-        is_correct = (i == correct_idx)
+    for i, opt_text in enumerate(options):
+        oy = opt_y + i * (opt_h + opt_gap)
+        is_correct = (state == "reveal" and i == correct_idx)
+        is_faded = (state == "reveal" and i != correct_idx)
 
-        if state == "reveal" and is_correct:
-            # Glowing Emerald Green Card
-            fill_c = (15, 122, 73, 245)
-            border_c = (74, 222, 128, 255)
+        if is_correct:
+            card_fill = (15, 130, 80, 255)
+            card_border = (74, 222, 128, 255)
             border_w = 4
-            text_c = (255, 255, 255, 255)
-            badge_bg = (34, 197, 94, 255)
-        elif state == "reveal" and not is_correct:
-            # Dimmed Out Option Card
-            fill_c = (15, 23, 42, 140)
-            border_c = (71, 85, 105, 120)
-            border_w = 2
-            text_c = (148, 163, 184, 180)
-            badge_bg = (51, 65, 85, 180)
+            let_bg = (74, 222, 128, 255)
+            let_fg = (4, 40, 24, 255)
+            text_color = (255, 255, 255, 255)
+        elif is_faded:
+            card_fill = (10, 18, 22, 130)
+            card_border = (50, 70, 75, 120)
+            border_w = 1
+            let_bg = (30, 45, 50, 140)
+            let_fg = (148, 163, 184, 180)
+            text_color = (148, 163, 184, 180)
         else:
-            # Normal State
-            fill_c = (15, 23, 42, 225)
-            border_c = (212, 175, 55, 185)
+            card_fill = (6, 24, 22, 245)
+            card_border = (212, 175, 55, 255)
             border_w = 2
-            text_c = (255, 255, 255, 255)
-            badge_bg = (30, 41, 59, 240)
+            let_bg = (234, 179, 8, 255)
+            let_fg = (15, 23, 42, 255)
+            text_color = (255, 255, 255, 255)
 
-        draw.rounded_rectangle([opt_x, curr_y, opt_x + opt_w, curr_y + opt_h], radius=26, fill=fill_c, outline=border_c, width=border_w)
+        draw_luxury_box(draw, opt_x, oy, opt_w, opt_h, radius=28, fill_color=card_fill, border_color=card_border, border_w=border_w)
 
-        # Right-aligned Letter Circle
-        badge_dia = 78
-        bx = opt_x + opt_w - badge_dia - 24
-        by_opt = curr_y + (opt_h - badge_dia) // 2
-        draw.ellipse([bx, by_opt, bx + badge_dia, by_opt + badge_dia], fill=badge_bg, outline=border_c, width=2)
+        # 3D Letter Medallion on the RIGHT (RTL layout)
+        med_dia = 68
+        mx = opt_x + opt_w - med_dia - 24
+        my = oy + (opt_h - med_dia) // 2
+        draw.ellipse([mx, my, mx + med_dia, my + med_dia], fill=let_bg, outline=(255, 255, 255, 200), width=2)
+        
+        let_txt = reshape_arabic(letters[i])
+        lb = font_let.getbbox(let_txt)
+        draw.text((mx + (med_dia - (lb[2] - lb[0])) // 2, my + 10), let_txt, font=font_let, fill=let_fg)
 
-        # Letter Text
-        let_str = "✔" if (state == "reveal" and is_correct) else letters[i]
-        font_let = ImageFont.truetype(str(CAIRO_FONT_PATH), 38)
-        lb = font_let.getbbox(let_str)
-        draw.text((bx + (badge_dia - (lb[2] - lb[0])) // 2, by_opt + 12), let_str, font=font_let, fill=(255, 255, 255, 255))
+        # Verse Option Text
+        ot_lines = wrap_arabic_lines(opt_text, font_opt, opt_w - med_dia - 70)
+        if len(ot_lines) > 1:
+            font_opt_small = ImageFont.truetype(str(quran_font_to_use), 36)
+            ot_lines = wrap_arabic_lines(opt_text, font_opt_small, opt_w - med_dia - 70)
+            use_font = font_opt_small
+            ot_spacing = 44
+        else:
+            use_font = font_opt
+            ot_spacing = 50
 
-        # Option Text
-        font_opt = ImageFont.truetype(str(AMIRI_FONT_PATH) if any("\u0600" <= c <= "\u06FF" for c in opt) else str(CAIRO_FONT_PATH), 38)
-        opt_bidi = reshape_arabic(opt)
-        ob = font_opt.getbbox(opt_bidi)
-        ow = ob[2] - ob[0]
-        if ow > (bx - opt_x - 50):
-            # Auto-scale font down if needed
-            font_opt = ImageFont.truetype(str(AMIRI_FONT_PATH), 30)
-            ob = font_opt.getbbox(opt_bidi)
-            ow = ob[2] - ob[0]
+        total_ot_h = len(ot_lines) * ot_spacing
+        oty = oy + (opt_h - total_ot_h) // 2
 
-        draw.text((bx - ow - 35, curr_y + (opt_h - (ob[3] - ob[1])) // 2 - 4), opt_bidi, font=font_opt, fill=text_c)
-
-    # 5. Bottom Call to Action (y = 1530)
-    font_sub_cta = ImageFont.truetype(str(CAIRO_FONT_PATH), 26)
-    if state == "reveal":
-        cta_txt = reshape_arabic("صلِّ على النبي ﷺ واشترك ليصلك تحدي كل يوم")
-    else:
-        cta_txt = reshape_arabic("أهل القرآن يشاركون إجاباتهم بالتعليقات")
-    cb = font_sub_cta.getbbox(cta_txt)
-    draw.text(((1080 - (cb[2] - cb[0])) // 2, 1515), cta_txt, font=font_sub_cta, fill=(203, 213, 225, 220))
+        for o_line in ot_lines:
+            obidi = reshape_arabic(o_line)
+            ob = use_font.getbbox(obidi)
+            olx = mx - 20 - (ob[2] - ob[0])
+            draw.text((olx + 2, oty + 2), obidi, font=use_font, fill=(0, 0, 0, 220))
+            draw.text((olx, oty), obidi, font=use_font, fill=text_color, stroke_width=1, stroke_fill=(0, 0, 0, 160))
+            oty += ot_spacing
 
     return canvas
 
-# ---------------------------------------------------------------------------
 # Module E: Zero-Music Halal Audio & Background Engine (FFmpeg)
 # ---------------------------------------------------------------------------
-def synthesize_clock_tick_sfx(output_path: Path):
-    """Synthesizes 3.0s wooden clock ticking SFX directly with FFmpeg (ZERO music)."""
-    single_tick = OUTPUT_DIR / "single_tick.wav"
-    cmd1 = [
-        FFMPEG_BIN, "-y", "-hide_banner",
-        "-f", "lavfi", "-i", "sine=frequency=900:duration=0.05",
-        "-af", "volume=0.8",
-        str(single_tick)
-    ]
-    subprocess.run(cmd1, capture_output=True, check=True)
-
-    filter_complex = (
-        "[0:a]asplit=3[t0][t1_pre][t2_pre];"
-        "[t1_pre]adelay=1000|1000[t1];"
-        "[t2_pre]adelay=2000|2000[t2];"
-        "[t0][t1][t2]amix=inputs=3:dropout_transition=0:normalize=0,apad=whole_dur=3[aout]"
-    )
-    cmd2 = [
-        FFMPEG_BIN, "-y", "-hide_banner",
-        "-i", str(single_tick),
-        "-filter_complex", filter_complex,
-        "-map", "[aout]",
-        "-t", "3.0",
-        str(output_path)
-    ]
-    subprocess.run(cmd2, capture_output=True, check=True)
-
-def synthesize_reveal_chime_sfx(output_path: Path):
-    """Synthesizes 0.6s soft single-note chime (1046Hz exponential decay) with FFmpeg."""
+def generate_clock_tick_sfx(output_path: Path, duration: float = 3.0):
+    """Generates crisp clock tick SFX procedurally via FFmpeg."""
     cmd = [
         FFMPEG_BIN, "-y", "-hide_banner",
-        "-f", "lavfi", "-i", "sine=frequency=1046:duration=0.6",
+        "-f", "lavfi",
+        "-i", "sine=f=1200:d=0.03,afade=t=out:st=0.01:d=0.02,volume=0.9",
+        "-f", "lavfi",
+        "-i", "sine=f=800:d=0.03,afade=t=out:st=0.01:d=0.02,volume=0.9",
+        "-filter_complex",
+        "[0:a]adelay=0|0[t1];"
+        "[1:a]adelay=1000|1000[t2];"
+        "[0:a]adelay=2000|2000[t3];"
+        "[t1][t2][t3]amix=inputs=3:dropout_transition=0:normalize=0,apad=pad_dur=0.5[aout]",
+        "-map", "[aout]",
+        "-t", f"{duration:.2f}",
+        str(output_path)
+    ]
+    subprocess.run(cmd, capture_output=True, check=True)
+
+def generate_chime_sfx(output_path: Path):
+    """Generates clean bell chime SFX procedurally via FFmpeg."""
+    cmd = [
+        FFMPEG_BIN, "-y", "-hide_banner",
+        "-f", "lavfi",
+        "-i", "sine=f=1046.5:d=0.6",
+        "-t", "0.6",
         "-af", "volume=0.8,afade=t=out:st=0.1:d=0.5",
         str(output_path)
     ]
     subprocess.run(cmd, capture_output=True, check=True)
 
+synthesize_clock_tick_sfx = generate_clock_tick_sfx
+synthesize_reveal_chime_sfx = generate_chime_sfx
+synthesize_chime_sfx = generate_chime_sfx
+
 def get_or_generate_background_video(total_duration: float, output_path: Path):
     """
-    Priority 1: Random .mp4 in assets/backgrounds/ or assets/videos/
-    Priority 2: Pexels API (if PEXELS_API_KEY set)
-    Priority 3: Universal zero-key FFmpeg midnight atmospheric background
+    Synthesizes a Breathtaking Luxury Royal Islamic Motion Background:
+    Rich royal emerald & midnight navy animated gradient with golden divine bloom,
+    delicate celestial stardust motes and cinematic vignette.
     """
-    candidates = list(BACKGROUNDS_DIR.glob("*.mp4")) + list((ASSETS_DIR / "videos").glob("*.mp4"))
-    if candidates:
-        chosen = random.choice(candidates)
-        print(f"  [Background Engine] Using video asset: {chosen.name}")
-        # Loop to total_duration
+    print(f"  [Background Engine] Synthesizing Luxury Royal Islamic Motion Background ({total_duration:.1f}s)...")
+    
+    # Check if a custom curated luxury video is in assets/backgrounds/ (excluding legacy plain video)
+    custom_bgs = [p for p in BACKGROUNDS_DIR.glob("*.mp4") if "ambient" not in p.name.lower()]
+    if custom_bgs:
+        chosen = random.choice(custom_bgs)
+        print(f"  [Background Engine] Using custom luxury video asset: {chosen.name}")
         cmd = [
             FFMPEG_BIN, "-y", "-hide_banner",
             "-stream_loop", "-1", "-i", str(chosen),
             "-t", f"{total_duration:.2f}",
-            "-vf", "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1",
+            "-vf", "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,vignette=PI/3.2,setsar=1",
             "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p", "-an",
             str(output_path)
         ]
         subprocess.run(cmd, capture_output=True, check=True)
         return output_path
 
-    # Check PEXELS_API_KEY
-    pexels_key = os.getenv("PEXELS_API_KEY")
-    if pexels_key:
-        try:
-            print("  [Background Engine] Querying Pexels API for vertical nature/mosque footage...")
-            url = "https://api.pexels.com/videos/search?query=mosque+night+sky&orientation=portrait&per_page=5"
-            req = urllib.request.Request(url, headers={"Authorization": pexels_key, "User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                for v in data.get("videos", []):
-                    for vf in v.get("video_files", []):
-                        if vf.get("width") == 1080 and vf.get("height") == 1920:
-                            v_url = vf.get("link")
-                            with urllib.request.urlopen(v_url, timeout=20) as v_resp, open(output_path, "wb") as f_out:
-                                f_out.write(v_resp.read())
-                            return output_path
-        except Exception as e:
-            print(f"  [Pexels Warning] {e}; switching to zero-key procedural fallback...")
-
-    # Universal Zero-Key Fallback: Deep Midnight Atmospheric Background
-    print(f"  [Background Engine] Generating zero-key procedural atmospheric background ({total_duration:.1f}s)...")
-    vf = f"color=c=0x07131f:s=1080x1920:d={total_duration+1}:r=30,noise=alls=8:allf=t+u,vignette=PI/3"
+    # Synthesize breathtaking procedural luxury emerald-gold gradient with celestial particles
+    lavfi_src = (
+        f"gradients=s=1080x1920:c0=0x021612:c1=0x093b2e:x0=540:y0=1920:x1=540:y1=0:d={total_duration+1}:r=30"
+    )
+    vf = "noise=alls=7:allf=t+u,vignette=PI/3.2,eq=contrast=1.15:brightness=0.01:saturation=1.3"
     cmd = [
         FFMPEG_BIN, "-y", "-hide_banner",
-        "-f", "lavfi", "-i", vf,
+        "-f", "lavfi", "-i", lavfi_src,
+        "-vf", vf,
         "-t", f"{total_duration:.2f}",
         "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p", "-an",
         str(output_path)
@@ -977,9 +993,7 @@ def get_or_generate_background_video(total_duration: float, output_path: Path):
     subprocess.run(cmd, capture_output=True, check=True)
     return output_path
 
-# ---------------------------------------------------------------------------
-# Video Assembly & Pipeline Execution
-# ---------------------------------------------------------------------------
+
 def assemble_challenge_short(challenge: dict, output_file: Path) -> Path:
     """
     Composites the full 1080x1920 video for a challenge:
